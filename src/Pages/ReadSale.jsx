@@ -33,9 +33,6 @@ function ReadSale() {
     return (
         <div className="relative text-center h-full w-full flex flex-col justify-center items-center">                                 
                 
-            
-
-            
                 <form className="mt-4">
                     <h2 className="text-xl font-bold mb-2">Orden {Sale.ID_Sale}</h2>
                     <div className="mb-4">

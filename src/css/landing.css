@@ -52,20 +52,7 @@ section {
 .title {
     position: relative;
     text-align: center;
-    margin-bottom: 40px;
-    width: 40px;
-    background-color: #202020;
-    color: #fff;
-    text-align: center;
-    border-radius: 20px;
-    padding: 15px;
-    position: absolute;
-    z-index: 1;
-    bottom: 100%;
-    left: 30%;
-    margin-left: -20px;
-    opacity: 0;
-    transition: opacity 0.3s;
+    margin-bottom: 50px;
 }
 
 .title h2 {
@@ -599,10 +586,6 @@ footer .b-footer .bottom-tag {
 
 /* Codigo de css propio para las modal */
 
-strong {
-    color: #ff0000;
-}
-
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -618,11 +601,11 @@ strong {
 
 .modal-container {
     background-color: white;
-    padding: 0px;
+    padding: 20px;
     border-radius: 5px;
     z-index: 1001;
     max-width: 90%;
-    width: 0px;
+    width: 400px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -639,10 +622,8 @@ strong {
     margin-bottom: -50px;
 }
 
-.estado-icon.active {
-    color: white;
-}
-
-.estado-icon.inactive {
-    color: #012200;
-}
+.barra-container {
+    margin-top: -10px;
+    margin-bottom: -10px;
+    margin-left: 105px;
+  }
