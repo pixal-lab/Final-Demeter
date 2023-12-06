@@ -1,16 +1,19 @@
-
 import React from 'react';
 import ReactModal from 'react-modal'; 
 import './PayModal.css'; 
-import { useSaleContext } from '../context/SaleContext';
+import { useSaleContext } from '../Context/SaleContext';
 import axios from 'axios';
 
 ReactModal.setAppElement('#root'); 
-function PaymentMethodModal({ isOpen, onRequestClose,onSelectPaymentMethod , id  }) {
 
-    const {paySale} = useSaleContext();
+function PaymentMethodModal({ isOpen, onRequestClose, onSelectPaymentMethod, id }) {
+  const { paySale } = useSaleContext();
 
-    
+  const handlePayment = (paymentMethod) => {
+    paySale(id, paymentMethod);
+    onRequestClose();
+  };
+
   return (
     <ReactModal 
       isOpen={isOpen}
@@ -20,12 +23,11 @@ function PaymentMethodModal({ isOpen, onRequestClose,onSelectPaymentMethod , id 
     >
       <h2>Selecciona el método de pago</h2> 
       <div className="payment-options">
-        <button onClick={() => { paySale(id)}}>QR</button>
-        <button onClick={() => { paySale(id) }}>Tarjeta</button>
-        <button onClick={() => {paySale(id) }}>Efectivo</button>
-        
+        <button onClick={() => handlePayment("QR")}>QR</button>
+        <button onClick={() => handlePayment("Tarjeta")}>Tarjeta</button>
+        <button onClick={() => handlePayment("Efectivo")}>Efectivo</button>
       </div>
-    </ReactModal >
+    </ReactModal>
   );
 }
 

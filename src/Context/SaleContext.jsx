@@ -105,9 +105,10 @@ export const SaleProvider = ({ children }) => {
 
     }
 
-    const paySale = async(data) =>{
+    const paySale = async(data, payment) =>{
         try {
-           const res =await pay({"ID_Sale": data});
+           const res =await pay({"ID_Sale": data,
+           "Payment": payment});
            console.log(res.data)
         } catch (error) {
             console.log(error)
