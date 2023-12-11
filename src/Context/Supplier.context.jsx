@@ -40,8 +40,11 @@ export function Supplier({ children }) {
   const getSupplierByState = async () => {
     try {
       const res = await getSupplierRequest()
+      console.log("res")
+      console.log(res)
       setSupplier(res.data);
     } catch (error) {
+      console.log("res")
       console.log(error)
     }
 
@@ -106,13 +109,19 @@ export function Supplier({ children }) {
   };
 
   const deleteSupplier = async (id) => {
+    let isDeleted = false
     try {
       const res = await deleteSupplierRequest(id);
-      if (res.status === 204)
+      if (res.status === 204) {
         setSupplier(supplier.filter((supplier) => supplier.ID_Supplier !== id));
-    } catch (error) {
-      console.log(error);
-    }
+        isDeleted = true
+      }
+
+        return isDeleted
+      } catch (error) {
+        console.log(error);
+      }
+      return isDeleted
   };
 
   return (

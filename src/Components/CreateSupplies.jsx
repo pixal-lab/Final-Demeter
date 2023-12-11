@@ -41,16 +41,17 @@ const customStyles = {
 
 function CreateSupplies({
   onDefaultSubmit = null,
+  setCreatedSupplie,
   buttonProps = {
     buttonClass: 'btn btn-primary',
-    buttonText: 'Registrar',
+    buttonText: 'Crear Insumo',
   },
 }) {
   const {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isValid },
+    formState: { errors },
     reset,
   } = useForm();
 
@@ -146,13 +147,13 @@ function CreateSupplies({
       return;
     }
 
-    createSupplies(dataToSend);
+    const data = await createSupplies(dataToSend);
+    setCreatedSupplie(data)
     setOpen(false);
     reset();
     setSelectedMeasure(null);
     setSelectedCategory(null);
   });
-
   const onCancel = () => {
     setOpen(false);
     setSelectedMeasure(null);
@@ -343,7 +344,7 @@ function CreateSupplies({
                       <button
                         className="btn btn-primary mr-5"
                         type="submit"
-                        disabled={!isValid || !selectedMeasure || !selectedCategory}
+                        disabled={!selectedMeasure || !selectedCategory}
                       >
                         Confirmar
                       </button>
