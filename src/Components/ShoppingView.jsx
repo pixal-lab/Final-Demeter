@@ -20,16 +20,18 @@ const style = {
 };
 
 
-function ShoppingView({ id }) {
+function ShoppingView({ id, date }) {
   const [open, setOpen] = React.useState(false);
-  const { getShoppingAndSuppliesBySupplierId } = useShoppingContext()
+  const { getShoppingAndSuppliesBySupplierIdAndDateTime } = useShoppingContext()
   const [shoppingData, setShoppingData] = useState([])
 
   useEffect(() => {
 
     return async () => {
-      if (open) return
-      const data = await getShoppingAndSuppliesBySupplierId(id)
+      if (open || !id || !date) return
+      const data = await getShoppingAndSuppliesBySupplierIdAndDateTime(id, date)
+      console.log("data2")
+      console.log(data)
       setShoppingData(data)
     }
   }, [open])
@@ -112,27 +114,27 @@ function ShoppingView({ id }) {
 
 export default ShoppingView
 
-const data = {
-  "ID_ShoppingDetail": 25,
-  "Lot": 2,
-  "Price_Supplier": "10000.00",
-  "Supplies_ID": 3,
-  "Shopping_ID": 26,
-  "Shopping": {
-    "ID_Shopping": 26,
-    "Datetime": "1970-01-01T00:00:00.000Z",
-    "Total": "50000.00",
-    "State": true,
-    "User_ID": 7,
-    "Supplier_ID": 1
-  },
-  "Supply": {
-    "ID_Supplies": 3,
-    "Name_Supplies": "Leche",
-    "Unit": 0,
-    "Measure": "kg",
-    "Stock": 10,
-    "State": true,
-    "SuppliesCategory_ID": null
-  }
-}
+// const data = {
+//   "ID_ShoppingDetail": 25,
+//   "Lot": 2,
+//   "Price_Supplier": "10000.00",
+//   "Supplies_ID": 3,
+//   "Shopping_ID": 26,
+//   "Shopping": {
+//     "ID_Shopping": 26,
+//     "Datetime": "1970-01-01T00:00:00.000Z",
+//     "Total": "50000.00",
+//     "State": true,
+//     "User_ID": 7,
+//     "Supplier_ID": 1
+//   },
+//   "Supply": {
+//     "ID_Supplies": 3,
+//     "Name_Supplies": "Leche",
+//     "Unit": 0,
+//     "Measure": "kg",
+//     "Stock": 10,
+//     "State": true,
+//     "SuppliesCategory_ID": null
+//   }
+// }

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import '../css/style.css'
@@ -16,15 +15,19 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-
  
-function LinkedSupplier() {
-    const [open, setOpen] = React.useState(false);
+function LinkedSupplier({isOpen = false, useButton = true, onClose = () => null}) {
+    const [open, setOpen] = React.useState(isOpen);
     const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+      onClose()
+      setOpen(false)
+    };
   return (
     <div>
-    <button className="btn btn-primary" onClick={handleOpen}>Cancelar</button>
+      {
+        useButton && <button className="btn btn-primary" onClick={handleOpen}>Cancelar</button>
+      }
     <Modal
       open={open}
       onClose={handleClose}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { BiEdit } from "react-icons/bi";
 import { AiOutlineEye, AiFillDelete } from "react-icons/ai";
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
@@ -11,21 +11,40 @@ import "../fonts/fontawesome.css";
 import "../fonts//material.css";
 import CreateSupplier from "../Components/CreateSupplier.jsx";
 import DeleteSupplier from "../Components/DeleteSupplier.jsx";
+import LinkedSupplier from "../Components/LinkedSupplier.jsx";
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+
+
 
 function SupplierPage() {
-  const { supplier, getSupplierByState, updateSupplier, getSupplie , toggleSupplyStatus } = useSupplier();
-
+  const { supplier, getSupplierByState, updateSupplier, getSupplie, toggleSupplyStatus } = useSupplier();
   const [searchTerm, setSearchTerm] = useState("");
+  const [showEnabledOnly, setShowEnabledOnly] = useState(false); // Estado para controlar la visibilidad
+
 
   useEffect(() => {
     getSupplierByState();
   }, []);
 
+  const onSupplierChangeState = () => {
+    setTimeout(() => {
+      window.location.reload()
+    }, 500)
+  }
+  //funcion para inhabilitar proveedor
+  const status = supplier.State ? "" : "desactivado";
+
+  //función para mostrar solo los habilitdos
+  const handleCheckboxChange = (event) => {
+    setShowEnabledOnly(event.target.checked);
+  };
+
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
-
-  const status = supplier.State ? "" : "desactivado";
 
   const filteredSuppliers = supplier.filter((supplierItem) => {
     const {
@@ -38,14 +57,52 @@ function SupplierPage() {
       Email,
       State
     } = supplierItem;
-    const searchString =
-      `${Type_Document} ${Document} ${Name_Supplier} ${Name_Business} ${Phone} ${City} ${Email} ${State}`.toLowerCase();
-    return searchString.includes(searchTerm.toLowerCase());
+
+
+    if (showEnabledOnly) {
+      return (
+        supplierItem.State && // Verificar si el proveedor está habilitado
+        `${Type_Document} ${Document} ${Name_Supplier} ${Name_Business} ${City}  ${Phone}  ${Email}`
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Si showEnabledOnly no está marcado, mostrar todos los proveedores que coincidan con la búsqueda
+    return (
+      `${Type_Document} ${Document} ${Name_Supplier} ${Name_Business} ${City}  ${Phone}  ${Email}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
   });
+  //   const searchString =
+  //     `${Type_Document} ${Document} ${Name_Supplier} ${Name_Business} ${Phone} ${City} ${Email} ${State}`.toLowerCase();
+  //   return searchString.includes(searchTerm.toLowerCase());
+  // });
+
+  //paginación
+
+  const itemsForPage = 5;
+    const [currentPage, setCurrentPage] = useState(1);
+
+const enabledUsers = filteredSuppliers.filter((supplier) => supplier.State);
+    const disabledUsers = filteredSuppliers.filter((supplier) => !supplier.State);
+    const sortedUsers = [...enabledUsers, ...disabledUsers];
+
+    const pageCount = Math.ceil(sortedUsers.length / itemsForPage);
+
+    const startIndex = (currentPage - 1) * itemsForPage;
+    const endIndex = startIndex + itemsForPage;
+    const visibleUsers = sortedUsers.slice(startIndex, endIndex);
+
+const handlePageChange = (event, value) => {
+        setCurrentPage(value);
+    };
+
 
   const onUpdate = (event, id, modalView) => {
     event.preventDefault();
-    
+
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData);
 
@@ -73,8 +130,8 @@ function SupplierPage() {
                 </div>
                 <div className="card-body">
                   <div className="row">
-                    <div className="col-md-6">
-                      <CreateSupplier />
+                    <div className="col-md-6" title="Presiona para registrar un proveedor">
+                      <CreateSupplier whenSubmit={onSupplierChangeState}/>
                     </div>
                     <div className="col-md-6">
                       <div className="form-group">
@@ -86,9 +143,24 @@ function SupplierPage() {
                           placeholder="Buscador"
                           value={searchTerm}
                           onChange={handleSearchChange}
+                          title="Presiona para buscar el proveedor"
                         />
                       </div>
                     </div>
+                  </div>
+
+                  <div className="form-check ml-4 mt-1" >
+                    <input
+                      type="checkbox"
+                      title='Presiona para mostrar solo las compras habilitadas'
+                      className="form-check-input"
+                      id="showEnabledOnly"
+                      checked={showEnabledOnly}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label className="form-check-label" htmlFor="showEnabledOnly">
+                      Mostrar solo habilitados
+                    </label>
                   </div>
 
                   <div className="card-body table-border-style">
@@ -108,7 +180,7 @@ function SupplierPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredSuppliers.map((supplierItem) => (
+                          {visibleUsers.map((supplierItem) => (
                             <tr key={supplierItem.ID_Supplier}>
                               <td>{supplierItem.Type_Document}</td>
                               <td>{supplierItem.Document}</td>
@@ -119,7 +191,7 @@ function SupplierPage() {
                               <td>{supplierItem.Email}</td>
                               <td className={`${status}`}>
                                 {supplierItem.State ? "Habilitado" : "Deshabilitado"}
-                                </td>
+                              </td>
                               <td className="flex items-center">
                                 <CreateSupplier
                                   isDisabled={!supplierItem.State}
@@ -139,30 +211,36 @@ function SupplierPage() {
                                   }
                                   buttonProps={{
                                     buttonText: (
-                                      <i data-feather="thumbs-up">
+                                      <i data-feather="thumbs-up" title="Presiona para editar el proveedor">
                                         <BiEdit />
                                       </i>
                                     ),
-                                    buttonClass: "btn btn-icon btn-primary mr-1"
+                                    buttonClass: "btn btn-icon btn-primary mr-1",
                                   }}
+
+                                  whenSubmit={onSupplierChangeState}
                                 />
-                                <DeleteSupplier
-                                  currentSupplier={supplierItem}
-                                  isDisabled={!supplierItem.State}
-                                  
-                                />
+                                <div title="Presiona para eliminar el proveedor">
+                                  <DeleteSupplier
+                                    currentSupplier={supplierItem}
+                                    isDisabled={!supplierItem.State}
+                                  />
+
+                                </div>
+
                                 <button
-                                   type="button"
-                                   className={`btn  btn-icon btn-success ml-1 ${status}`}
-                                   onClick={() => toggleSupplyStatus(supplierItem.ID_Supplier)}
-                                  
+                                  type="button"
+                                  title='Presiona para inhabilitar o habilitar el proveedor'
+                                  className={`btn  btn-icon btn-success ml-1 ${status}`}
+                                  onClick={() => toggleSupplyStatus(supplierItem.ID_Supplier)}
+
                                 >
-                                   {supplierItem.State ? (
-                                     <MdToggleOn className={`estado-icon active${status}`} />
-                                   ) : (
-                                     <MdToggleOff className={`estado-icon inactive${status}`} />
- 
-                                   )}
+                                  {supplierItem.State ? (
+                                    <MdToggleOn className={`estado-icon active${status}`} />
+                                  ) : (
+                                    <MdToggleOff className={`estado-icon inactive${status}`} />
+
+                                  )}
                                 </button>
                               </td>
                             </tr>
@@ -177,6 +255,28 @@ function SupplierPage() {
           </div>
         </div>
       </div>
+      <div
+                className="pagination-container pagination"
+                title='Para moverse mas rapido por el modulo cuando hay varios registros en el sistema.'
+            >
+                <Stack spacing={2}>
+                    <Pagination
+                        count={pageCount}
+                        page={currentPage}
+                        siblingCount={2}
+                        onChange={handlePageChange}
+                        variant="outlined"
+                        shape="rounded"
+                        
+                    />
+                </Stack>
+            </div>
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2, title: 'Muestra la pagina en la que se encuentra actualmente de las paginas en total que existen.' }}>
+                <Typography variant="body2" color="text.secondary">
+                    Página {currentPage} de {pageCount}
+                </Typography>
+            </Box>
     </section>
   );
 }
