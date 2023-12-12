@@ -122,15 +122,13 @@ function UpdateUser({ onClose, userToEdit }) {
                                                 })}
                                                 value={typeOptions.find(option => option.value === selectedType)}
                                                 onChange={(selectedOption) => setSelectedType(selectedOption.value)}
-                                                menuPlacement="auto"
-                                                menuShouldScrollIntoView={false}
-                                                maxMenuHeight={132}
                                                 styles={customStyles}
+                                                className='form-selects'
                                                 theme={(theme) => ({
                                                     ...theme,
                                                     colors: {
                                                         ...theme.colors,
-                                                        primary: '#201E1E',
+                                                        primary: '#e36209',
                                                     },
                                                 })}
                                             />
@@ -257,17 +255,15 @@ function UpdateUser({ onClose, userToEdit }) {
                                             {...register("Role_ID")}
                                             value={rolOpcions.find(option => option.value === selectedRole)}
                                             onChange={(selectedRole) => setSelectedRole(selectedRole)}
-                                            menuPlacement="auto"
-                                            menuShouldScrollIntoView={false}
-                                            maxMenuHeight={132}
                                             styles={customStyles}
-                                            theme={(theme) => ({
-                                                ...theme,
-                                                colors: {
-                                                    ...theme.colors,
-                                                    primary: '#201E1E',
-                                                },
-                                            })}
+                                                className='form-selects'
+                                                theme={(theme) => ({
+                                                    ...theme,
+                                                    colors: {
+                                                        ...theme.colors,
+                                                        primary: '#e36209',
+                                                    },
+                                                })}
                                         />
                                         {errors.Role_ID && (
                                             <p className="text-red-500">

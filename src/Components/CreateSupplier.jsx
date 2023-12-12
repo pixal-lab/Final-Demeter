@@ -27,7 +27,8 @@ export default function CreateSupplier({
   },
   isDisabled = false,
   onOpen = () => null,
-  whenSubmit = () => null
+  whenSubmit = () => null,
+  beforeSubmit = null
 }) {
   const {
     register,
@@ -54,6 +55,7 @@ export default function CreateSupplier({
   };
 
   const onSubmit = handleSubmit(async (values) => {
+
     const isDocumentoDuplicate = supplier.some(
       (supplier) => supplier.Document === values.Document
     );
@@ -99,6 +101,8 @@ export default function CreateSupplier({
       return;
     }
 
+    if (typeof beforeSubmit === "function" && !(await Promise.resolve(beforeSubmit(values)))) return
+
     createSupplier(values);
     reset();
     setOpen(false);
@@ -117,10 +121,11 @@ export default function CreateSupplier({
     setOpen(false);
   };
 
-  const defaultSubmit = (event) => {
-    onDefaultSubmit(event, setOpen)
+  const defaultSubmit = handleSubmit(async (data) => {
+    if (typeof beforeSubmit === "function" && !(await Promise.resolve(beforeSubmit(data, setError)))) return
+    onDefaultSubmit(data, setOpen)
     whenSubmit()
-  }
+  })
 
   return (
     <React.Fragment>
@@ -251,7 +256,7 @@ export default function CreateSupplier({
                           {...register("Name_Supplier", {
                             required: "El nombre es obligatorio",
                             pattern: {
-                              value:/^[A-ZÁÉÍÓÚÑ][a-zA-Z\sáéíóúñ]*$/,
+                              value: /^[A-ZÁÉÍÓÚÑ][a-zA-Z\sáéíóúñ]*$/,
                               message:
                                 "La primera letra debe ser mayúscula"
                             }
@@ -277,7 +282,7 @@ export default function CreateSupplier({
                           {...register("Name_Business", {
                             required: false,
                             pattern: {
-                              value:/^[A-ZÁÉÍÓÚÑ][a-zA-Z\sáéíóúñ]*$/,
+                              value: /^[A-ZÁÉÍÓÚÑ][a-zA-Z\sáéíóúñ]*$/,
                               message:
                                 "La primera letra debe ser mayúscula y solo letras."
                             }
@@ -350,7 +355,7 @@ export default function CreateSupplier({
                           {...register("City", {
                             required: "La ciudad es requerida",
                             pattern: {
-                              value:/^[A-ZÁÉÍÓÚÑ][a-zA-Z\sáéíóúñ]*$/,
+                              value: /^[A-ZÁÉÍÓÚÑ][a-zA-Z\sáéíóúñ]*$/,
                               message:
                                 "La primera letra debe ser mayúscula y solo letras."
                             }
@@ -361,7 +366,7 @@ export default function CreateSupplier({
                           onChange={(e) => handleInputChange("City", e.target.value)}
 
                         />
-                    {errors.City && (
+                        {errors.City && (
                           <p className="text-red-500">{errors.City.message}</p>
                         )}
 

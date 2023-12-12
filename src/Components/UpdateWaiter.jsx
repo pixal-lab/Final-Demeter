@@ -3,7 +3,6 @@ import Select from 'react-select';
 import Box from "@mui/material/Box";
 import { useForm } from 'react-hook-form';
 import { useUser } from '../Context/User.context.jsx';
-import { useRole } from '../Context/Role.context';
 
 const style = {
     position: "fixed",
@@ -19,20 +18,16 @@ const style = {
     pb: 3
 };
 
-function EditUser({ onClose, userToEdit }) {
-    const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: userToEdit });
-    const { updateUser, user } = useUser();
-    const [selectedType, setSelectedType] = useState(userToEdit.Type_Document);
-    const { role } = useRole();
-    const [selectedRole, setSelectedRole] = useState(userToEdit.Role_ID);
+function UpdateWaiter({ onClose, waiterToEdit }) {
+    const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: waiterToEdit });
+    const { UpdateWaiter, user } = useUser();
+    const [selectedType, setSelectedType] = useState(waiterToEdit.Type_Document);
 
     const typeOptions = [
         { label: 'Cédula de ciudadanía', value: 'CC' },
         { label: 'Cédula de extranjería', value: 'CE' },
         { label: 'Pasaporte', value: 'PB' },
     ];
-
-    const rolOpcions = role.map(option => ({ label: option.Name_Role, value: option.ID_Role }));
 
     const customStyles = {
         control: (provided, state) => ({
@@ -70,28 +65,13 @@ function EditUser({ onClose, userToEdit }) {
                 return true;
             },
         });
-        register('Email', {
-            required: 'El correo es obligatorio',
-            validate: (value) => {
-                const duplicateEmail = user.find(
-                    (users) =>
-                        users.Email === value &&
-                        users.ID_User !== userToEdit.ID_User
-                );
 
-                if (duplicateEmail) {
-                    return 'Este correo ya existe.';
-                }
-                return true;
-            },
-        });
-    }, [register, user, userToEdit.ID_USUARIO]);
+    }, [register, user, waiterToEdit.ID_User]);
 
     const onSubmit = handleSubmit(async (values) => {
         values.Type_Document = selectedType;
-        values.Role_ID = selectedRole;
 
-        updateUser(userToEdit.ID_User, values);
+        UpdateWaiter(waiterToEdit.ID_User, values);
         onClose();
     });
 
@@ -105,7 +85,7 @@ function EditUser({ onClose, userToEdit }) {
                 <div className="col-md-12">
                     <div className="card">
                         <div className="card-header">
-                            <h5>Editar un empleado</h5>
+                            <h5>Editar un mesero</h5>
                         </div>
                         <div className="card-body">
                             <form onSubmit={onSubmit}>
@@ -122,15 +102,13 @@ function EditUser({ onClose, userToEdit }) {
                                                 })}
                                                 value={typeOptions.find(option => option.value === selectedType)}
                                                 onChange={(selectedOption) => setSelectedType(selectedOption.value)}
-                                                menuPlacement="auto"
-                                                menuShouldScrollIntoView={false}
-                                                maxMenuHeight={132}
                                                 styles={customStyles}
+                                                className='form-selects'
                                                 theme={(theme) => ({
                                                     ...theme,
                                                     colors: {
                                                         ...theme.colors,
-                                                        primary: '#201E1E',
+                                                        primary: '#e36209',
                                                     },
                                                 })}
                                             />
@@ -224,55 +202,25 @@ function EditUser({ onClose, userToEdit }) {
 
                                 <div className="control">
                                     <div className="form-group col-md-6">
-                                        <label htmlFor="Email" className="form-label">
-                                            Correo electrónico: <strong>*</strong>
+                                        <label htmlFor="Restaurant" className="form-label">
+                                            Restaurante: <strong>*</strong>
                                         </label>
                                         <input
-                                            {...register("Email", {
-                                                required: 'El correo es obligatorio',
+                                            {...register("Restaurant", {
+                                                required: 'El restaurante es obligatorio',
                                                 pattern: {
-                                                    value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/,
-                                                    message: 'El correo electrónico no es válido'
+                                                    value: /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ\s]*[a-záéíóúñ]$/,
+                                                    message:
+                                                        "El restaurante al cual pertenece el mesero debe tener la primera letra en mayúscula y solo letras."
                                                 }
                                             })}
                                             type="email"
                                             placeholder='Correo electrónico'
                                             className="form-control"
                                         />
-                                        {errors.Email && (
+                                        {errors.Restaurant && (
                                             <p className="text-red-500">
-                                                {errors.Email.message}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div className="form-group col-md-6">
-                                        <label htmlFor="Role_ID" className="form-label">
-                                            Rol: <strong>*</strong>
-                                        </label>
-                                        <Select
-                                            options={[
-                                                { label: 'Seleccione rol', value: '', isDisabled: true },
-                                                ...rolOpcions
-                                            ]}
-                                            {...register("Role_ID")}
-                                            value={rolOpcions.find(option => option.value === selectedRole)}
-                                            onChange={(selectedRole) => setSelectedRole(selectedRole)}
-                                            menuPlacement="auto"
-                                            menuShouldScrollIntoView={false}
-                                            maxMenuHeight={132}
-                                            styles={customStyles}
-                                            theme={(theme) => ({
-                                                ...theme,
-                                                colors: {
-                                                    ...theme.colors,
-                                                    primary: '#201E1E',
-                                                },
-                                            })}
-                                        />
-                                        {errors.Role_ID && (
-                                            <p className="text-red-500">
-                                                {errors.Role_ID.message}
+                                                {errors.Restaurant.message}
                                             </p>
                                         )}
                                     </div>
@@ -304,4 +252,4 @@ function EditUser({ onClose, userToEdit }) {
     )
 }
 
-export default EditUser
+export default UpdateWaiter

@@ -1,16 +1,29 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+
+// Icons
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
-import EnhancedEncryptionIcon from '@mui/icons-material/EnhancedEncryption';
-import '../css/style.css'
-import '../css/landing.css'
+import { Assignment } from "@mui/icons-material";
 
-import { useRole } from '../Context/Role.context.jsx';
-import CreateRole from '../Components/CreateRole.jsx';
-import UpdateRole from '../Components/UpdateRole.jsx';
-import DeleteRole from '../Components/DeleteRole.jsx';
-import AssignPermissions from '../Components/AssignPermissions.jsx';
+// Diseño
+import "../css/style.css";
+import "../css/landing.css";
+
+// Context
+import { useRole } from "../Context/Role.context.jsx";
+
+// Componentes
+import CreateRole from "../Components/CreateRole.jsx";
+import UpdateRole from "../Components/UpdateRole.jsx";
+// import DeleteRole from "../Components/DeleteRole.jsx";
+import AssignPermissions from "../Components/AssignPermissions.jsx";
+
+// Paginado
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 function RolePage() {
     const { role, getRoles, toggleRoleStatus, deleteRole } = useRole();
@@ -20,21 +33,28 @@ function RolePage() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [roleToEdit, setRoleToEdit] = useState(null);
     const [roleToDelete, setRoleToDelete] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState("");
 
-    // useLayoutEffect(() => {
-    //     getRoles();
-    // }, []);
+    const roleIdRef = useRef(null)
+
+    const [showEnabledOnly, setShowEnabledOnly] = useState(
+        localStorage.getItem("showEnabledOnly") === "true"
+    );
+    const itemsForPage = 5;
+    const [currentPage, setCurrentPage] = useState(1);
+
     useEffect(() => {
-        getRoles();
+        getRoles(), setCurrentPage(1);
     }, []);
 
     const navigateToCreateRole = () => {
         setIsModalOpen(true);
     };
 
-    const AssignPermissions = () => {
+    const AssignPermission = (id) => {
+        roleIdRef.current = +id
         setIsModalOpenPrmissions(true);
+
     };
 
     const handleCreated = () => {
@@ -64,17 +84,44 @@ function RolePage() {
         setIsDeleteModalOpen(false);
     };
 
+    useEffect(() => {
+        localStorage.setItem("showEnabledOnly", showEnabledOnly);
+    }, [showEnabledOnly]);
+
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
     };
 
-    const filteredRoles = role.filter((role) => {
-        const { Name_Role, State } = role;
-        const searchString = `${Name_Role} ${State}`.toLowerCase();
+    const handleCheckboxChange = () => {
+        setShowEnabledOnly(!showEnabledOnly);
+    };
+
+    const filteredRoles = role.filter((rol) => {
+        const { Name_Role } = rol;
+        const searchString = `${Name_Role}`.toLowerCase();
+
+        if (showEnabledOnly) {
+            return rol.State && searchString.includes(searchTerm.toLowerCase());
+        }
+
         return searchString.includes(searchTerm.toLowerCase());
     });
 
+    const enabledRoles = filteredRoles.filter((rol) => rol.State);
+    const disabledRoles = filteredRoles.filter((rol) => !rol.State);
+    const sortedRoles = [...enabledRoles, ...disabledRoles];
+
+    const pageCount = Math.ceil(sortedRoles.length / itemsForPage);
+
+    const startIndex = (currentPage - 1) * itemsForPage;
+    const endIndex = startIndex + itemsForPage;
+    const visibleRoles = sortedRoles.slice(startIndex, endIndex);
+
     const statusRoles = role.State ? "" : "desactivado";
+
+    const handlePageChange = (event, value) => {
+        setCurrentPage(value);
+    };
 
     return (
         <section className="pc-container">
@@ -82,7 +129,6 @@ function RolePage() {
                 <div className="row w-100">
                     <div className="col-md-12">
                         <div className=" w-100 col-sm-12">
-
                             <div className="card">
                                 <div className="card-header">
                                     <h5>Visualización de roles</h5>
@@ -91,24 +137,44 @@ function RolePage() {
                                     <div className="row">
                                         <div className="col-md-6">
                                             <button
-                                                type='button'
-                                                className='btn btn-primary'
+                                                type="button"
+                                                className="btn btn-primary"
                                                 onClick={navigateToCreateRole}
-                                                title='Registrar un nuevo rol para un empleado para el sistema.'
+                                                title="Registrar un nuevo rol para un empleado para el sistema."
                                             >
                                                 Registrar
                                             </button>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
-                                                <input type="search" className="form-control"
+                                                <input
+                                                    type="search"
+                                                    className="form-control"
                                                     id="exampleInputEmail1"
                                                     aria-describedby="emailHelp"
                                                     placeholder="Buscador"
                                                     value={searchTerm}
                                                     onChange={handleSearchChange}
-                                                    title='Se puede buscar el rol por el nombre'
+                                                    title="Se puede buscar el rol por el nombre"
                                                 />
+                                            </div>
+                                        </div>
+                                        <div className="movement">
+                                            <div className="form-check">
+                                                <input
+                                                    type="checkbox"
+                                                    title="Mostrar los roles que estan habilitados en la primeras paginas."
+                                                    className="form-check-input"
+                                                    id="showEnabledOnly"
+                                                    checked={showEnabledOnly}
+                                                    onChange={handleCheckboxChange}
+                                                />
+                                                <label
+                                                    className="form-check-label"
+                                                    htmlFor="showEnabledOnly"
+                                                >
+                                                    Mostrar solo habilitados.
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
@@ -125,57 +191,82 @@ function RolePage() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {filteredRoles.map((rol) => (
+                                                    {visibleRoles.map((rol) => (
                                                         <tr key={rol.ID_Role}>
-                                                            <td title='Nombre del rol'>{rol.Name_Role}</td>
+                                                            <td title="Nombre del rol">{rol.Name_Role}</td>
                                                             <td>
                                                                 {rol.ID_Role !== 1 ? (
-                                                                    <div style={{ display: "flex", alignItems: "center" }}>
+                                                                    <div
+                                                                        style={{
+                                                                            display: "flex",
+                                                                            alignItems: "center"
+                                                                        }}
+                                                                    >
                                                                         <button
-                                                                            title='Para poder remover o asignar permisos a un rol ya creado con anterioridad.'
-                                                                            type='button'
-                                                                            className='btn btn-icon btn-outline-dark btn-sm'
-                                                                            onClick={AssignPermissions}
+                                                                            title="Para poder remover o asignar permisos a un rol ya creado con anterioridad."
+                                                                            type="button"
+                                                                            className="btn btn-icon btn-outline-dark btn-sm"
+                                                                            onClick={() => AssignPermission(rol.ID_Role)}
                                                                         >
-                                                                            <EnhancedEncryptionIcon />
+                                                                            <Assignment />
                                                                         </button>
                                                                     </div>
                                                                 ) : (
                                                                     "El rol tiene todos los permisos."
                                                                 )}
                                                             </td>
-                                                            <td title='El estado actual del rol seleccionado en el sistema.' className={`${statusRoles}`}>
+                                                            <td
+                                                                title="El estado actual del rol seleccionado en el sistema."
+                                                                className={`${statusRoles}`}
+                                                            >
                                                                 {rol.State ? "Habilitado" : "Deshabilitado"}
                                                             </td>
                                                             <td>
                                                                 {rol.ID_Role !== 1 ? (
-                                                                    <div style={{ display: "flex", alignItems: "center" }}>
+                                                                    <div
+                                                                        style={{
+                                                                            display: "flex",
+                                                                            alignItems: "center"
+                                                                        }}
+                                                                    >
                                                                         <button
                                                                             onClick={() => handleEdit(rol)}
-                                                                            className={`ml-1 btn btn-icon btn-primary ${!rol.State ? "text-gray-400 cursor-not-allowed" : ""}`}
+                                                                            className={`ml-1 btn btn-icon btn-primary ${!rol.State
+                                                                                    ? "text-gray-400 cursor-not-allowed"
+                                                                                    : ""
+                                                                                }`}
                                                                             disabled={!rol.State}
-                                                                            title='Para editar el nombre del rol seleccionado en el sistema.'
+                                                                            title="Para editar el nombre del rol seleccionado en el sistema."
                                                                         >
                                                                             <BiEdit />
                                                                         </button>
                                                                         <button
                                                                             onClick={() => handleDelete(rol)}
-                                                                            className={`ml-1 btn btn-icon btn-danger ${!rol.State ? "text-gray-400 cursor-not-allowed" : ""}`}
+                                                                            className={`ml-1 btn btn-icon btn-danger ${!rol.State
+                                                                                    ? "text-gray-400 cursor-not-allowed"
+                                                                                    : ""
+                                                                                }`}
                                                                             disabled={!rol.State}
-                                                                            title='Para eliminar el rol de forma permanente del sistema.'
+                                                                            title="Para eliminar el rol de forma permanente del sistema."
                                                                         >
                                                                             <AiFillDelete />
                                                                         </button>
                                                                         <button
                                                                             type="button"
-                                                                            title='Para cambiar el estado del rol seleccionado en el sistema.'
-                                                                            className={`btn btn-icon btn-success ${statusRoles}`}
-                                                                            onClick={() => toggleRoleStatus(rol.ID_Role)}
+                                                                            title="Para cambiar el estado del rol seleccionado en el sistema."
+                                                                            className={`ml-1 btn btn-icon btn-success ${statusRoles}`}
+                                                                            onClick={() =>
+                                                                                toggleRoleStatus(rol.ID_Role)
+                                                                            }
                                                                         >
                                                                             {rol.State ? (
-                                                                                <MdToggleOn className={`estado-icon active ${statusRoles}`} />
+                                                                                <MdToggleOn
+                                                                                    className={`estado-icon active ${statusRoles}`}
+                                                                                />
                                                                             ) : (
-                                                                                <MdToggleOff className={`estado-icon inactive ${statusRoles}`} />
+                                                                                <MdToggleOff
+                                                                                    className={`estado-icon inactive ${statusRoles}`}
+                                                                                />
                                                                             )}
                                                                         </button>
                                                                     </div>
@@ -187,51 +278,95 @@ function RolePage() {
                                                     ))}
                                                 </tbody>
                                             </table>
-
-                                            {isModalOpen && (
-                                                <div className="fixed inset-0 flex items-center justify-center z-50">
-                                                    <div className="modal-overlay" onClick={() => setIsModalOpen(false)}></div>
-                                                    <div className="modal-container">
-                                                        <CreateRole onClose={() => setIsModalOpen(false)} onCreated={handleCreated} />
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {isModalOpenPrmissions && (
-                                                <div className="fixed inset-0 flex items-center justify-center z-50">
-                                                    <div className="modal-overlay" onClick={() => setIsModalOpenPrmissions(false)}></div>
-                                                    <div className="modal-container">
-                                                        <AssignPermissions onClose={() => setIsModalOpenPrmissions(false)} onAssign={handleCreated} />
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {isEditModalOpen && (
-                                                <div className="fixed inset-0 flex items-center justify-center z-50">
-                                                    <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}></div>
-                                                    <div className="modal-container">
-                                                        <UpdateRole onClose={() => setIsEditModalOpen(false)} roleToEdit={roleToEdit} />
-                                                    </div>
-                                                </div>
-                                            )}
-||
-                                            {isDeleteModalOpen && (
-                                                <DeleteRole
-                                                    onClose={cancelDelete}
-                                                    onDelete={confirmDelete}
-                                                />
-                                            )}
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div
+                className="pagination-container pagination"
+                title="Para moverse mas rapido por el modulo cuando hay varios registros en el sistema."
+            >
+                <Stack spacing={2}>
+                    <Pagination
+                        count={pageCount}
+                        page={currentPage}
+                        siblingCount={2}
+                        onChange={handlePageChange}
+                        variant="outlined"
+                        shape="rounded"
+                    />
+                </Stack>
+            </div>
+
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: 2,
+                    title:
+                        "Muestra la pagina en la que se encuentra actualmente de las paginas en total que existen."
+                }}
+            >
+                <Typography variant="body2" color="text.secondary">
+                    Página {currentPage} de {pageCount}
+                </Typography>
+            </Box>
+
+            {isModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <div
+                        className="modal-overlay"
+                        onClick={() => setIsModalOpen(false)}
+                    ></div>
+                    <div className="modal-container">
+                        <CreateRole
+                            onClose={() => setIsModalOpen(false)}
+                            onCreated={handleCreated}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {isModalOpenPrmissions && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <div
+                        className="modal-overlay"
+                        onClick={() => setIsModalOpenPrmissions(false)}
+                    ></div>
+                    <div className="modal-container">
+                        <AssignPermissions
+                            onClose={() => setIsModalOpenPrmissions(false)}
+                            onAssign={AssignPermission}
+                            roleId={roleIdRef.current}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {isEditModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <div
+                        className="modal-overlay"
+                        onClick={() => setIsEditModalOpen(false)}
+                    ></div>
+                    <div className="modal-container">
+                        <UpdateRole
+                            onClose={() => setIsEditModalOpen(false)}
+                            roleToEdit={roleToEdit}
+                        />
+                    </div>
+                </div>
+            )}
+            {/* {isDeleteModalOpen && (
+                <DeleteRole onClose={cancelDelete} onDelete={confirmDelete} />
+            )} */}
         </section>
-    )
+    );
 }
 
-export default RolePage
+export default RolePage;

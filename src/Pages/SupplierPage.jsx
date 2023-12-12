@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { BiEdit } from "react-icons/bi";
 import { AiOutlineEye, AiFillDelete } from "react-icons/ai";
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
@@ -16,12 +16,19 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { useUser } from "../Context/User.context.jsx";
 
 
 
 function SupplierPage() {
   const { supplier, getSupplierByState, updateSupplier, getSupplie, toggleSupplyStatus } = useSupplier();
+  const { existSupplierByEmailOrId } = useUser()
   const [searchTerm, setSearchTerm] = useState("");
+  const currentSupplierDataRef = useRef({
+    email: "",
+    document: ""
+  })
+
   const [showEnabledOnly, setShowEnabledOnly] = useState(false); // Estado para controlar la visibilidad
 
 
@@ -83,28 +90,24 @@ function SupplierPage() {
   //paginación
 
   const itemsForPage = 5;
-    const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
-const enabledUsers = filteredSuppliers.filter((supplier) => supplier.State);
-    const disabledUsers = filteredSuppliers.filter((supplier) => !supplier.State);
-    const sortedUsers = [...enabledUsers, ...disabledUsers];
+  const enabledUsers = filteredSuppliers.filter((supplier) => supplier.State);
+  const disabledUsers = filteredSuppliers.filter((supplier) => !supplier.State);
+  const sortedUsers = [...enabledUsers, ...disabledUsers];
 
-    const pageCount = Math.ceil(sortedUsers.length / itemsForPage);
+  const pageCount = Math.ceil(sortedUsers.length / itemsForPage);
 
-    const startIndex = (currentPage - 1) * itemsForPage;
-    const endIndex = startIndex + itemsForPage;
-    const visibleUsers = sortedUsers.slice(startIndex, endIndex);
+  const startIndex = (currentPage - 1) * itemsForPage;
+  const endIndex = startIndex + itemsForPage;
+  const visibleUsers = sortedUsers.slice(startIndex, endIndex);
 
-const handlePageChange = (event, value) => {
-        setCurrentPage(value);
-    };
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
 
-  const onUpdate = (event, id, modalView) => {
-    event.preventDefault();
-
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData);
+  const onUpdate = (data, id, modalView) => {
 
     updateSupplier(id, data);
     modalView(false);
@@ -117,6 +120,27 @@ const handlePageChange = (event, value) => {
       setValue(key, supplierById[key]);
     }
   };
+
+  const beforeUpdate = async ({ Email, Document }, errorSetter) => {
+    const { existingUser: { Email: e_email }, existUser } = await existSupplierByEmailOrId(Email, Document)
+    const { email } = currentSupplierDataRef.current
+
+    const condition = existUser && email !== e_email
+    if (condition) {
+      errorSetter("Email", {
+        type: "manual",
+        message: "El correo y/o documento del proveedor ya existe."
+      });
+
+      errorSetter("Document", {
+        type: "manual",
+        message: "El correo y/o documento del proveedor ya existe."
+      });
+
+    }
+
+    return !condition
+  }
 
   return (
     <section className="pc-container">
@@ -131,7 +155,7 @@ const handlePageChange = (event, value) => {
                 <div className="card-body">
                   <div className="row">
                     <div className="col-md-6" title="Presiona para registrar un proveedor">
-                      <CreateSupplier whenSubmit={onSupplierChangeState}/>
+                      <CreateSupplier whenSubmit={onSupplierChangeState} />
                     </div>
                     <div className="col-md-6">
                       <div className="form-group">
@@ -193,33 +217,43 @@ const handlePageChange = (event, value) => {
                                 {supplierItem.State ? "Habilitado" : "Deshabilitado"}
                               </td>
                               <td className="flex items-center">
-                                <CreateSupplier
-                                  isDisabled={!supplierItem.State}
-                                  key={supplierItem.ID_Supplier}
-                                  onDefaultSubmit={(event, setOpen) =>
-                                    onUpdate(
-                                      event,
-                                      supplierItem.ID_Supplier,
-                                      setOpen
-                                    )
+                                <button onClick={() => {
+                                  currentSupplierDataRef.current = {
+                                    ...currentSupplierDataRef.current,
+                                    email: supplierItem.Email,
+                                    document: supplierItem.Document
                                   }
-                                  onOpen={(params) =>
-                                    onOpenComponent(
-                                      supplierItem.ID_Supplier,
-                                      params
-                                    )
-                                  }
-                                  buttonProps={{
-                                    buttonText: (
-                                      <i data-feather="thumbs-up" title="Presiona para editar el proveedor">
-                                        <BiEdit />
-                                      </i>
-                                    ),
-                                    buttonClass: "btn btn-icon btn-primary mr-1",
-                                  }}
+                                }}>
 
-                                  whenSubmit={onSupplierChangeState}
-                                />
+                                  <CreateSupplier
+                                    isDisabled={!supplierItem.State}
+                                    key={supplierItem.ID_Supplier}
+                                    onDefaultSubmit={(event, setOpen) =>
+                                      onUpdate(
+                                        event,
+                                        supplierItem.ID_Supplier,
+                                        setOpen
+                                      )
+                                    }
+                                    onOpen={(params) =>
+                                      onOpenComponent(
+                                        supplierItem.ID_Supplier,
+                                        params
+                                      )
+                                    }
+                                    buttonProps={{
+                                      buttonText: (
+                                        <i data-feather="thumbs-up" title="Presiona para editar el proveedor">
+                                          <BiEdit />
+                                        </i>
+                                      ),
+                                      buttonClass: "btn btn-icon btn-primary mr-1",
+                                    }}
+
+                                    whenSubmit={onSupplierChangeState}
+                                    beforeSubmit={beforeUpdate}
+                                  />
+                                </button>
                                 <div title="Presiona para eliminar el proveedor">
                                   <DeleteSupplier
                                     currentSupplier={supplierItem}
@@ -256,27 +290,27 @@ const handlePageChange = (event, value) => {
         </div>
       </div>
       <div
-                className="pagination-container pagination"
-                title='Para moverse mas rapido por el modulo cuando hay varios registros en el sistema.'
-            >
-                <Stack spacing={2}>
-                    <Pagination
-                        count={pageCount}
-                        page={currentPage}
-                        siblingCount={2}
-                        onChange={handlePageChange}
-                        variant="outlined"
-                        shape="rounded"
-                        
-                    />
-                </Stack>
-            </div>
+        className="pagination-container pagination"
+        title='Para moverse mas rapido por el modulo cuando hay varios registros en el sistema.'
+      >
+        <Stack spacing={2}>
+          <Pagination
+            count={pageCount}
+            page={currentPage}
+            siblingCount={2}
+            onChange={handlePageChange}
+            variant="outlined"
+            shape="rounded"
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2, title: 'Muestra la pagina en la que se encuentra actualmente de las paginas en total que existen.' }}>
-                <Typography variant="body2" color="text.secondary">
-                    Página {currentPage} de {pageCount}
-                </Typography>
-            </Box>
+          />
+        </Stack>
+      </div>
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2, title: 'Muestra la pagina en la que se encuentra actualmente de las paginas en total que existen.' }}>
+        <Typography variant="body2" color="text.secondary">
+          Página {currentPage} de {pageCount}
+        </Typography>
+      </Box>
     </section>
   );
 }

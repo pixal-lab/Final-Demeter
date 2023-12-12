@@ -13,7 +13,7 @@ import useLocaStorage from '../hooks/useLocaStorage';
 function ShoppingBill({ total = 0, onConfirm, ...confirmValues }) {
   const { register, handleSubmit } = useForm();
   const { getSupplier } = useSupplier()
-  
+
   const [currentUser, setCurrentUser] = useState({})
 
   const { getCurrentUser } = useUser()
@@ -30,7 +30,7 @@ function ShoppingBill({ total = 0, onConfirm, ...confirmValues }) {
   useEffect(() => {
     return async () => {
       const newSupplier = await Promise.resolve(getSupplier());
-      const filteredSuppliers = newSupplier.filter((supplierItem) => supplierItem.State); 
+      const filteredSuppliers = newSupplier.filter((supplierItem) => supplierItem.State);
       setSupplierState(filteredSuppliers);
     };
   }, []);
@@ -118,7 +118,7 @@ function ShoppingBill({ total = 0, onConfirm, ...confirmValues }) {
         </div>
         <hr className='ml-2 mt-4' />
         <div>
-          <h1 className='text-center mt-5'>$ {total}</h1>
+          <h1 className='text-center mt-5'>$ {total.toLocaleString()}</h1>
           <p className='text-center mt-1'>Total</p>
         </div>
 
@@ -127,7 +127,10 @@ function ShoppingBill({ total = 0, onConfirm, ...confirmValues }) {
           <div className="flex justify-between pt-3">
             <ConfirmShop {...Object.assign(confirmValues, {
               uuidv4
-            })} data={selectedSupplier}
+            })} data={{
+              ...selectedSupplier,
+              uuidv4
+            }}
               onConfirm={beforeConfirm} />
             <CancelShop />
           </div>

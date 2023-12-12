@@ -91,6 +91,8 @@ function ShoppingPage() {
   const endIndex = startIndex + itemsForPage;
   const visibleUsers = sortedUsers.slice(startIndex, endIndex);
 
+  console.log("visibleUsers", visibleUsers)
+
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };

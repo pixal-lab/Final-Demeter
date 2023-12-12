@@ -76,6 +76,7 @@ export default function UpdateRole({ onClose, roleToEdit }) {
                       type="text"
                       placeholder='Nombre'
                       className="form-control"
+                      title='Se cambia el nombre del rol que se desea editar.'
                     />
                     {errors.Name_Role && (
                       <p className="text-red-500">
@@ -91,6 +92,7 @@ export default function UpdateRole({ onClose, roleToEdit }) {
                       className="btn btn-primary"
                       onClick={onCancel}
                       type="button"
+                      title='Se cancela el cambio del rol a editar en el sistema'
                     >
                       Cancelar
                     </button>
@@ -98,6 +100,7 @@ export default function UpdateRole({ onClose, roleToEdit }) {
                     <button
                       className="btn btn-primary mr-5"
                       type="submit"
+                      title='Se guarda el cambio realizado en el rol del sistema.'
                     >
                       Guardar
                     </button>
