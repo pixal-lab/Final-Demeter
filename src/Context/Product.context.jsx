@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { getProductsRequest, getProductByCategoryRequest, createProductsRequest, statusProductsRequest, updateProductsRequest, deleteProductsRequest } from "../Api/Product.request.js"
-import {  getProductSale, getAllProduct, getDetailProductRequest, createDetailPRequest, deleteDetailProductRequest } from "../Api/Product.request.js" //Detalles
+import {  getProductSale, getAllProduct, getDetailProductRequest,getDetailProductRequest2, createDetailPRequest, deleteDetailProductRequest } from "../Api/Product.request.js" //Detalles
 
 const ProductContext = createContext();
 
@@ -108,6 +108,16 @@ export function Product({ children }) {
         }
     }
 
+    const getDetailProduct2 = async (id) => {
+        try {
+            const res = await getDetailProductRequest2(id);
+            
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+
     const createDetailP = async ( datilsP) => {
         try {
             await createDetailPRequest( datilsP);
@@ -169,6 +179,7 @@ export function Product({ children }) {
             // Datalles
             getDetailProduct,
             createDetailP,
+            getDetailProduct2,
             detailP,
             deleteDetailProduct,
             Product,
