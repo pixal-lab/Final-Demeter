@@ -29,7 +29,13 @@ function SupplierPage() {
     document: ""
   })
 
-  const [showEnabledOnly, setShowEnabledOnly] = useState(false); // Estado para controlar la visibilidad
+  const [showEnabledOnly, setShowEnabledOnly] = useState(
+    localStorage.getItem("showEnabledOnly") === "true"
+  );
+
+  useEffect(() => {
+    localStorage.setItem("showEnabledOnly", showEnabledOnly);
+  }, [showEnabledOnly]);
 
 
   useEffect(() => {
