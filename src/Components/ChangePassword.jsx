@@ -53,11 +53,11 @@ const ChangePassword = () => {
                 )}
             </div>
             <div className="form-group px-3">
-                <label htmlFor="Password" className="form-label">
+                <label htmlFor="NewPassword" className="form-label">
                     Contraseña nueva: <strong>*</strong>
                 </label>
                 <input
-                    {...register("Password", {
+                    {...register("NewPassword", {
                         required: 'La contraseña es obligatorio',
                         pattern: {
                             value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)(?=.*\w).*$/,
@@ -77,9 +77,9 @@ const ChangePassword = () => {
                     className="form-control"
                     title='Ingresar la nueva contraseña.'
                 />
-                {errors.Password && (
+                {errors.NewPassword && (
                     <p className="text-red-500">
-                        {errors.Password.message}
+                        {errors.NewPassword.message}
                     </p>
                 )}
             </div>
