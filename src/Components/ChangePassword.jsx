@@ -1,12 +1,25 @@
 import React from 'react'
 import { useForm } from 'react-hook-form';
+import { useUser } from '../Context/User.context.jsx'
 
 const ChangePassword = () => {
 
-    const { register, formState: { errors } } = useForm({});
+    const { register, handleSubmit, formState: { errors } } = useForm({});
+    const { changePassword, userId } = useUser;
+
+    const onSubmit = async (data) => {
+        try {
+            await changePassword(userId, data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
-        <form className='text-center col-md-10'>
+        <form
+            className='text-center col-md-10'
+            onSubmit={handleSubmit(onSubmit)}
+        >
 
             <div className="form-group p-3">
                 <label htmlFor="Password" className="form-label">
@@ -40,11 +53,11 @@ const ChangePassword = () => {
                 )}
             </div>
             <div className="form-group px-3">
-                <label htmlFor="Password" className="form-label">
+                <label htmlFor="NewPassword" className="form-label">
                     Contraseña nueva: <strong>*</strong>
                 </label>
                 <input
-                    {...register("Password", {
+                    {...register("NewPassword", {
                         required: 'La contraseña es obligatorio',
                         pattern: {
                             value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)(?=.*\w).*$/,
@@ -64,9 +77,9 @@ const ChangePassword = () => {
                     className="form-control"
                     title='Ingresar la nueva contraseña.'
                 />
-                {errors.Password && (
+                {errors.NewPassword && (
                     <p className="text-red-500">
-                        {errors.Password.message}
+                        {errors.NewPassword.message}
                     </p>
                 )}
             </div>

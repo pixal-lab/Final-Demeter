@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getUsersRequest, GetCurrentUser, getUserRequest, createUserRequest, statusUserRequest, updateUserRequest, deleteUserRequest, loginRequest, verifyTokenRequest, forgotPasswordRequest, NewPasswordRequest, GetUserCookies } from '../Api/User.request.js'
+import { getUsersRequest, GetCurrentUser, getUserRequest, createUserRequest, statusUserRequest, updateUserRequest, deleteUserRequest, loginRequest, verifyTokenRequest, forgotPasswordRequest, NewPasswordRequest, GetUserCookies, existUserByEmailOrIdRequest, getWaiterRequest } from '../Api/User.request.js'
 import { getWaitersRequest, createWaiterRequest } from '../Api/User.request.js';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
@@ -31,14 +31,14 @@ export const User = ({ children }) => {
 
   const getUsers = async () => {
     try {
-        const res = await getUsersRequest();
-        setUser(res.data);
-        
-        
+      const res = await getUsersRequest();
+      setUser(res.data);
+
+
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-}
+  }
   const getUser = async (id) => {
     try {
       const res = await getUserRequest(id);
@@ -46,6 +46,19 @@ export const User = ({ children }) => {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  const existUserByEmailOrId = async (document, email, userType) => {
+    try {
+      const res = await existUserByEmailOrIdRequest(document, email, userType);
+      return res.data
+    } catch (error) {
+      return true
+    }
+  }
+
+  const existSupplierByEmailOrId = async (document, email) => {
+    return await existUserByEmailOrId(document, email, "supplier")
   }
 
   const getUserCookies = async () => {
@@ -265,31 +278,31 @@ export const User = ({ children }) => {
 
   const getWaiters = async () => {
     try {
-        const res = await getWaitersRequest();
-        setUser(res.data)
+      const res = await getWaitersRequest();
+      setUser(res.data)
     } catch (error) {
-        console.log(error)
+      console.log(error)
     }
-    }
+  }
 
-    const getWaiter = async (id) => {
+  const getWaiter = async (id) => {
     try {
-        const res = await getWaiterRequest(id);
-        return res.data
+      const res = await getWaiterRequest(id);
+      return res.data
     } catch (error) {
-        console.error(error);
+      console.error(error);
     }
-}
+  }
 
-const createWaiter = async (user) => {
+  const createWaiter = async (user) => {
     try {
-        const res = await createWaiterRequest(user);
-        getWaiters();
-        console.log(res)
+      const res = await createWaiterRequest(user);
+      getWaiters();
+      console.log(res)
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-}
+  }
   return (
     <UserContext.Provider
       value={{
@@ -320,7 +333,9 @@ const createWaiter = async (user) => {
         changePasswordSuccess,
         setChangePasswordSuccess,
         getUserCookies,
-        getCurrentUser
+        getCurrentUser,
+        existUserByEmailOrId,
+        existSupplierByEmailOrId
       }}
     >
       {children}

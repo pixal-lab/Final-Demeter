@@ -15,6 +15,7 @@ function UserPage() {
     const { user, getUsers, toggleUserStatus, deleteUser } = useUser()
     const { role } = useRole();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [allUsers, setAllUsers] = useState([])
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [userToEdit, setUserToEdit] = useState(null);
@@ -23,7 +24,12 @@ function UserPage() {
     // const [role, setRole] = useState([])
 
     useEffect(() => {
-        getUsers();
+
+        return async () => {
+            const users = await getUsers();
+
+            setAllUsers(users)
+        }
     }, []);
 
     const navigateToCreateUser = () => {
@@ -61,13 +67,13 @@ function UserPage() {
         setSearchTerm(event.target.value);
     };
 
-    const filteredUsers = user.filter((user) => {
+    const filteredUsers = allUsers.filter((user) => {
         const { Type_Document, Document, Name_User, LastName_User, Email, State } = user;
         const searchString = `${Type_Document} ${Document} ${Name_User} ${LastName_User} ${Email} ${State}`.toLowerCase();
         return searchString.includes(searchTerm.toLowerCase());
-    });
+    })
 
-    const barraClass = user.State ? "" : "desactivado";
+    const barraClass = user?.State ? "" : "desactivado";
 
     return (
         <section className="pc-container">
@@ -131,7 +137,7 @@ function UserPage() {
                                                             <td>{users.LastName_User}</td>
                                                             <td>{users.Email}</td>
                                                             <td>
-                                                                {users.Role_ID
+                                                                {users?.Role_ID
                                                                     ? role.find(
                                                                         (rol) =>
                                                                             rol.ID_Role ===
@@ -140,14 +146,14 @@ function UserPage() {
                                                                 }
                                                             </td>
                                                             <td className={`${barraClass}`}>
-                                                                {users.State ? "Habilitado" : "Deshabilitado"}
+                                                                {users?.State ? "Habilitado" : "Deshabilitado"}
                                                             </td>
                                                             <td>
                                                                 <div style={{ display: "flex", alignItems: "center", padding: '3px' }}>
                                                                     <button
                                                                         onClick={() => handleEdit(users)}
                                                                         className={`ml-1 btn btn-icon btn-primary ${!users.State ? "text-gray-400 cursor-not-allowed" : ""}`}
-                                                                        disabled={!users.State}
+                                                                        disabled={!users?.State}
                                                                     >
                                                                         <BiEdit />
                                                                     </button>

@@ -15,7 +15,9 @@ import { SaleProvider } from './Context/SaleContext.jsx'
  import { DashboardProvider } from './Context/Dashboard.context.jsx'
 import { Product } from './Context/Product.context.jsx'
 import { ProductCategoriesProvider } from './Context/ProductCategoriesContext'
-import {ProductProvider} from './Context/ProductContext.jsx'
+import { ProductProvider } from './Context/ProductContext.jsx'
+import { Module } from './Context/Module.context.jsx'
+
 // Pages
 import UserPage from './Pages/UserPage.jsx'
 import RolePage from './Pages/RolePage.jsx'
@@ -47,19 +49,20 @@ function App() {
     <BrowserRouter>
       <Role>
         <User>
+              <Module>
            <DashboardProvider> 
             <CategorySupplies>
               <CategoryProducts>
                 <Product>
-                <Supplies>
-                  <ShoppingProvider>
-                    <SaleProvider>
-                    <ProductCategoriesProvider>
-                    <ProductProvider>
-                      <Supplier>
-                        <Header/>
-                          <Navbar/>               
-                            <Routes>
+                  <Supplies>
+                    <ShoppingProvider>
+                      <SaleProvider>
+                        <ProductCategoriesProvider>
+                          <ProductProvider>
+                            <Supplier>
+                              <Header />
+                              <Navbar />
+                              <Routes>
                                 <Route path='/' element={<Login />} />
                                 <Route path='/resetPassword' element={<ResetPassword />} />
                                 <Route path='/newPassword/:idUser' element={<NewPassword />} />

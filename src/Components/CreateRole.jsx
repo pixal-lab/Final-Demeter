@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Box from "@mui/material/Box";
-import { MdToggleOn, MdToggleOff } from "react-icons/md";
 import { useForm } from 'react-hook-form';
 import { useRole } from '../Context/Role.context';
 
@@ -22,19 +21,6 @@ function CreateRole({ onClose, onCreated }) {
     const { register, handleSubmit, formState: { errors }, setError } = useForm();
     const { createRole, role } = useRole();
 
-    // Cambio de activacion
-    const [dashboardActive, setDashboardActive] = useState(false);
-    const [configuracionActive, setConfiguracionActive] = useState(false);
-    const [usuarioActive, setUsuarioActive] = useState(false);
-    const [categoriaInsumosActive, setCategoriaInsumosActive] = useState(false);
-    const [insumosActive, setInsumosActive] = useState(false);
-    const [proveedoresActive, setProveedoresActive] = useState(false);
-    const [categoriaProductosActive, setCategoriaProductosActive] = useState(false);
-    const [productosActive, setProductosActive] = useState(false);
-    const [meserosActive, setMeserosActive] = useState(false);
-    const [comprasActive, setComprasActive] = useState(false);
-    const [ventasActive, setVentasActive] = useState(false);
-
     const onSubmit = handleSubmit(async (values) => {
         const isNameDuplicate = role.some(rol => rol.Name_Role === values.Name_Role);
 
@@ -55,53 +41,8 @@ function CreateRole({ onClose, onCreated }) {
         onClose();
     };
 
-    // Funciones de cambio de activacion
-    const handleDashboardClick = () => {
-        setDashboardActive(prevState => !prevState);
-    };
-
-    const handleConfiguracionClick = () => {
-        setConfiguracionActive(prevState => !prevState);
-    };
-
-    const handleUsuarioClick = () => {
-        setUsuarioActive(prevState => !prevState);
-    };
-
-    const handleCategoriaInsumosClick = () => {
-        setCategoriaInsumosActive(prevState => !prevState);
-    };
-
-    const handleInsumosClick = () => {
-        setInsumosActive(prevState => !prevState);
-    };
-
-    const handleProveedoresClick = () => {
-        setProveedoresActive(prevState => !prevState);
-    };
-
-    const handleCategoriaProductosClick = () => {
-        setCategoriaProductosActive(prevState => !prevState);
-    };
-
-    const handleProductosClick = () => {
-        setProductosActive(prevState => !prevState);
-    };
-
-    const handleMeserosClick = () => {
-        setMeserosActive(prevState => !prevState);
-    };
-
-    const handleComprasClick = () => {
-        setComprasActive(prevState => !prevState);
-    };
-
-    const handleVentasClick = () => {
-        setVentasActive(prevState => !prevState);
-    };
-
     return (
-        <Box sx={{ ...style, width: 700, height: 500 }}>
+        <Box sx={{ ...style, width: 600 }}>
             <div>
                 <div className="col-md-12">
                     <div className="card">
@@ -128,6 +69,7 @@ function CreateRole({ onClose, onCreated }) {
                                             type="text"
                                             placeholder='Nombre'
                                             className="form-control"
+                                            title='Ingrese el nombre del nuevo rol.'
                                         />
                                         {errors.Name_Role && (
                                             <p className="text-red-500">
@@ -137,208 +79,22 @@ function CreateRole({ onClose, onCreated }) {
                                     </div>
                                 </div>
 
-                                <div className="control">
-                                    <div className="form-group col-md-4">
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <h5>DashBoard</h5>
-                                            <button
-                                                type="button"
-                                                className={`${dashboardActive ? "" : "desactivado"}`}
-                                                onClick={handleDashboardClick}
-                                            >
-                                                {dashboardActive ? (
-                                                    <MdToggleOn className={`estado-icon active`} />
-                                                ) : (
-                                                    <MdToggleOff className={`estado-icon inactive`} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="form-group col-md-4">
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <h5>Configuracion</h5>
-                                            <button
-                                                type="button"
-                                                className={`${configuracionActive ? "" : "desactivado"}`}
-                                                onClick={handleConfiguracionClick}
-                                            >
-                                                {configuracionActive ? (
-                                                    <MdToggleOn className={`estado-icon active`} />
-                                                ) : (
-                                                    <MdToggleOff className={`estado-icon inactive`} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="form-group col-md-4">
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <h5>Usuario</h5>
-                                            <button
-                                                type="button"
-                                                className={`${usuarioActive ? "" : "desactivado"}`}
-                                                onClick={handleUsuarioClick}
-                                            >
-                                                {usuarioActive ? (
-                                                    <MdToggleOn className={`estado-icon active`} />
-                                                ) : (
-                                                    <MdToggleOff className={`estado-icon inactive`} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="control">
-                                    <div className="form-group col-md-4">
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <h5>Categoria Insumos</h5>
-                                            <button
-                                                type="button"
-                                                className={`${categoriaInsumosActive ? "" : "desactivado"}`}
-                                                onClick={handleCategoriaInsumosClick}
-                                            >
-                                                {categoriaInsumosActive ? (
-                                                    <MdToggleOn className={`estado-icon active`} />
-                                                ) : (
-                                                    <MdToggleOff className={`estado-icon inactive`} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="form-group col-md-4">
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <h5>Insumos</h5>
-                                            <button
-                                                type="button"
-                                                className={`${insumosActive ? "" : "desactivado"}`}
-                                                onClick={handleInsumosClick}
-                                            >
-                                                {insumosActive ? (
-                                                    <MdToggleOn className={`estado-icon active`} />
-                                                ) : (
-                                                    <MdToggleOff className={`estado-icon inactive`} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="form-group col-md-4">
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <h5>Proveedores</h5>
-                                            <button
-                                                type="button"
-                                                className={`${proveedoresActive ? "" : "desactivado"}`}
-                                                onClick={handleProveedoresClick}
-                                            >
-                                                {proveedoresActive ? (
-                                                    <MdToggleOn className={`estado-icon active`} />
-                                                ) : (
-                                                    <MdToggleOff className={`estado-icon inactive`} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="control">
-                                    <div className="form-group col-md-4">
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <h5>Categoria Productos</h5>
-                                            <button
-                                                type="button"
-                                                className={`${categoriaProductosActive ? "" : "desactivado"}`}
-                                                onClick={handleCategoriaProductosClick}
-                                            >
-                                                {categoriaProductosActive ? (
-                                                    <MdToggleOn className={`estado-icon active`} />
-                                                ) : (
-                                                    <MdToggleOff className={`estado-icon inactive`} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="form-group col-md-4">
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <h5>Productos</h5>
-                                            <button
-                                                type="button"
-                                                className={`${productosActive ? "" : "desactivado"}`}
-                                                onClick={handleProductosClick}
-                                            >
-                                                {productosActive ? (
-                                                    <MdToggleOn className={`estado-icon active`} />
-                                                ) : (
-                                                    <MdToggleOff className={`estado-icon inactive`} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="form-group col-md-4">
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <h5>Meseros</h5>
-                                            <button
-                                                type="button"
-                                                className={`${meserosActive ? "" : "desactivado"}`}
-                                                onClick={handleMeserosClick}
-                                            >
-                                                {meserosActive ? (
-                                                    <MdToggleOn className={`estado-icon active`} />
-                                                ) : (
-                                                    <MdToggleOff className={`estado-icon inactive`} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="control">
-                                    <div className="form-group col-md-6">
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <h5>Compras</h5>
-                                            <button
-                                                type="button"
-                                                className={`${comprasActive ? "" : "desactivado"}`}
-                                                onClick={handleComprasClick}
-                                            >
-                                                {comprasActive ? (
-                                                    <MdToggleOn className={`estado-icon active`} />
-                                                ) : (
-                                                    <MdToggleOff className={`estado-icon inactive`} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="form-group col-md-6">
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <h5>Ventas</h5>
-                                            <button
-                                                type="button"
-                                                className={`${ventasActive ? "" : "desactivado"}`}
-                                                onClick={handleVentasClick}
-                                            >
-                                                {ventasActive ? (
-                                                    <MdToggleOn className={`estado-icon active`} />
-                                                ) : (
-                                                    <MdToggleOff className={`estado-icon inactive`} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div className="buttonconfirm">
                                     <div className="mb-3">
-                                        <button
-                                            className="btn btn-primary mr-5"
-                                            type="submit"
-                                        >
-                                            Confirmar
-                                        </button>
                                         <button
                                             className="btn btn-primary"
                                             onClick={onCancel}
                                             type="button"
+                                            title='Cancelar el rol no creado actualmente en el sistema'
                                         >
                                             Cancelar
+                                        </button>
+                                        <button
+                                            className="btn btn-primary mr-5"
+                                            type="submit"
+                                            title='Se guarda el rol recien ingresado en el sistema.'
+                                        >
+                                            Confirmar
                                         </button>
                                     </div>
                                 </div>

@@ -22,7 +22,8 @@ function NewPurchase() {
   const [shoppingBillState, setShoppingBillState] = useState({
     total: 0
   })
-  const [refreshPage, setRefreshPage] = useState(false);
+  const [selectedMeasure, setSelectedMeasure] = useState(null);
+
 
   const [availableSupplies, setAvailableSupplies] = useState([]);
 
@@ -146,6 +147,9 @@ function NewPurchase() {
   const onSelectSupplie = (option) => {
     // console.log(target.querySelector("selected").value)
     supplierRef.current = option.value
+    const selectedSupplie = suppliesState.find((supply) => supply.ID_Supplies === option.value);
+    setSelectedMeasure(selectedSupplie.Measure);
+
   }
 
   const onDeleteSupplie = (id) => {
@@ -223,17 +227,14 @@ function NewPurchase() {
                 <div className="flex mb-3">
 
                   <div className="mr-5 ml-5">
-                    <label>
-                      Medida:
-                      <select className="select-measure  rounded-md p-1 mr-5 ml-3" {...register("Measure")}>
-                        <option value="unidad(es)">Unidad(es)</option>
-                        <option value="kg">Kilogramo(kg)</option>
-                        <option value="g">gramos(g)</option>
-                        <option value="L">Litros(L)</option>
-                        <option value="ml">Mililitros(ml)</option>
-
-                      </select>
+                    <label htmlFor="Measure" className="form-label">
+                      Medida
                     </label>
+                    <input
+                      value={selectedMeasure || ''}
+                      readOnly
+                      className="select-measure  rounded-md p-1 mr-5 ml-3"
+                    />
                   </div>
 
                   <div>
@@ -264,7 +265,6 @@ function NewPurchase() {
                   <tr>
                     <th>Insumo</th>
                     <th>Cantidad</th>
-                    <th>Medida</th>
                     <th>Precio</th>
                     <th>Acción</th>
                   </tr>
@@ -275,7 +275,6 @@ function NewPurchase() {
                       <tr key={ID_Supplies}>
                         <td>{supplieName}</td>
                         <td>{Lot}</td>
-                        <td>{Measure}</td>
                         <td>{Price_Supplier}</td>
                         <td>
                           <button type="button" className="btn btn-icon btn-danger" onClick={() => onDeleteSupplie(ID_Supplies)}>
