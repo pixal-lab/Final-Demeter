@@ -19,6 +19,20 @@ export function Product({ children }) {
     const [Products, setProducts] = useState([]);
     const [Product, setproduct] = useState([]);
     const [AllProducts, setAllProducts] = useState([]);
+    const [CurrentProd, setCurrentProd] = useState();
+    
+
+    const getCurrentProduct = (id) => {
+        try {
+            setCurrentProd(id)
+            console.log(CurrentProd)
+            
+            
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    
 
     const getProducts = async () => {
         try {
@@ -88,15 +102,15 @@ export function Product({ children }) {
     const getDetailProduct = async (id) => {
         try {
             const res = await getDetailProductRequest(id);
-            setDetailP(res);
+            setDetailP(res.data);
         } catch (error) {
             console.error(error);
         }
     }
 
-    const createDetailP = async (id, datilsP) => {
+    const createDetailP = async ( datilsP) => {
         try {
-            await createDetailPRequest(id, datilsP);
+            await createDetailPRequest( datilsP);
             getDetailProduct();
         } catch (error) {
             console.error(error);
@@ -151,13 +165,16 @@ export function Product({ children }) {
             toggleSupplyStatus,
             updateProduct,
             deleteProduct,
+            getCurrentProduct,
             // Datalles
             getDetailProduct,
             createDetailP,
+            detailP,
             deleteDetailProduct,
             Product,
             Products,
             AllProducts,
+            CurrentProd,
             fetchProduct,
             getProduct,
             getwholeProducts 

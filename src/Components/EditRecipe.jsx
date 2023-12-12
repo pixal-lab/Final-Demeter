@@ -1,8 +1,10 @@
 // EditRecipe.jsx
 import React, { useState } from 'react';
 import { useSupplies } from "../Context/Supplies.context.jsx";
+import { useProduct } from '../Context/Product.context.jsx'
 
 const EditRecipe = ({ onClose }) => {
+  const { CurrentProd, createDetailP } = useProduct();
   const { supplies } = useSupplies();
   const [selectedIngredient, setSelectedIngredient] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -17,20 +19,23 @@ const EditRecipe = ({ onClose }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Aquí puedes agregar la lógica para manejar los datos del formulario
-    console.log('Ingredient:', selectedIngredient);
-    console.log('Quantity:', quantity);
-    // Lógica adicional según tus necesidades, por ejemplo, enviar datos al servidor, etc.
-    // ...
 
-    // Cierra el modal después de manejar el formulario
+    // Crear el objeto 'data' con los datos del formulario y CurrentProd
+    const data = {
+      id: CurrentProd,
+      Supplies_ID: selectedIngredient,
+      Lot_ProductDetail: quantity,
+    };
+
+    createDetailP(data)
+  
     onClose();
   };
 
   return (
     <div className="modal-content">
       <div className="modal-header">
-        <h5 className="modal-title">Receta</h5>
+        <h5 className="modal-title">Receta {CurrentProd}</h5>
         <button type="button" className="close" onClick={onClose}>
           <span>&times;</span>
         </button>
@@ -49,7 +54,7 @@ const EditRecipe = ({ onClose }) => {
                 <option key={supply.ID_Supplies} value={supply.ID_Supplies}>
                   {supply.Name_Supplies}
                 </option>
-              ))}   
+              ))}
             </select>
           </div>
           <div className="form-group">

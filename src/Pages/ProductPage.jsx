@@ -10,15 +10,17 @@ import { useSupplies } from "../Context/Supplies.context.jsx";
 import { useProduct } from '../Context/Product.context.jsx'
 import { useCategoryProducts } from '../Context/CategoryProducts.context.jsx'
 import CreateProducts from '../Components/CreateProduct.jsx'
-import EditRecipe from '../Components/EditRecipe.jsx';  // Importa el nuevo componente
+import EditRecipe from '../Components/EditRecipe.jsx';
+import EditRecipeWithTable from '../Components/EditRecipeWithTable.jsx';  // Importa el nuevo componente
 
 function ProductPage() {
-  const { product, getProducts, toggleSupplyStatus } = useProduct();
+  const { product, getProducts, toggleSupplyStatus, getCurrentProduct } = useProduct();
   const { Category_products } = useCategoryProducts();
   const { supplies, getSupplies, deleteSupplies } = useSupplies();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditTableModalOpen, setIsEditTableModalOpen] = useState(false); // Agrega el estado para el nuevo modal
   const navigate = useNavigate();
 
   const navigateToCreateProduct = () => {
@@ -124,16 +126,19 @@ function ProductPage() {
                                   <button
                                     type="button"
                                     className="btn btn-icon bg-gray"
-                                    onClick={() => setIsEditModalOpen(true)}
+                                    onClick={() => {
+                                      getCurrentProduct(produc.ID_Product);
+                                      setIsEditTableModalOpen(true); // Abre el nuevo modal
+                                    }}
                                   >
-                                    Agregar Insumo
+                                    Ver Receta
                                   </button>
                                   <button
                                     type="button"
                                     className="btn btn-icon bg-gray"
                                     onClick={() => setIsEditModalOpen(true)}
                                   >
-                                    Ver Insumos
+                                    Agregar Insumo
                                   </button>
                                 </div>
                               </td>
@@ -154,6 +159,14 @@ function ProductPage() {
                           <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}></div>
                           <div className="modal-container">
                             <EditRecipe onClose={() => setIsEditModalOpen(false)} />
+                          </div>
+                        </div>
+                      )}
+                      {isEditTableModalOpen && (
+                        <div className="fixed inset-0 flex items-center justify-center z-50">
+                          <div className="modal-overlay" onClick={() => setIsEditTableModalOpen(false)}></div>
+                          <div className="modal-container">
+                            <EditRecipeWithTable onClose={() => setIsEditTableModalOpen(false)} />
                           </div>
                         </div>
                       )}
