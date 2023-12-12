@@ -12,7 +12,7 @@ import { Supplies } from './Context/Supplies.context.jsx'
 import { CategorySupplies } from './Context/CategorySupplies.context.jsx'
 import { CategoryProducts } from './Context/CategoryProducts.context.jsx'
 import { SaleProvider } from './Context/SaleContext.jsx'
-// import { DashboardProvider } from './Context/Dashboard.context.jsx'
+import { DashboardProvider } from './Context/Dashboard.context.jsx'
 import { Product } from './Context/Product.context.jsx'
 import { ProductCategoriesProvider } from './Context/ProductCategoriesContext'
 import { ProductProvider } from './Context/ProductContext.jsx'
@@ -28,7 +28,7 @@ import ShoppingPage from './Pages/ShoppingPage.jsx'
 import Login from './Pages/Login.jsx'
 import ProductCategoryPage from './Pages/ProductCategoryPage.jsx'
 import WaiterPage from './Pages/WaiterPage.jsx'
-// import DashBoard from './Pages/Dashboard.jsx'
+import DashBoard from './Pages/Dashboard.jsx'
 import ResetPassword from './Pages/ResetPassword.jsx'
 import NewPassword from './Pages/NewPassword.jsx'
 import NewPurchase from './Pages/newPurchase.jsx'
@@ -49,7 +49,7 @@ function App() {
     <BrowserRouter>
       <Role>
         <User>
-          {/* <DashboardProvider> */}
+          <DashboardProvider>
           <CategorySupplies>
             <CategoryProducts>
               <Module>
@@ -67,7 +67,7 @@ function App() {
                                 <Route path='/resetPassword' element={<ResetPassword />} />
                                 <Route path='/newPassword/:idUser' element={<NewPassword />} />
                                 <Route element={<ProtectedRoute />}>
-                                  <Route path='/dashboard' element={<h1>Dashboard</h1>} />
+                                  <Route path='/dashboard' element={<DashBoard />} />
                                   <Route path='/setting' element={<RolePage />} />
                                   <Route path='/user' element={<UserPage />} />
                                   <Route path='/category_supplies' element={<SuppliesCategoryPage />} />
@@ -96,7 +96,7 @@ function App() {
               </Module>
             </CategoryProducts>
           </CategorySupplies>
-          {/* </DashboardProvider>   */}
+          </DashboardProvider>  
         </User>
       </Role>
     </BrowserRouter>

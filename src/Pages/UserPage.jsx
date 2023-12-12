@@ -15,21 +15,21 @@ function UserPage() {
     const { user, getUsers, toggleUserStatus, deleteUser } = useUser()
     const { role } = useRole();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [allUsers, setAllUsers] = useState([])
+    const [allUsers, setAllUsers] = useState([]);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [userToEdit, setUserToEdit] = useState(null);
     const [userToDelete, setUserToDelete] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
-    // const [role, setRole] = useState([])
 
     useEffect(() => {
-
+        // getUsers();
         return async () => {
             const users = await getUsers();
 
             setAllUsers(users)
         }
+        setCurrentPage(1);
     }, []);
 
     const navigateToCreateUser = () => {
@@ -67,13 +67,25 @@ function UserPage() {
         setSearchTerm(event.target.value);
     };
 
-    const filteredUsers = allUsers.filter((user) => {
-        const { Type_Document, Document, Name_User, LastName_User, Email, State } = user;
+    const filteredUsers = allUsers.filter((users) => {
+        const { Type_Document, Document, Name_User, LastName_User, Email, State } = users;
         const searchString = `${Type_Document} ${Document} ${Name_User} ${LastName_User} ${Email} ${State}`.toLowerCase();
         return searchString.includes(searchTerm.toLowerCase());
     })
 
     const barraClass = user?.State ? "" : "desactivado";
+
+    const onStatusChange = async (id) => {
+
+        const { hasError } = await toggleUserStatus(id)
+
+        if (hasError) return
+
+        setAllUsers((prevUser) =>
+            prevUser.map((users) =>
+                users.ID_User === id ? { ...users, State: !users.State } : users
+            ))
+    }
 
     return (
         <section className="pc-container">
@@ -167,7 +179,7 @@ function UserPage() {
                                                                     <button
                                                                         type="button"
                                                                         className={`ml-1 btn btn-icon btn-success ${barraClass}`}
-                                                                        onClick={() => toggleUserStatus(users.ID_User)}
+                                                                        onClick={() => onStatusChange(users.ID_User)}
                                                                     >
                                                                         {users.State ? (
                                                                             <MdToggleOn className={`estado-icon active ${barraClass}`} />

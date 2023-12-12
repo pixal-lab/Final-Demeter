@@ -1,218 +1,108 @@
 import React, { useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useDashboard } from '../Context/Dashboard.context';
-import { useUser } from "../Context/User.context.jsx";
-import { useProduct } from '../Context/Product.context.jsx'
+import { useUser } from '../Context/User.context.jsx';
+import { useProduct } from '../Context/Product.context.jsx';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 
 const Dashboard = () => {
-  const { user, getUsers, toggleUserStatus, deleteUser } = useUser()
-  const { product, getProducts, toggleSupplyStatus } = useProduct();
-  const {
-    getMostPurchasedSupplies,
-    getMostSoldProducts,
-    getTotalProfitAndExpenses,
-    getOrganizeByDay,
-    getOrganizeByWeek,
-    getOrganizeByMonth,
-    getTotalProfitAndExpensesByPaymentMethod,
-    getTotalUnitsPurchasedBySupply,
-    getTotalUnitsSoldByProduct,
-    getAverageUnitsPerPurchase,
-    getAverageUnitsPerSale,
-    getNetIncomeByProduct,
-    getNetIncomeBySupply,
-  } = useDashboard();
+  const { user, getUsers, toggleUserStatus, deleteUser } = useUser();
+  const { product, getProducts, toggleSupplyStatus, getCurrentProduct } = useProduct();
+  const { salesChart, fetchSales, fetchSalesusers, salesuserChart, fetchBP, besProd, shopsChart, fetchShops,
+    fetchsupli,
+    supli } = useDashboard();
 
   useEffect(() => {
     getUsers();
     getProducts();
-    
-  }, []); 
+    fetchSales();
+    fetchSalesusers();
+    fetchBP();
+    fetchShops();
+    fetchsupli();
+  }, []);
 
-  const mostSoldProducts = getMostSoldProducts();
-  const mostPurchasedSupplies = getMostPurchasedSupplies();
-  const totalProfitAndExpenses = getTotalProfitAndExpenses();
-  const organizeByDay = getOrganizeByDay();
-  const organizeByWeek = getOrganizeByWeek();
-  const organizeByMonth = getOrganizeByMonth();
-  const totalProfitAndExpensesByPaymentMethod = getTotalProfitAndExpensesByPaymentMethod();
-  const totalUnitsPurchasedBySupply = getTotalUnitsPurchasedBySupply();
-  const totalUnitsSoldByProduct = getTotalUnitsSoldByProduct();
-  const averageUnitsPerPurchase = getAverageUnitsPerPurchase();
-  const averageUnitsPerSale = getAverageUnitsPerSale();
-  const netIncomeByProduct = getNetIncomeByProduct();
-  const netIncomeBySupply = getNetIncomeBySupply();
+  // Utiliza los datos de salesChart para el gráfico
+  const chartData = salesChart.map((item) => ({
+    name: item.saleDate,
+    totalSales: item.totalSales,
+    totalAmount: parseFloat(item.totalAmount), // Convierte la cantidad a número
+  }));
+
+  const shopchartData = shopsChart.map((item) => ({
+    name: item.shoppingDate,
+    totalSales: item.totalShopping,
+    totalAmount: parseFloat(item.totalAmount), // Convierte la cantidad a número
+  }));
+
+  // Utiliza los datos de salesuserChart para la gráfica de dona
+  const pieData = salesuserChart.map((item) => ({
+    name: item.userName,
+    value: parseFloat(item.totalAmount),
+  }));
+
+  const COLORS = ['#ff6600', '#6610f2', '#FFBB28', '#FF8042']; // Puedes cambiar los colores según tus preferencias
 
   return (
-    <div>
-      <h2>Productos Más Vendidos</h2>
-      <ul>
-        {mostSoldProducts.map((product) => (
-          <li key={product.Product_ID}>
-            Producto ID: {product.Product_ID}, Unidades Vendidas: {product.totalLot}
-          </li>
-        ))}
-      </ul>
-
-      <h2>Insumos Más Comprados</h2>
-      <ul>
-        {mostPurchasedSupplies.map((supply) => (
-          <li key={supply.Supplies_ID}>
-            Insumo ID: {supply.Supplies_ID}, Unidades Compradas: {supply.totalLot}
-          </li>
-        ))}
-      </ul>
-
-      <h2>Ganancias Totales</h2>
-      <p>Ganancias Totales: {totalProfitAndExpenses.totalProfit}</p>
-
-      <h2>Gráfico de Barras - Ventas y Gastos Diarios</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={organizeByDay.salesByDay}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <XAxis dataKey="day" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="totalSales" fill="rgba(75,192,192,0.2)" name="Ventas" />
-          <Bar dataKey="totalExpenses" fill="rgba(255,99,132,0.2)" name="Gastos" />
-        </BarChart>
-      </ResponsiveContainer>
-      <p>Total Ventas: {totalProfitAndExpenses.totalProfit}</p>
-      <p>Total Gastos: {totalProfitAndExpenses.totalExpenses}</p>
-
-      <h2>Gráfico de Barras - Ventas y Gastos Semanales</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={organizeByWeek.salesByWeek}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <XAxis dataKey="week" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="totalSales" fill="rgba(75,192,192,0.2)" name="Ventas" />
-          <Bar dataKey="totalExpenses" fill="rgba(255,99,132,0.2)" name="Gastos" />
-        </BarChart>
-      </ResponsiveContainer>
-      <p>Total Ventas: {totalProfitAndExpenses.totalProfit}</p>
-      <p>Total Gastos: {totalProfitAndExpenses.totalExpenses}</p>
-
-      <h2>Gráfico de Barras - Ventas y Gastos Mensuales</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={organizeByMonth.salesByMonth}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="totalSales" fill="rgba(75,192,192,0.2)" name="Ventas" />
-          <Bar dataKey="totalExpenses" fill="rgba(255,99,132,0.2)" name="Gastos" />
-        </BarChart>
-      </ResponsiveContainer>
-      <p>Total Ventas: {totalProfitAndExpenses.totalProfit}</p>
-      <p>Total Gastos: {totalProfitAndExpenses.totalExpenses}</p>
-
-      <h2>Gráfico de Barras - Métodos de Pago</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={totalProfitAndExpensesByPaymentMethod}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <XAxis dataKey="Payment" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="usageCount" fill="rgba(75,192,192,0.2)" name="Usos" />
-        </BarChart>
-      </ResponsiveContainer>
-
-      <h2>Tabla - Unidades Compradas y Vendidas</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Unidades Compradas</th>
-            <th>Unidades Vendidas</th>
-          </tr>
-        </thead>
-        <tbody>
-          {totalUnitsPurchasedBySupply.map((entry, index) => (
-            <tr key={index}>
-              <td>{entry.totalUnitsPurchased}</td>
-              <td>{totalUnitsSoldByProduct[index]?.totalUnitsSold || 0}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <h2>Gráfico de Barras - Promedio de Unidades por Compra</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={averageUnitsPerPurchase}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <XAxis dataKey="averageUnitsPerPurchase" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="averageUnitsPerPurchase" fill="rgba(75,192,192,0.2)" name="Promedio" />
-        </BarChart>
-      </ResponsiveContainer>
-
-      <h2>Gráfico de Barras - Promedio de Unidades por Venta</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={averageUnitsPerSale}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <XAxis dataKey="averageUnitsPerSale" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="averageUnitsPerSale" fill="rgba(255,99,132,0.2)" name="Promedio" />
-        </BarChart>
-      </ResponsiveContainer>
-
-      <h2>Gráfico de Barras - Ingresos Netos por Producto</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={netIncomeByProduct}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <XAxis dataKey="Product_ID" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="netIncome" fill="rgba(75,192,192,0.2)" name="Ingresos Netos" />
-        </BarChart>
-      </ResponsiveContainer>
-
-      <h2>Gráfico de Barras - Ingresos Netos por Suministro</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={netIncomeBySupply}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <XAxis dataKey="Supplies_ID" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="netIncome" fill="rgba(255,99,132,0.2)" name="Ingresos Netos" />
-        </BarChart>
-      </ResponsiveContainer>
-
-      {/* Descripción - Ingresos Netos por Producto y Suministro */}
-      <h2>Descripción - Ingresos Netos por Producto y Suministro</h2>
-      <p>
-        La función <strong>getNetIncomeByProduct</strong> proporciona información sobre el ingreso neto por producto,
-        teniendo en cuenta los costos asociados. Mientras tanto, la función <strong>getNetIncomeBySupply</strong> ofrece
-        datos sobre el ingreso neto por insumo, teniendo en cuenta los costos asociados.
-      </p>
-    </div>
+    <div className="all">
+      <h2 className='text-3xl font-bold mb-4 text-center'>Dashboard</h2>
+      <h2 className='text-3xl font-bold mt-[7vh] mb-4 text-center'>Ventas</h2>
+      <div className='flex flex-row items-center justify-center ml-[28vh]'>
+        <div className='flex flex-col mx-[5vh]'>
+          <h2 className='text-3xl font-bold mb-[10vh] text-center'>Ventas Por Día</h2>
+          <LineChart width={600} height={300} data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <XAxis dataKey='name' />
+            <YAxis />
+            <CartesianGrid strokeDasharray='3 3' />
+            <Tooltip />
+            <Legend />
+            <Line type='monotone' dataKey='totalSales' stroke='#00000' name='Ventas' />
+            <Line type='monotone' dataKey='totalAmount' stroke='#ff6600' activeDot={{ r: 8 }} name='Monto Total' />
+          </LineChart>
+        </div>
+        <div className='flex flex-col'>
+          <h2 className='text-3xl font-bold mt-[3vh] mb-[10vh] text-center'>Ventas/Meseros</h2>
+          <PieChart width={400} height={400}>
+            <Pie
+              data={pieData}
+              cx={200}
+              cy={200}
+              outerRadius={80}
+              fill='#8884d8'
+              dataKey='value'
+              label={(entry) => entry.name}
+            >
+              {pieData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </div>
+        <div className='flex flex-col mx-[5vh]'>
+          <h2 className='text-2xl font-bold mt-4 mb-2 whitespace-normal text-center'>El Producto más vendido fue: {besProd.ProductName}</h2>
+          <h2 className='text-2xl font-bold mb-4 whitespace-normal text-center'>Cantidad de Ventas: {besProd.detailCount}</h2>
+        </div>
+      </div>
+      <div className="border-b-2 border-gray-300 my-6"></div>
+      <h2 className='text-3xl font-bold mt-4 mb-4 text-center'>Compras</h2>
+      <div className='flex flex-row items-center justify-center ml-[28vh]'>
+        <div className='flex flex-col mx-[5vh]'>
+          <h2 className='text-3xl font-bold mb-[10vh] text-center'>Compras Por Día</h2>
+          <LineChart width={600} height={300} data={shopchartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <XAxis dataKey='name' />
+            <YAxis />
+            <CartesianGrid strokeDasharray='3 3' />
+            <Tooltip />
+            <Legend />
+            <Line type='monotone' dataKey='totalSales' stroke='#00000' name='Compras' />
+            <Line type='monotone' dataKey='totalAmount' stroke='#ff6600' activeDot={{ r: 8 }} name='Monto Total' />
+          </LineChart>
+        </div>
+        <div className='flex flex-col mx-[5vh]'>
+          <h2 className='text-2xl font-bold mt-4 mb-2 whitespace-normal text-center'>El Insumo al que mas se le invirtio fue: {supli.userName}</h2>
+          <h2 className='text-2xl font-bold mb-4 whitespace-normal text-center'>Dinero Invertido: {supli.totalSpent}</h2>
+        </div>
+      </div></div>
   );
 };
 

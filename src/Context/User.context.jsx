@@ -32,12 +32,15 @@ export const User = ({ children }) => {
   const getUsers = async () => {
     try {
       const res = await getUsersRequest();
-      setUser(res.data);
+      // setUser(res.data);
 
+      return res.data
 
     } catch (error) {
       console.log(error);
     }
+
+    return []
   }
   const getUser = async (id) => {
     try {
@@ -89,18 +92,22 @@ export const User = ({ children }) => {
   }
 
   const toggleUserStatus = async (id) => {
+
+    let userData = {}
+    let hasError = false
     try {
       const res = await statusUserRequest(id);
 
-      if (res.status === 200) {
-        setUser((prevUser) =>
-          prevUser.map((users) =>
-            users.ID_User === id ? { ...users, State: !users.State } : users
-          )
-        );
-      }
+      userData = res.data
+
     } catch (error) {
       console.log(error);
+      hasError = true
+    }
+
+    return {
+      userData,
+      hasError
     }
   }
 
@@ -280,9 +287,12 @@ export const User = ({ children }) => {
     try {
       const res = await getWaitersRequest();
       setUser(res.data)
+
+      return res.data
     } catch (error) {
       console.log(error)
     }
+    return []
   }
 
   const getWaiter = async (id) => {

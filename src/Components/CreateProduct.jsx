@@ -28,7 +28,7 @@ function CreateProducts({ onClose, onCreated }) {
 
     const handleCategoryChange = (selectedOption) => {
         setSelectedCategory(selectedOption);
-      
+
     };
 
     const customStyles = {
@@ -71,9 +71,9 @@ function CreateProducts({ onClose, onCreated }) {
         }
 
         values.ProductCategory_ID = selectedCategory.value;
-        
+
         createProduct(values)
-        
+
         onCreated();
         onClose();
     });
@@ -88,7 +88,7 @@ function CreateProducts({ onClose, onCreated }) {
                 <div className="col-md-12">
                     <div className="card">
                         <div className="card-header">
-                            <h5>Registro de empleado</h5>
+                            <h5>Registro de producto</h5>
                         </div>
                         <div className="card-body">
                             <form onSubmit={onSubmit}>
@@ -123,7 +123,7 @@ function CreateProducts({ onClose, onCreated }) {
                                             Categoria: <strong>*</strong>
                                         </label>
                                         <Select
-                                            
+
                                             options={Category_products.map((category) => ({
                                                 value: category.ID_ProductCategory,
                                                 label: category.Name_ProductCategory,
@@ -174,27 +174,6 @@ function CreateProducts({ onClose, onCreated }) {
                                         )}
                                     </div>
 
-                                    <div className="form-group col-md-6">
-                                        <label htmlFor="Unit" className="form-label">
-                                            Cantidad
-                                        </label>
-                                        <input
-                                            {...register('Unit', {
-                                                required: 'Este campo es obligatorio',
-                                                validate: (value) => {
-                                                    const parsedValue = parseInt(value);
-                                                    if (isNaN(parsedValue)) {
-                                                        return 'La cantidad debe ser un número válido.';
-                                                    }
-                                                },
-                                            })}
-                                            type="text"
-                                            className="form-control"
-                                        />
-                                        {errors.Unit && (
-                                            <p className="text-red-500">{errors.Unit.message}</p>
-                                        )}
-                                    </div>
                                 </div>
 
                                 <div className="buttonconfirm">

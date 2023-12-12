@@ -1,3 +1,4 @@
+// ProductPage.jsx
 import React, { useState, useEffect } from "react";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
@@ -5,25 +6,35 @@ import { useNavigate } from "react-router-dom";
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
 import "../css/style.css";
 import "../css/landing.css";
-
+import { useSupplies } from "../Context/Supplies.context.jsx";
 import { useProduct } from '../Context/Product.context.jsx'
 import { useCategoryProducts } from '../Context/CategoryProducts.context.jsx'
 import CreateProducts from '../Components/CreateProduct.jsx'
+import EditRecipe from '../Components/EditRecipe.jsx';
+import EditRecipeWithTable from '../Components/EditRecipeWithTable.jsx';  // Importa el nuevo componente
 
 function ProductPage() {
-    const { product, getProducts, toggleSupplyStatus } = useProduct();
+    const { product, getProducts, toggleSupplyStatus, getCurrentProduct } = useProduct();
     const { Category_products } = useCategoryProducts();
+    const { supplies, getSupplies, deleteSupplies } = useSupplies();
     const [searchTerm, setSearchTerm] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isEditTableModalOpen, setIsEditTableModalOpen] = useState(false); // Agrega el estado para el nuevo modal
     const navigate = useNavigate();
 
     const navigateToCreateProduct = () => {
-        setIsModalOpen(true);
+        setIsCreateModalOpen(true);
     };
 
     const handleCreated = () => {
         getProducts();
     };
+
+    useEffect(() => {
+        getProducts();
+        getSupplies();
+    }, []);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -35,15 +46,12 @@ function ProductPage() {
         return searchString.includes(searchTerm.toLowerCase());
     });
 
-    const status = product.State ? "" : "desactivado";
-
     return (
         <section className="pc-container">
             <div className="pcoded-content">
                 <div className="row w-100">
                     <div className="col-md-12">
                         <div className=" w-100 col-sm-12">
-
                             <div className="card">
                                 <div className="card-header">
                                     <h5>Visualización de productos</h5>
@@ -102,18 +110,35 @@ function ProductPage() {
                                                             <td>{produc.Price_Product}</td>
                                                             <td>{produc.State ? 'Habilitado' : 'Deshabilitado'}</td>
                                                             <td>
-                                                                <div style={{ display: "flex", alignItems: "center" }}>
-
+                                                                <div style={{ display: "flex", alignItems: "center" }} className="pl-[30vh]">
                                                                     <button
                                                                         type="button"
                                                                         className={`btn btn-icon btn-success ${produc.State ? "active" : "inactive"}`}
                                                                         onClick={() => toggleSupplyStatus(produc.ID_Product)}
+                                                                        style={{ marginRight: "10px" }}
                                                                     >
                                                                         {produc.State ? (
-                                                                            <MdToggleOn className={`estado-icon active`} />
+                                                                            <MdToggleOn className="estado-icon active" />
                                                                         ) : (
-                                                                            <MdToggleOff className={`estado-icon inactive`} />
+                                                                            <MdToggleOff className="estado-icon inactive" />
                                                                         )}
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-icon bg-gray"
+                                                                        onClick={() => {
+                                                                            getCurrentProduct(produc.ID_Product);
+                                                                            setIsEditTableModalOpen(true); // Abre el nuevo modal
+                                                                        }}
+                                                                    >
+                                                                        Ver Receta
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-icon bg-gray"
+                                                                        onClick={() => setIsEditModalOpen(true)}
+                                                                    >
+                                                                        Agregar Insumo
                                                                     </button>
                                                                 </div>
                                                             </td>
@@ -121,11 +146,27 @@ function ProductPage() {
                                                     ))}
                                                 </tbody>
                                             </table>
-                                            {isModalOpen && (
+                                            {isCreateModalOpen && (
                                                 <div className="fixed inset-0 flex items-center justify-center z-50">
-                                                    <div className="modal-overlay" onClick={() => setIsModalOpen(false)}></div>
+                                                    <div className="modal-overlay" onClick={() => setIsCreateModalOpen(false)}></div>
                                                     <div className="modal-container">
-                                                        <CreateProducts onClose={() => setIsModalOpen(false)} onCreated={handleCreated} />
+                                                        <CreateProducts onClose={() => setIsCreateModalOpen(false)} onCreated={handleCreated} />
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {isEditModalOpen && (
+                                                <div className="fixed inset-0 flex items-center justify-center z-50">
+                                                    <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}></div>
+                                                    <div className="modal-container">
+                                                        <EditRecipe onClose={() => setIsEditModalOpen(false)} />
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {isEditTableModalOpen && (
+                                                <div className="fixed inset-0 flex items-center justify-center z-50">
+                                                    <div className="modal-overlay" onClick={() => setIsEditTableModalOpen(false)}></div>
+                                                    <div className="modal-container">
+                                                        <EditRecipeWithTable onClose={() => setIsEditTableModalOpen(false)} />
                                                     </div>
                                                 </div>
                                             )}
