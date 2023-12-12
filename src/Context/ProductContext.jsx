@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { createContext, useState, useContext, useEffect } from 'react'
-import { getProducts, getAllProduct, createDetailPRequest } from '../Api/product.request.js'
+import { getProducts, getAllProduct, createDetailPRequest} from '../Api/product.request.js'
 
 export const ProductContext = createContext();
 
@@ -23,7 +23,7 @@ export const ProductProvider = ({ children }) => {
     const fetchProduct = async (id) => {
         try {
             const res = await getProducts(id);
-            return (res.data)
+            return(res.data)
         } catch (error) {
             console.log(error)
         }
@@ -57,7 +57,7 @@ export const ProductProvider = ({ children }) => {
                 AllProducts,
                 fetchProduct,
                 getProduct,
-                getwholeProducts
+                getwholeProducts    
             }}
         >
             {children}

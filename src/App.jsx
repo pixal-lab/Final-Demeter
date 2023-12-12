@@ -49,57 +49,57 @@ function App() {
     <BrowserRouter>
       <Role>
         <User>
-          <DashboardProvider>
-          <CategorySupplies>
-            <CategoryProducts>
-              <Module>
-                <Product>
-                  <Supplies>
-                    <ShoppingProvider>
-                      <SaleProvider>
-                        <ProductCategoriesProvider>
-                          <ProductProvider>
-                            <Supplier>
-                              <Header />
-                              <Navbar />
-                              <Routes>
-                                <Route path='/' element={<Login />} />
-                                <Route path='/resetPassword' element={<ResetPassword />} />
-                                <Route path='/newPassword/:idUser' element={<NewPassword />} />
-                                <Route element={<ProtectedRoute />}>
-                                  <Route path='/dashboard' element={<DashBoard />} />
-                                  <Route path='/setting' element={<RolePage />} />
-                                  <Route path='/user' element={<UserPage />} />
-                                  <Route path='/category_supplies' element={<SuppliesCategoryPage />} />
-                                  <Route path='/supplies' element={<SuppliesPage />} />
-                                  <Route path='/supplier' element={<SupplierPage />} />
-                                  <Route path='/shopping' element={<ShoppingPage />} />
-                                  <Route path='/shop' element={<NewPurchase />} />
-                                  <Route path='/category_product' element={<ProductCategoryPage />} />
-                                  <Route path='/product' element={<ProductPage />} />
-                                  <Route path='/waiter' element={<WaiterPage />} />
-                                  <Route path='/alert' element={<Alert />} />
-                                  <Route path='/edit_profile' element={<EditProfile />} />
-                                  <Route path='/instructions' element={<Instruction />} />
-                                  <Route path='/create_product' element={<ProductDetails />} />
-                                  <Route path='/sale' element={<ViewSales></ViewSales>} />
-                                  <Route path='/sales' element={<Sales />} />
-                                </Route>
-                              </Routes>
-                            </Supplier>
-                          </ProductProvider>
-                        </ProductCategoriesProvider>
-                      </SaleProvider>
-                    </ShoppingProvider>
-                  </Supplies>
-                </Product>
-              </Module>
-            </CategoryProducts>
-          </CategorySupplies>
-          </DashboardProvider>  
+          <Module>
+            <DashboardProvider>
+              <CategorySupplies>
+                <CategoryProducts>
+                  <Product>
+                    <Supplies>
+                      <ShoppingProvider>
+                        <SaleProvider>
+                          <ProductCategoriesProvider>
+                            <ProductProvider>
+                              <Supplier>
+                                <Header />
+                                <Navbar />
+                                <Routes>
+                                  <Route path='/' element={<Login />} />
+                                  <Route path='/resetPassword' element={<ResetPassword />} />
+                                  <Route path='/newPassword/:idUser' element={<NewPassword />} />
+                                  <Route element={<ProtectedRoute />}>
+                                    <Route path='/dashboard' element={<DashBoard />} />
+                                    <Route path='/setting' element={<RolePage />} />
+                                    <Route path='/user' element={<UserPage />} />
+                                    <Route path='/category_supplies' element={<SuppliesCategoryPage />} />
+                                    <Route path='/supplies' element={<SuppliesPage />} />
+                                    <Route path='/supplier' element={<SupplierPage />} />
+                                    <Route path='/shopping' element={<ShoppingPage />} />
+                                    <Route path='/shop' element={<NewPurchase />} />
+                                    <Route path='/category_product' element={<ProductCategoryPage />} />
+                                    <Route path='/product' element={<ProductPage />} />
+                                    <Route path='/waiter' element={<WaiterPage />} />
+                                    <Route path='/alert' element={<Alert />} />
+                                    <Route path='/edit_profile' element={<EditProfile />} />
+                                    <Route path='/instructions' element={<Instruction />} />
+                                    <Route path='/create_product' element={<ProductDetails />} />
+                                    <Route path='/sale' element={<ViewSales></ViewSales>} />
+                                    <Route path='/sales' element={<Sales />} />
+                                  </Route>
+                                </Routes>
+                              </Supplier>
+                            </ProductProvider>
+                          </ProductCategoriesProvider>
+                        </SaleProvider>
+                      </ShoppingProvider>
+                    </Supplies>
+                  </Product>
+                </CategoryProducts>
+              </CategorySupplies>
+            </DashboardProvider>
+          </Module>
         </User>
       </Role>
-    </BrowserRouter>
+    </BrowserRouter >
   )
 }
 
