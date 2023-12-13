@@ -29,8 +29,8 @@ const overlayStyles = {
 
 const buttonStyles = {
   marginTop: '80px',
-  marginRight: '-10%',
-  marginLeft: '17%',
+  marginRight: '10%',
+  marginLeft: '10%',
 };
 
 function DeleteSuppliesCategory({ onClose, onDelete }) {
@@ -40,10 +40,14 @@ function DeleteSuppliesCategory({ onClose, onDelete }) {
         <h1 className="text-3xl font-semibold">Eliminar categoría de insumo</h1>
         <p className="deleteText">¿Está seguro de que desea eliminar esta categoría?</p>
         <div className="flex justify-between ">
-          <button onClick={onDelete} style={buttonStyles} className="btn btn-icon btn-danger">
+          <button onClick={onDelete} style={buttonStyles} className="btn btn-icon btn-danger"
+            title="Este botón sirve para eliminar la categoría y cerrar la ventana modal."
+          >
             Eliminar
           </button>
-          <button onClick={onClose} style={buttonStyles} className="btn btn-icon btn-primary">
+          <button onClick={onClose} style={buttonStyles} className="btn btn-icon btn-primary"
+            title="Este botón sirve para cerrar la ventana modal sin eliminar la categoría."
+          >
             Cancelar
           </button>
         </div>

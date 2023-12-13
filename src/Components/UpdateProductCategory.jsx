@@ -26,14 +26,15 @@ function UpdateProductCategory({
   },
   productCategoryToEdit = null,
 }) {
-  const { updateCategory_products } = useCategoryProducts();
+  const { updateCategory_products, Category_products } = useCategoryProducts();
   const [open, setOpen] = useState(false);
 
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors, isValid },
+    formState: { errors },
+    setError,
   } = useForm();
 
   useEffect(() => {
@@ -43,18 +44,39 @@ function UpdateProductCategory({
     }
   }, [productCategoryToEdit]);
 
+  function removeAccentsAndSpaces(str) {
+    return str
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f\s]/g, '');
+}
 
-  const onSubmit = handleSubmit(async (values) => {
-    if (productCategoryToEdit) {
-      const productCategory = { ...productCategoryToEdit, ...values };
-      try {
-        await updateCategory_products(productCategory.ID_ProductCategory, productCategory);
-        setOpen(false);
-      } catch (error) {
-        console.error('Error al actualizar la categoria', error);
-      }
+const onSubmit = handleSubmit(async (values) => {
+  if (productCategoryToEdit) {
+    const normalizedInputName = removeAccentsAndSpaces(values.Name_ProductCategory);
+    const normalizedExistingNames = Category_products
+      .filter(category => category.ID_ProductCategory !== productCategoryToEdit.ID_ProductCategory)
+      .map(category => removeAccentsAndSpaces(category.Name_ProductCategory));
+
+    const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
+
+    if (isNameDuplicate) {
+      setError('Name_ProductCategory', {
+        type: 'manual',
+        message: 'El nombre de la categoría ya existe.',
+      });
+      return;
     }
-  });
+
+    const productCategory = { ...productCategoryToEdit, ...values };
+    try {
+      await updateCategory_products(productCategory.ID_ProductCategory, productCategory);
+      setOpen(false);
+    } catch (error) {
+      console.error('Error al actualizar la categoría de producto', error);
+    }
+  }
+});
 
   const onCancel = () => {
     setOpen(false);
@@ -79,68 +101,81 @@ function UpdateProductCategory({
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
-                <Box sx={{ ...style, width: 600 }}>
-                    <div className="col-md-12">
-                        <div className="card">
-                            <div className="card-header">
-                                <h5>Edición de categoria de producto</h5>
-                            </div>
-                            <div className="card-body">
-                                <form
-                                    onSubmit={(event) => onSubmit(event)}
-                                >
-                                    <div className="city">
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="Name_ProductCategory" className="form-label">
-                                                Nombre
-                                            </label>
-                                            <input
-                                                {...register('Name_ProductCategory', {
-                                                    required: 'Este campo es obligatorio',
-                                                    pattern: {
-                                                        value: /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ\s]*[a-záéíóúñ]$/,
-                                                        message:
-                                                            'El nombre de la categoria del producto debe tener la primera letra en mayúscula, el resto en minúscula y solo se permiten letras.',
-                                                    },
-                                                })}
-                                                type="text"
-                                                className="form-control"
-                                                defaultValue={productCategoryToEdit ? productCategoryToEdit.Name_ProductCategory : ''}
-                                            />
-                                            {errors.Name_ProductCategory && (
-                                                <p className="text-red-500">
-                                                    {errors.Name_ProductCategory.message}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="buttonconfirm">
-                                        <div className="mb-3">
-                                            <button
-                                                className="btn btn-primary mr-5"
-                                                type="submit"
-                                                disabled={!isValid}
-                                            >
-                                                Confirmar
-                                            </button>
-                                            <button
-                                                className="btn btn-primary"
-                                                onClick={onCancel}
-                                                type="submit"
-                                            >
-                                                Cancelar
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+        <Box sx={{ ...style, width: 600 }}>
+          <div className="col-md-12">
+            <div className="card">
+              <div className="card-header">
+                <h5>Edición de categoria de producto</h5>
+              </div>
+              <div className="card-body">
+                <form
+                  onSubmit={(event) => onSubmit(event)}
+                >
+                  <div className="city">
+                    <div className="form-group col-md-6">
+                      <label htmlFor="Name_ProductCategory" className="form-label">
+                        Nombre:
+                      </label>
+                      <input
+                        {...register('Name_ProductCategory', {
+                          required: 'Este campo es obligatorio',
+                          pattern: {
+                            value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ]+(\s[A-Za-zÁÉÍÓÚÑáéíóúñ]+)?$/,
+                            message: 'Solo se permiten letras, tildes y hasta un espacio entre letras.',
+                          },
+                          minLength: {
+                            value: 3,
+                            message: 'El nombre debe tener al menos 3 caracteres.',
+                          },
+                          maxLength: {
+                            value: 30,
+                            message: 'El nombre no puede tener más de 30 caracteres.',
+                          },
+                          setValueAs: (value) =>
+                            value
+                              .trim()
+                              .replace(/\s+/g, ' ') 
+                              .toLowerCase() 
+                              .replace(/^(.)/, (match) => match.toUpperCase()),
+                        })}
+                        type="text"
+                        className="form-control"
+                      />
+                      {errors.Name_ProductCategory && (
+                        <p className="text-red-500">
+                          {errors.Name_ProductCategory.message}
+                        </p>
+                      )}
                     </div>
-                </Box>
-            </Modal>
-        </React.Fragment>
-    );
+                  </div>
+
+                  <div className="buttonconfirm">
+                    <div className="mb-3">
+                      <button
+                        className="btn btn-primary mr-5"
+                        type="submit"
+                        title="Este botón sirve para guardar la información y cerrar la ventana modal."
+                      >
+                        Confirmar
+                      </button>
+                      <button
+                        className="btn btn-primary"
+                        onClick={onCancel}
+                        type="submit"
+                        title="Este botón sirve para cerrar la ventana modal sin guardar la información."
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+    </React.Fragment>
+  );
 }
 
 export default UpdateProductCategory;

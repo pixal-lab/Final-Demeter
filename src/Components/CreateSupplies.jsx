@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { useSupplies } from '../Context/Supplies.context';
 import { useCategorySupplies } from '../Context/CategorySupplies.context';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import Select from 'react-select';
 
 const style = {
@@ -41,13 +41,13 @@ const customStyles = {
 
 function CreateSupplies({
   onDefaultSubmit = null,
-  setCreatedSupplie,
   buttonProps = {
     buttonClass: 'btn btn-primary',
-    buttonText: 'Crear Insumo',
+    buttonText: 'Registrar',
   },
 }) {
   const {
+    control,
     register,
     handleSubmit,
     setError,
@@ -57,44 +57,21 @@ function CreateSupplies({
 
   const { createSupplies, supplies } = useSupplies();
   const { Category_supplies } = useCategorySupplies();
-
   const [open, setOpen] = useState(false);
   const [selectedMeasure, setSelectedMeasure] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const handleMeasureChange = (selectedOption) => {
-    setSelectedMeasure(selectedOption);
-  };
-
-  const handleCategoryChange = (selectedOption) => {
-    setSelectedCategory(selectedOption);
-  };
+  function removeAccentsAndSpaces(str) {
+    return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+  }
 
   const onSubmit = handleSubmit(async (values) => {
-    if (!selectedMeasure) {
-      setError('Measure', {
-        type: 'manual',
-        message: 'Debes seleccionar una medida.',
-      });
-      return;
-    }
-
-    if (!selectedCategory) {
-      setError('SuppliesCategory_ID', {
-        type: 'manual',
-        message: 'Debes seleccionar una categoría.',
-      });
-      return;
-    }
-    const dataToSend = {
-      ...values,
-      Measure: selectedMeasure.value,
-      SuppliesCategory_ID: selectedCategory.value,
-    };
-
-    const isNameDuplicate = supplies.some(
-      (supply) => supply.Name_Supplies === dataToSend.Name_Supplies
+    const normalizedInputName = removeAccentsAndSpaces(values.Name_Supplies);
+    const normalizedExistingNames = supplies.map(supply =>
+      removeAccentsAndSpaces(supply.Name_Supplies)
     );
+
+    const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
 
     if (isNameDuplicate) {
       setError('Name_Supplies', {
@@ -104,68 +81,33 @@ function CreateSupplies({
       return;
     }
 
-    if (!dataToSend.Unit || isNaN(parseInt(dataToSend.Unit))) {
-      setError('Unit', {
-        type: 'manual',
-        message: 'La cantidad es requerida y debe ser un número válido.',
-      });
-      return;
-    }
+    const dataToSend = {
+      ...values,
+      Name_Supplies: values.Name_Supplies,
+      Measure: selectedMeasure.value,
+      SuppliesCategory_ID: selectedCategory.value,
+    };
 
-    if (
-      parseInt(dataToSend.Unit) < 0 ||
-      parseInt(dataToSend.Unit) > 999999
-    ) {
-      setError('Unit', {
-        type: 'manual',
-        message: 'La cantidad debe tener de 1 a 10 caracteres.',
-      });
-      return;
-    }
-
-    if (!dataToSend.Stock || isNaN(parseInt(dataToSend.Stock))) {
-      setError('Stock', {
-        type: 'manual',
-        message: 'El stock mínimo es requerido y debe ser un número válido.',
-      });
-      return;
-    }
-
-    if (parseInt(dataToSend.Stock) < 0 || parseInt(dataToSend.Stock) > 999) {
-      setError('Stock', {
-        type: 'manual',
-        message: 'El stock mínimo debe ser un número entero entre 0 y 999.',
-      });
-      return;
-    }
-
-    if (parseInt(dataToSend.Stock) > parseInt(dataToSend.Unit)) {
-      setError('Stock', {
-        type: 'manual',
-        message: `El stock mínimo no puede ser mayor que la cantidad de insumo (${dataToSend.Unit}).`,
-      });
-      return;
-    }
-
-    const data = await createSupplies(dataToSend);
-    setCreatedSupplie(data)
+    createSupplies(dataToSend);
     setOpen(false);
     reset();
     setSelectedMeasure(null);
     setSelectedCategory(null);
   });
+
   const onCancel = () => {
     setOpen(false);
+    reset();
     setSelectedMeasure(null);
     setSelectedCategory(null);
   };
 
   const options = Category_supplies
-  .filter(category => category.State)
-  .map(category => ({
-    value: category.ID_SuppliesCategory,
-    label: category.Name_SuppliesCategory,
-  }));
+    .filter(category => category.State)
+    .map(category => ({
+      value: category.ID_SuppliesCategory,
+      label: category.Name_SuppliesCategory,
+    }));
 
   return (
     <React.Fragment>
@@ -176,6 +118,7 @@ function CreateSupplies({
           reset();
           setOpen(true);
         }}
+        title="Este botón sirve para crear un insumo"
       >
         {buttonProps.buttonText}
       </button>
@@ -203,16 +146,30 @@ function CreateSupplies({
                   <div className="control">
                     <div className="form-group col-md-6">
                       <label htmlFor="Name_Supplies" className="form-label">
-                        Nombre<strong>*</strong>
+                        Nombre: <strong>*</strong>
                       </label>
                       <input
                         {...register('Name_Supplies', {
                           required: 'Este campo es obligatorio',
                           pattern: {
-                            value: /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ\s]*[a-záéíóúñ]$/,
+                            value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ]+(\s[A-Za-zÁÉÍÓÚÑáéíóúñ]+)?$/,
                             message:
-                              'El nombre del insumo debe tener la primera letra en mayúscula, el resto en minúscula y solo se permiten letras.',
+                              'Solo se permiten letras, tildes y hasta un espacio entre letras.',
                           },
+                          minLength: {
+                            value: 3,
+                            message: 'El nombre debe tener al menos 3 caracteres.',
+                          },
+                          maxLength: {
+                            value: 30,
+                            message: 'El nombre no puede tener más de 30 caracteres.',
+                          },
+                          setValueAs: (value) =>
+                            value
+                              .trim() 
+                              .replace(/\s+/g, ' ') 
+                              .toLowerCase()
+                              .replace(/^(.)/, (match) => match.toUpperCase()),
                         })}
                         type="text"
                         className="form-control"
@@ -226,16 +183,24 @@ function CreateSupplies({
 
                     <div className="form-group col-md-6">
                       <label htmlFor="Unit" className="form-label">
-                        Cantidad<strong>*</strong>
+                        Cantidad: <strong>*</strong>
                       </label>
                       <input
                         {...register('Unit', {
                           required: 'Este campo es obligatorio',
-                          validate: (value) => {
-                            const parsedValue = parseInt(value);
-                            if (isNaN(parsedValue)) {
-                              return 'La cantidad debe ser un número válido.';
-                            }
+                          validate: {
+                            isDouble: (value) => {
+                              const parsedValue = parseFloat(value);
+                              if (isNaN(parsedValue)) {
+                                return 'Debe ser un número positivo.';
+                              }
+                            },
+                            validRange: (value) => {
+                              const parsedValue = parseFloat(value);
+                              if (parsedValue < 0 || parsedValue > 99999999) {
+                                return 'La cantidad debe estar entre 0 y 99999999.';
+                              }
+                            },
                           },
                         })}
                         type="text"
@@ -250,56 +215,69 @@ function CreateSupplies({
                   <div className="control">
                     <div className="form-group col-md-6">
                       <label htmlFor="Measure" className="form-label">
-                        Medida<strong>*</strong>
+                        Medida: <strong>*</strong>
                       </label>
-                      <Select
-                        options={[
-                          { value: 'Unidad(es)', label: 'Unidad(es)' },
-                          { value: 'Kilogramos (kg)', label: 'Kilogramos (kg)' },
-                          { value: 'Gramos (g)', label: 'Gramos (g)' },
-                          { value: 'Litros (L)', label: 'Litros (L)' },
-                          { value: 'Mililitros (ml)', label: 'Mililitros (ml)' },
-                        ]}
-                        value={selectedMeasure}
-                        onChange={handleMeasureChange}
-                        styles={customStyles}
-                        className="form-selects"
-                        theme={(theme) => ({
-                          ...theme,
-                          colors: {
-                            ...theme.colors,
-                            primary: '#e36209',
-                          },
-                        })}
+                      <Controller
+                        control={control}
+                        name="Measure"
+                        rules={{ required: 'Este campo es obligatorio' }}
+                        render={({ field }) => (
+                          <Select
+                            options={[
+                              { value: 'Kilogramos (kg)', label: 'Kilogramos (kg)' },
+                              { value: 'Gramos (g)', label: 'Gramos (g)' },
+                              { value: 'Litros (L)', label: 'Litros (L)' },
+                              { value: 'Mililitros (ml)', label: 'Mililitros (ml)' },
+                              { value: 'Unidad(es)', label: 'Unidad(es)' },
+                            ]}
+                            value={selectedMeasure}
+                            onChange={(selectedOption) => {
+                              setSelectedMeasure(selectedOption);
+                              field.onChange(selectedOption.value);
+                            }}
+                            styles={customStyles}
+                            className="form-selects"
+                            theme={(theme) => ({
+                              ...theme,
+                              colors: {
+                                ...theme.colors,
+                                primary: '#e36209',
+                              },
+                            })}
+                          />
+                        )}
                       />
                       {errors.Measure && (
                         <p className="text-red-500">{errors.Measure.message}</p>
                       )}
-                      <div className="invalid-feedback">Ingrese la medida</div>
                     </div>
 
                     <div className="form-group col-md-6">
                       <label htmlFor="Stock" className="form-label">
-                        Existencia mínima<strong>*</strong>
+                        Existencia mínima: <strong>*</strong>
                       </label>
                       <input
                         {...register('Stock', {
                           required: 'Este campo es obligatorio',
-                          validate: (value, { Unit }) => {
-                            const parsedValue = parseInt(value);
-                            const parsedUnit = parseInt(Unit);
+                          validate: {
+                            isDouble: (value) => {
+                              const parsedValue = parseFloat(value);
+                              if (isNaN(parsedValue)) {
+                                return 'Debe ser un número positivo.';
+                              }
+                            },
+                            validRange: (value, { Unit }) => {
+                              const parsedValue = parseFloat(value);
+                              const parsedUnit = parseFloat(Unit);
 
-                            if (isNaN(parsedValue)) {
-                              return 'La existencia mínima debe ser un número válido.';
-                            }
+                              if (parsedValue < 0 || parsedValue > 9999) {
+                                return 'La existencia mínima debe estar entre 0 y 9999.';
+                              }
 
-                            if (parsedValue < 0 || parsedValue > 999) {
-                              return 'La existencia mínima debe ser un número entero entre 0 y 999.';
-                            }
-
-                            if (parsedValue > parsedUnit) {
-                              return `La existencia mínima no puede ser mayor que la cantidad de insumo (${parsedUnit}).`;
-                            }
+                              if (parsedValue > parsedUnit) {
+                                return `No puede ser mayor que la cantidad: ${parsedUnit}.`;
+                              }
+                            },
                           },
                         })}
                         type="text"
@@ -314,28 +292,35 @@ function CreateSupplies({
                   <div className="city">
                     <div className="form-group col-md-6">
                       <label htmlFor="SuppliesCategory_ID" className="form-label">
-                        Categoría<strong>*</strong>
+                        Categoría: <strong>*</strong>
                       </label>
-                      <Select
-                        options={options}
-                        value={selectedCategory}
-                        onChange={handleCategoryChange}
-                        styles={customStyles}
-                        className="form-selects"
-                        theme={(theme) => ({
-                          ...theme,
-                          colors: {
-                            ...theme.colors,
-                            primary: '#e36209',
-                          },
-                        })}
+                      <Controller
+                        control={control}
+                        name="SuppliesCategory_ID"
+                        rules={{ required: 'Este campo es obligatorio' }}
+                        render={({ field }) => (
+                          <Select
+                            options={options}
+                            value={selectedCategory}
+                            onChange={(selectedOption) => {
+                              setSelectedCategory(selectedOption);
+                              field.onChange(selectedOption);
+                            }}
+                            styles={customStyles}
+                            className="form-selects"
+                            theme={(theme) => ({
+                              ...theme,
+                              colors: {
+                                ...theme.colors,
+                                primary: '#e36209',
+                              },
+                            })}
+                          />
+                        )}
                       />
                       {errors.SuppliesCategory_ID && (
-                        <p className="text-red-500">
-                          {errors.SuppliesCategory_ID.message}
-                        </p>
+                        <p className="text-red-500">{errors.SuppliesCategory_ID.message}</p>
                       )}
-                      <div className="invalid-feedback">Ingrese la categoría</div>
                     </div>
                   </div>
 
@@ -344,7 +329,7 @@ function CreateSupplies({
                       <button
                         className="btn btn-primary mr-5"
                         type="submit"
-                        disabled={!selectedMeasure || !selectedCategory}
+                        title="Este botón sirve para guardar la información y cerrar la ventana modal."
                       >
                         Confirmar
                       </button>
@@ -352,6 +337,7 @@ function CreateSupplies({
                         className="btn btn-primary"
                         onClick={onCancel}
                         type="submit"
+                        title="Este botón sirve para cerrar la ventana modal sin guardar la información."
                       >
                         Cancelar
                       </button>

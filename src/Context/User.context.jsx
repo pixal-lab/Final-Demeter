@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { getUsersRequest, GetCurrentUser, getUserRequest, createUserRequest, statusUserRequest, updateUserRequest, deleteUserRequest, loginRequest, verifyTokenRequest, forgotPasswordRequest, NewPasswordRequest, GetUserCookies, existUserByEmailOrIdRequest, getWaiterRequest } from '../Api/User.request.js'
-import { getWaitersRequest, createWaiterRequest } from '../Api/User.request.js';
+import { getWaitersRequest, createWaiterRequest, updateWaiterRequest } from '../Api/User.request.js';
+import { updateUserLoginRequest, updatePasswordLoginRequest } from '../Api/User.request.js';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
@@ -278,7 +279,6 @@ export const User = ({ children }) => {
     navigate('/');
   }
 
-
   // --------------------------- Mesero --------------------------- //
 
   const getWaiters = async () => {
@@ -311,6 +311,36 @@ export const User = ({ children }) => {
       console.log(error);
     }
   }
+
+  const updateWaiter = async (users) => {
+    try {
+      await updateWaiterRequest(users);
+      getUsers();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // --------------------------- Edit Profile --------------------------- //
+
+  const updateUserLogin = async (users) => {
+    try {
+      await updateUserLoginRequest(users);
+      getUsers();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const updatePasswordLogin = async (users) => {
+    try {
+      await updatePasswordLoginRequest(users);
+      getUsers();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -325,7 +355,11 @@ export const User = ({ children }) => {
         getWaiters,
         getWaiter,
         createWaiter,
-        //-------------login------------//
+        updateWaiter,
+        //------------- Profile ------------//
+        updateUserLogin,
+        updatePasswordLogin,
+        //------------- Login ------------//
         isAuthenticated,
         isAuthenticated,
         signin,
