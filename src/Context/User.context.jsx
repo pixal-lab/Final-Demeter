@@ -32,10 +32,8 @@ export const User = ({ children }) => {
   const getUsers = async () => {
     try {
       const res = await getUsersRequest();
-      // setUser(res.data);
-
+      setUser(res.data);
       return res.data
-
     } catch (error) {
       console.log(error);
     }

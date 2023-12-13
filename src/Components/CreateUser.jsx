@@ -61,24 +61,7 @@ function CreateUser({ onClose, onCreated }) {
     };
 
     const onSubmit = handleSubmit(async (values) => {
-        const isDocumentouplicate = user.some(users => users.Document === values.Document);
-        const isEmailDuplicate = user.some(users => users.Email === values.Email);
-
-        if (isDocumentouplicate) {
-            setError('Document', {
-                type: 'manual',
-                message: 'El documento del usuario ya existe.'
-            });
-            return;
-        }
-
-        if (isEmailDuplicate) {
-            setError('Email', {
-                type: 'manual',
-                message: 'El correo del usuario ya existe.'
-            });
-            return;
-        }
+        
 
         if (!selectedType || selectedType.value === '') {
             setError('Type_Document', {
