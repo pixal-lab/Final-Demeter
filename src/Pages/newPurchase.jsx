@@ -311,7 +311,7 @@ function NewPurchase() {
                     <th>Insumo</th>
                     <th>Cantidad</th>
                     <th>Precio</th>
-                    <th>Acción</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
