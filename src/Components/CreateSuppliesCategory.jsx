@@ -36,27 +36,24 @@ function CreateCategory_supplies({
     const { Category_supplies, createCategory_supplies } = useCategorySupplies();
     const [open, setOpen] = useState(false);
 
-    function formatName(inputName) {
-        const trimmedName = inputName.trim();
-        const formattedName = trimmedName.charAt(0).toUpperCase() + trimmedName.slice(1).toLowerCase();
-        return formattedName;
+    function removeAccentsAndSpaces(str) {
+        return str
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f\s]/g, '');
     }
 
     const onSubmit = handleSubmit(async (values) => {
-        const normalizedInputName = values.Name_SuppliesCategory
-            .toLowerCase()
-            .replace(/\s/g, '')
-            .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-        const formattedName = formatName(normalizedInputName);
-
-        // Normalizar los nombres existentes para la comparación
-        const normalizedExistingNames = Category_supplies.map(category =>
-            category.Name_SuppliesCategory.toLowerCase().replace(/\s/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        const normalizedInputName = removeAccentsAndSpaces(
+            values.Name_SuppliesCategory
+        );
+        const normalizedExistingNames = Category_supplies.map((category) =>
+            removeAccentsAndSpaces(category.Name_SuppliesCategory)
         );
 
-        // Verificar si el nombre ya existe
-        const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
+        const isNameDuplicate = normalizedExistingNames.includes(
+            normalizedInputName
+        );
 
         if (isNameDuplicate) {
             setError('Name_SuppliesCategory', {
@@ -66,7 +63,12 @@ function CreateCategory_supplies({
             return;
         }
 
-        createCategory_supplies({ ...values, Name_SuppliesCategory: formattedName });
+        const dataToSend = {
+            ...values,
+            Name_SuppliesCategory: values.Name_SuppliesCategory,
+        };
+
+        createCategory_supplies(dataToSend);
         setOpen(false);
         reset();
     });
@@ -96,7 +98,7 @@ function CreateCategory_supplies({
                     <div className="col-md-12">
                         <div className="card">
                             <div className="card-header">
-                                <h5>Registro de categoria de insumos</h5>
+                                <h5>Registro de categoría de insumos</h5>
                             </div>
                             <div className="card-body">
                                 <form
@@ -108,16 +110,33 @@ function CreateCategory_supplies({
                                 >
                                     <div className="city">
                                         <div className="form-group col-md-6">
-                                            <label htmlFor="Name_SuppliesCategory" className="form-label">
+                                            <label
+                                                htmlFor="Name_SuppliesCategory"
+                                                className="form-label"
+                                            >
                                                 Nombre: <strong>*</strong>
                                             </label>
                                             <input
                                                 {...register('Name_SuppliesCategory', {
                                                     required: 'Este campo es obligatorio',
                                                     pattern: {
-                                                        value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]*$/u,
-                                                        message: 'Solo se permiten letras y un espacio.',
+                                                        value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ]+(\s[A-Za-zÁÉÍÓÚÑáéíóúñ]+)?$/,
+                                                        message: 'Solo se permiten letras, tildes y hasta un espacio entre letras.',
                                                     },
+                                                    minLength: {
+                                                        value: 3,
+                                                        message: 'El nombre debe tener al menos 3 caracteres.',
+                                                    },
+                                                    maxLength: {
+                                                        value: 30,
+                                                        message: 'El nombre no puede tener más de 30 caracteres.',
+                                                    },
+                                                    setValueAs: (value) =>
+                                                        value
+                                                            .trim() // Eliminar espacios al principio y al final
+                                                            .replace(/\s+/g, ' ') // Reducir múltiples espacios a un solo espacio
+                                                            .toLowerCase() // Convertir a minúsculas
+                                                            .replace(/^(.)/, (match) => match.toUpperCase()), // Capitalizar la primera letra
                                                 })}
                                                 type="text"
                                                 className="form-control"
@@ -160,3 +179,4 @@ function CreateCategory_supplies({
 }
 
 export default CreateCategory_supplies;
+

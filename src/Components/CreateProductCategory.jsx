@@ -34,23 +34,42 @@ function CreateCategory_products({
     } = useForm();
 
     const { Category_products, createCategory_products } = useCategoryProducts();
-
     const [open, setOpen] = useState(false);
 
+    function removeAccentsAndSpaces(str) {
+        return str
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f\s]/g, '');
+    }
+
     const onSubmit = handleSubmit(async (values) => {
-        const isNameDuplicate = Category_products.some(
-            (ProductCategory) => ProductCategory.Name_ProductCategory === values.Name_ProductCategory
+
+        const normalizedInputName = removeAccentsAndSpaces(
+            values.Name_ProductCategory
+        );
+        const normalizedExistingNames = Category_products.map((category) =>
+            removeAccentsAndSpaces(category.Name_ProductCategory)
+        );
+
+        const isNameDuplicate = normalizedExistingNames.includes(
+            normalizedInputName
         );
 
         if (isNameDuplicate) {
             setError('Name_ProductCategory', {
                 type: 'manual',
-                message: 'El nombre de la categoria ya existe.',
+                message: 'El nombre de la categoría ya existe.',
             });
             return;
         }
 
-        createCategory_products(values);
+        const dataToSend = {
+            ...values,
+            Name_ProductCategory: values.Name_ProductCategory,
+        };
+
+        createCategory_products(dataToSend);
         setOpen(false);
         reset();
     });
@@ -92,17 +111,30 @@ function CreateCategory_products({
                                 >
                                     <div className="city">
                                         <div className="form-group col-md-6">
-                                            <label htmlFor="Name_productCategory" className="form-label">
+                                            <label htmlFor="Name_ProductCategory" className="form-label">
                                                 Nombre: <strong>*</strong>
                                             </label>
                                             <input
                                                 {...register('Name_ProductCategory', {
                                                     required: 'Este campo es obligatorio',
                                                     pattern: {
-                                                        value: /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ\s]*[a-záéíóúñ]$/u,
-                                                        message:
-                                                            'Debe tener la primera letra en mayúscula, el resto en minúscula.',
+                                                        value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ]+(\s[A-Za-zÁÉÍÓÚÑáéíóúñ]+)?$/,
+                                                        message: 'Solo se permiten letras, tildes y hasta un espacio entre letras.',
                                                     },
+                                                    minLength: {
+                                                        value: 3,
+                                                        message: 'El nombre debe tener al menos 3 caracteres.',
+                                                    },
+                                                    maxLength: {
+                                                        value: 30,
+                                                        message: 'El nombre no puede tener más de 30 caracteres.',
+                                                    },
+                                                    setValueAs: (value) =>
+                                                        value
+                                                            .trim() // Eliminar espacios al principio y al final
+                                                            .replace(/\s+/g, ' ') // Reducir múltiples espacios a un solo espacio
+                                                            .toLowerCase() // Convertir a minúsculas
+                                                            .replace(/^(.)/, (match) => match.toUpperCase()), // Capitalizar la primera letra
                                                 })}
                                                 type="text"
                                                 className="form-control"
