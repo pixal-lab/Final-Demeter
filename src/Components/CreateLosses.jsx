@@ -39,7 +39,7 @@ function CreateLosses({ supply, onLossCreated }) {
                 Measure: supply.Measure,
             });
             setOpen(false);
-            
+
             if (onLossCreated) {
                 onLossCreated();
                 reset();
@@ -90,11 +90,19 @@ function CreateLosses({ supply, onLossCreated }) {
                                         <input
                                             {...register('Unit', {
                                                 required: 'Este campo es obligatorio',
-                                                validate: (value) => {
-                                                    const parsedValue = parseFloat(value);
-                                                    if (isNaN(parsedValue) || parsedValue < 0 || parsedValue > 99999999) {
-                                                        return 'Debe ser un número entero entre 0 y 99999999.';
-                                                    }
+                                                validate: {
+                                                    isDouble: (value) => {
+                                                        const parsedValue = parseFloat(value);
+                                                        if (isNaN(parsedValue)) {
+                                                            return 'Debe ser un número positivo.';
+                                                        }
+                                                    },
+                                                    validRange: (value) => {
+                                                        const parsedValue = parseFloat(value);
+                                                        if (parsedValue < 0 || parsedValue > 99999999) {
+                                                            return 'La cantidad debe estar entre 0 y 99999999.';
+                                                        }
+                                                    },
                                                 },
                                             })}
                                             type="text"
@@ -124,6 +132,14 @@ function CreateLosses({ supply, onLossCreated }) {
                                                     if (!/^[A-ZÁÉÍÓÚÑa-záéíóúñ\s,.]*$/.test(value)) {
                                                         return 'Se permiten letras mayúscula, minúsculas, espacios, tildes, comas y puntos.';
                                                     }
+                                                },
+                                                setValueAs: (value) => {
+                                                    const capitalizedValue = value
+                                                        .replace(/^\w/, (match) => match.toUpperCase()) // Capitalizar solo la primera letra
+                                                        .replace(/\. (\w)/g, (match) => `${match.toUpperCase()}`) // Capitalizar después de un punto y espacio
+                                                        .trim(); // Eliminar espacios al principio y al final
+
+                                                    return capitalizedValue.endsWith('.') ? capitalizedValue : `${capitalizedValue}.`;
                                                 },
                                             })}
                                             type="textarea"
