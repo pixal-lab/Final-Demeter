@@ -44,7 +44,8 @@ function RolePage() {
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        getRoles(), setCurrentPage(1);
+        getRoles(),
+        setCurrentPage(1);
     }, []);
 
     const navigateToCreateRole = () => {

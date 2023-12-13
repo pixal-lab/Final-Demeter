@@ -72,6 +72,9 @@ function NewPurchase() {
       Invoice_Number: uuidv4
     }))
 
+    console.log("data", data)
+    console.log("uuidv4", uuidv4)
+
     await createMultipleShopping(data)
     destroy()
 

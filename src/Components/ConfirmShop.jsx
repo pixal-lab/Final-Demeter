@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
@@ -23,6 +23,9 @@ function ConfirmShop({ onConfirm, data, ...onConfirmValues }) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  useEffect(() => {
+    console.log("onConfirmValues", onConfirmValues)
+  }, [onConfirmValues])
   return (
     <div>
       <button className="btn btn-primary ml-2" onClick={handleOpen}>Confirmar compra</button>
@@ -38,7 +41,7 @@ function ConfirmShop({ onConfirm, data, ...onConfirmValues }) {
 
           </Typography>
           <Link to="/shopping">
-            <button className="bg-red-500 text-white font-bold py-2 px-4 rounded ml-5 mt-3 " {...onConfirmValues} onClick={() => onConfirm(data)}>
+            <button className="bg-red-500 text-white font-bold py-2 px-4 rounded ml-5 mt-3 " {...onConfirmValues} onClick={() => onConfirm({...data, ...onConfirmValues})}>
               Confirmar
             </button>
           </Link>

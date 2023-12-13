@@ -23,7 +23,7 @@ function UserPage() {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        // getUsers();
+        getUsers();
         return async () => {
             const users = await getUsers();
 

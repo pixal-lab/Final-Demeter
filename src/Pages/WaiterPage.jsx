@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { BiEdit } from "react-icons/bi";
+import { useNavigate } from 'react-router-dom';
+
 // Icons
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
+import { BiEdit } from "react-icons/bi";
 
 // Diseño
 import '../css/style.css'
@@ -13,6 +15,7 @@ import { useUser } from '../Context/User.context.jsx';
 // Componentes
 import CreateWaiter from '../Components/CreateWaiter.jsx';
 import UpdateWaiter from '../Components/UpdateWaiter.jsx';
+import AuthorizationModal from '../Components/AuthorizationModal.jsx';
 
 // Paginado
 import Pagination from '@mui/material/Pagination';
@@ -33,15 +36,23 @@ function WaiterPage() {
     );
     const itemsForPage = 5;
     const [currentPage, setCurrentPage] = useState(1);
+    const [authorized, setAuthorized] = useState(true);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // getWaiters();
-        return async () => {
-            const users = await getWaiters();
-            setAllWaiter(users)
-        }
+        const fetchData = async () => {
+            try {
+                const users = await getWaiters();
+                setAllWaiter(users);
+            } catch (error) {
+                console.error(error);
+                setAuthorized(false);
+            }
+        };
+        fetchData();
         setCurrentPage(1);
-    }, []);
+    }, [getWaiters]);
 
     const navigateToCreateWaiter = () => {
         setIsModalOpen(true);
@@ -107,140 +118,149 @@ function WaiterPage() {
             ))
     }
 
+    const closeModal = () => {
+        setIsModalOpen(false);
+        navigate('/');
+    };
+
     return (
         <section className="pc-container">
             <div className="pcoded-content">
-                <div className="row w-100">
-                    <div className="col-md-12">
-                        <div className=" w-100 col-sm-12">
+                {!authorized ? (
+                    <AuthorizationModal onClose={closeModal} />
+                ) : (
+                    <div className="row w-100">
+                        <div className="col-md-12">
+                            <div className=" w-100 col-sm-12">
 
-                            <div className="card">
-                                <div className="card-header">
-                                    <h5>Visualización de meseros</h5>
-                                </div>
-                                <div className="card-body">
-                                    <div className="row">
-                                        <div className="col-md-6">
-                                            <button
-                                                title='Crear un nuevo mesero.'
-                                                type='button'
-                                                className='btn btn-primary'
-                                                onClick={navigateToCreateWaiter}
-                                            >
-                                                Registrar
-                                            </button>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <input type="search" className="form-control"
-                                                    id="exampleInputEmail1"
-                                                    aria-describedby="emailHelp"
-                                                    placeholder="Buscador"
-                                                    value={searchTerm}
-                                                    onChange={handleSearchChange}
-                                                    title='Buscar uno o varios meseros por algun dato de los meseros.'
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="movement">
-                                            <div className="form-check">
-                                                <input
-                                                    type="checkbox"
-                                                    title="Mostrar los meseros que estan habilitados en la primeras paginas."
-                                                    className="form-check-input"
-                                                    id="showEnabledOnly"
-                                                    checked={showEnabledOnly}
-                                                    onChange={handleCheckboxChange}
-                                                />
-                                                <label className="form-check-label" htmlFor="showEnabledOnly">
-                                                    Mostrar solo habilitados.
-                                                </label>
-                                            </div>
-                                        </div>
+                                <div className="card">
+                                    <div className="card-header">
+                                        <h5>Visualización de meseros</h5>
                                     </div>
+                                    <div className="card-body">
+                                        <div className="row">
+                                            <div className="col-md-6">
+                                                <button
+                                                    title='Crear un nuevo mesero.'
+                                                    type='button'
+                                                    className='btn btn-primary'
+                                                    onClick={navigateToCreateWaiter}
+                                                >
+                                                    Registrar
+                                                </button>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="form-group">
+                                                    <input type="search" className="form-control"
+                                                        id="exampleInputEmail1"
+                                                        aria-describedby="emailHelp"
+                                                        placeholder="Buscador"
+                                                        value={searchTerm}
+                                                        onChange={handleSearchChange}
+                                                        title='Buscar uno o varios meseros por algun dato de los meseros.'
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="movement">
+                                                <div className="form-check">
+                                                    <input
+                                                        type="checkbox"
+                                                        title="Mostrar los meseros que estan habilitados en la primeras paginas."
+                                                        className="form-check-input"
+                                                        id="showEnabledOnly"
+                                                        checked={showEnabledOnly}
+                                                        onChange={handleCheckboxChange}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="showEnabledOnly">
+                                                        Mostrar solo habilitados.
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
 
 
-                                    <div className="card-body table-border-style">
-                                        <div className="table-responsive">
-                                            <table className="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th className="text-center">Tipo de documento</th>
-                                                        <th className="text-center">N° documento</th>
-                                                        <th className="text-center">Nombre</th>
-                                                        <th className="text-center">Apellido</th>
-                                                        <th className="text-center">Restaurante</th>
-                                                        <th className="text-center">Estado</th>
-                                                        <th className="text-center">Acciones</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {visibleWaiters.map((waiter) => (
-                                                        <tr key={waiter.ID_User}>
-                                                            <td title='Tipo de documento del mesero.'>{waiter.Type_Document}</td>
-                                                            <td title='Numero de identificacion del mesero.'>{waiter.Document}</td>
-                                                            <td title='Nombre del mesero.'>{waiter.Name_User}</td>
-                                                            <td title='Apellido del mesero.'>{waiter.LastName_User}</td>
-                                                            <td title='Restaurante al que pertenece el mesero.'>{waiter.Restaurant}</td>
-                                                            <td title='Estado actual del mesero.' className={`${barraClass}`}>
-                                                                {waiter.State ? "Habilitado" : "Deshabilitado"}
-                                                            </td>
-                                                            <td><div style={{ display: "flex", alignItems: "center", padding: '3px' }}>
-                                                                <button
-                                                                    onClick={() => handleEdit(waiter)}
-                                                                    className={`ml-1 btn btn-icon btn-primary ${!waiter.State ? "text-gray-400 cursor-not-allowed" : ""}`}
-                                                                    disabled={!waiter.State}
-                                                                >
-                                                                    <BiEdit />
-                                                                </button>
-                                                                <button
-                                                                    type="button"
-                                                                    title='Cambiar el estado de un mesero.'
-                                                                    className={`ml-1 btn btn-icon btn-success ${barraClass}`}
-                                                                    onClick={() => onStatusChange(waiter.ID_User)}
-                                                                >
-                                                                    {waiter.State ? (
-                                                                        <MdToggleOn className={`estado-icon active ${barraClass}`} />
-                                                                    ) : (
-                                                                        <MdToggleOff className={`estado-icon inactive ${barraClass}`} />
-                                                                    )}
-                                                                </button>
-                                                            </div>
-                                                            </td>
+                                        <div className="card-body table-border-style">
+                                            <div className="table-responsive">
+                                                <table className="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th className="text-center">Tipo de documento</th>
+                                                            <th className="text-center">N° documento</th>
+                                                            <th className="text-center">Nombre</th>
+                                                            <th className="text-center">Apellido</th>
+                                                            <th className="text-center">Restaurante</th>
+                                                            <th className="text-center">Estado</th>
+                                                            <th className="text-center">Acciones</th>
                                                         </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
+                                                    </thead>
+                                                    <tbody>
+                                                        {visibleWaiters.map((waiter) => (
+                                                            <tr key={waiter.ID_User}>
+                                                                <td title='Tipo de documento del mesero.'>{waiter.Type_Document}</td>
+                                                                <td title='Numero de identificacion del mesero.'>{waiter.Document}</td>
+                                                                <td title='Nombre del mesero.'>{waiter.Name_User}</td>
+                                                                <td title='Apellido del mesero.'>{waiter.LastName_User}</td>
+                                                                <td title='Restaurante al que pertenece el mesero.'>{waiter.Restaurant}</td>
+                                                                <td title='Estado actual del mesero.' className={`${barraClass}`}>
+                                                                    {waiter.State ? "Habilitado" : "Deshabilitado"}
+                                                                </td>
+                                                                <td><div style={{ display: "flex", alignItems: "center", padding: '3px' }}>
+                                                                    <button
+                                                                        onClick={() => handleEdit(waiter)}
+                                                                        className={`ml-1 btn btn-icon btn-primary ${!waiter.State ? "text-gray-400 cursor-not-allowed" : ""}`}
+                                                                        disabled={!waiter.State}
+                                                                    >
+                                                                        <BiEdit />
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        title='Cambiar el estado de un mesero.'
+                                                                        className={`ml-1 btn btn-icon btn-success ${barraClass}`}
+                                                                        onClick={() => onStatusChange(waiter.ID_User)}
+                                                                    >
+                                                                        {waiter.State ? (
+                                                                            <MdToggleOn className={`estado-icon active ${barraClass}`} />
+                                                                        ) : (
+                                                                            <MdToggleOff className={`estado-icon inactive ${barraClass}`} />
+                                                                        )}
+                                                                    </button>
+                                                                </div>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
-                                    </div>
 
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div
-                className="pagination-container pagination"
-                title='Para moverse mas rapido por el modulo cuando hay varios registros en el sistema.'
-            >
-                <Stack spacing={2}>
-                    <Pagination
-                        count={pageCount}
-                        page={currentPage}
-                        siblingCount={2}
-                        onChange={handlePageChange}
-                        variant="outlined"
-                        shape="rounded"
-                    />
-                </Stack>
-            </div>
+                        <div
+                            className="pagination-container pagination"
+                            title='Para moverse mas rapido por el modulo cuando hay varios registros en el sistema.'
+                        >
+                            <Stack spacing={2}>
+                                <Pagination
+                                    count={pageCount}
+                                    page={currentPage}
+                                    siblingCount={2}
+                                    onChange={handlePageChange}
+                                    variant="outlined"
+                                    shape="rounded"
+                                />
+                            </Stack>
+                        </div>
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2, title: 'Muestra la pagina en la que se encuentra actualmente de las paginas en total que existen.' }}>
-                <Typography variant="body2" color="text.secondary">
-                    Página {currentPage} de {pageCount}
-                </Typography>
-            </Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2, title: 'Muestra la pagina en la que se encuentra actualmente de las paginas en total que existen.' }}>
+                            <Typography variant="body2" color="text.secondary">
+                                Página {currentPage} de {pageCount}
+                            </Typography>
+                        </Box>
+                    </div>
+                )}
+            </div>
 
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -259,6 +279,8 @@ function WaiterPage() {
                     </div>
                 </div>
             )}
+
+
         </section>
     )
 }
