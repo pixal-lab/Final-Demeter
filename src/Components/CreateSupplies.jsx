@@ -64,82 +64,37 @@ function CreateSupplies({
 
   const onSubmit = handleSubmit(async (values) => {
 
-    if (!selectedMeasure) {
-      setError('Measure', {
-        type: 'manual',
-        message: 'Debes seleccionar una medida.',
-      });
-      return;
-    }
 
-    if (!selectedCategory) {
-      setError('SuppliesCategory_ID', {
-        type: 'manual',
-        message: 'Debes seleccionar una categoría.',
-      });
-      return;
-    }
+    const normalizedInputName = values.Name_Supplies
+    .toLowerCase()
+    .replace(/\s/g, '')
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-    const dataToSend = {
-      ...values,
-      Measure: selectedMeasure.value,
-      SuppliesCategory_ID: selectedCategory.value,
-    };
+  const dataToSend = {
+    ...values,
+    Name_Supplies: normalizedInputName,
+    Measure: selectedMeasure.value,
+    SuppliesCategory_ID: selectedCategory.value,
+  };
 
-    const isNameDuplicate = supplies.some(
-      (supply) => supply.Name_Supplies === dataToSend.Name_Supplies
-    );
+  // Normalizar los nombres existentes para la comparación
+  const normalizedExistingNames = supplies.map(supply =>
+    supply.Name_Supplies.toLowerCase().replace(/\s/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  );
 
-    if (isNameDuplicate) {
-      setError('Name_Supplies', {
-        type: 'manual',
-        message: 'El nombre del insumo ya existe.',
-      });
-      return;
-    }
+  // Verificar si el nombre ya existe
+  const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
 
-    if (!dataToSend.Unit || isNaN(parseInt(dataToSend.Unit))) {
-      setError('Unit', {
-        type: 'manual',
-        message: 'La cantidad es requerida y debe ser un número válido.',
-      });
-      return;
-    }
+  if (isNameDuplicate) {
+    setError('Name_Supplies', {
+      type: 'manual',
+      message: 'El nombre del insumo ya existe.',
+    });
+    return;
+  }
 
-    if (
-      parseInt(dataToSend.Unit) < 0 ||
-      parseInt(dataToSend.Unit) > 999999
-    ) {
-      setError('Unit', {
-        type: 'manual',
-        message: 'La cantidad debe tener de 1 a 10 caracteres.',
-      });
-      return;
-    }
-
-    if (!dataToSend.Stock || isNaN(parseInt(dataToSend.Stock))) {
-      setError('Stock', {
-        type: 'manual',
-        message: 'La existencia mínima es requerida y debe ser un número válido.',
-      });
-      return;
-    }
-
-    if (parseInt(dataToSend.Stock) < 0 || parseInt(dataToSend.Stock) > 999) {
-      setError('Stock', {
-        type: 'manual',
-        message: 'La existencia mínima debe ser un número entero entre 0 y 999.',
-      });
-      return;
-    }
-
-    if (parseInt(dataToSend.Stock) > parseInt(dataToSend.Unit)) {
-      setError('Stock', {
-        type: 'manual',
-        message: `La existencia mínima no puede ser mayor que la cantidad de insumo (${dataToSend.Unit}).`,
-      });
-      return;
-    }
+  // Restaurar el nombre original antes de almacenar los datos
+  dataToSend.Name_Supplies = values.Name_Supplies;
 
     createSupplies(dataToSend);
     setOpen(false);
@@ -205,9 +160,8 @@ function CreateSupplies({
                         {...register('Name_Supplies', {
                           required: 'Este campo es obligatorio',
                           pattern: {
-                            value: /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ\s]*[a-záéíóúñ]$/u,
-                            message:
-                              'La primera letra debe ser mayúscula y el resto minúscula.',
+                            value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]*$/u,
+                            message: 'Solo se permiten letras y un espacio.',
                           },
                         })}
                         type="text"
@@ -227,11 +181,19 @@ function CreateSupplies({
                       <input
                         {...register('Unit', {
                           required: 'Este campo es obligatorio',
-                          validate: (value) => {
-                            const parsedValue = parseInt(value);
-                            if (isNaN(parsedValue)) {
-                              return 'Debe ser un número entero.';
-                            }
+                          validate: {
+                            isDouble: (value) => {
+                              const parsedValue = parseFloat(value);
+                              if (isNaN(parsedValue)) {
+                                return 'Debe ser un número decimal.';
+                              }
+                            },
+                            validRange: (value) => {
+                              const parsedValue = parseFloat(value);
+                              if (parsedValue < 0 || parsedValue > 99999999) {
+                                return 'La cantidad debe estar entre 0 y 99999999.';
+                              }
+                            },
                           },
                         })}
                         type="text"
@@ -290,21 +252,25 @@ function CreateSupplies({
                       <input
                         {...register('Stock', {
                           required: 'Este campo es obligatorio',
-                          validate: (value, { Unit }) => {
-                            const parsedValue = parseInt(value);
-                            const parsedUnit = parseInt(Unit);
+                          validate: {
+                            isDouble: (value) => {
+                              const parsedValue = parseFloat(value);
+                              if (isNaN(parsedValue)) {
+                                return 'Debe ser un número decimal.';
+                              }
+                            },
+                            validRange: (value, { Unit }) => {
+                              const parsedValue = parseFloat(value);
+                              const parsedUnit = parseFloat(Unit);
 
-                            if (isNaN(parsedValue)) {
-                              return 'Debe ser un número entero.';
-                            }
+                              if (parsedValue < 0 || parsedValue > 9999) {
+                                return 'La existencia mínima debe estar entre 0 y 9999.';
+                              }
 
-                            if (parsedValue < 0 || parsedValue > 999) {
-                              return 'Debe ser un número entero entre 0 y 999.';
-                            }
-
-                            if (parsedValue > parsedUnit) {
-                              return `No puede ser mayor que la cantidad: (${parsedUnit}).`;
-                            }
+                              if (parsedValue > parsedUnit) {
+                                return `No puede ser mayor que la cantidad: (${parsedUnit}).`;
+                              }
+                            },
                           },
                         })}
                         type="text"
