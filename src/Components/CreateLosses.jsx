@@ -139,6 +139,7 @@ function CreateLosses({ supply, onLossCreated }) {
                                             <button
                                                 className="btn btn-primary mr-5"
                                                 type="submit"
+                                                title="Este botón sirve para guardar la información y cerrar la ventana modal."
                                             >
                                                 Confirmar
                                             </button>
@@ -146,6 +147,7 @@ function CreateLosses({ supply, onLossCreated }) {
                                                 className="btn btn-primary"
                                                 onClick={onCancel}
                                                 type="button"
+                                                title="Este botón sirve para cerrar la ventana modal sin guardar la información."
                                             >
                                                 Cancelar
                                             </button>
