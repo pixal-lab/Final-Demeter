@@ -1,52 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { useSupplies } from '../Context/Supplies.context';
-import DeleteNotification from '../Components/DeleteNotification';
 import StoreIcon from '@mui/icons-material/Store';
-import { AiFillDelete } from "react-icons/ai";
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import '../css/style.css'
+import '../css/landing.css'
 
 function Alert() {
-  const { supplies } = useSupplies();
+  const { supplies, getSupplies } = useSupplies();
   const [lowStockSupplies, setLowStockSupplies] = useState([]);
-  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedSupplyToDelete, setSelectedSupplyToDelete] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const lowStock = supplies.filter((supply) => supply.Unit <= supply.Stock);
-    setLowStockSupplies(lowStock);
+    getSupplies();
+  }, []);
 
-    lowStock.forEach((supply) => {
-      toast.info(`Existencias bajas para ${supply.Name_Supplies}`, {
-        autoClose: 5000,
-      });
-    });
-  }, [supplies]);
+useEffect(() => {
+  // Intenta obtener los datos almacenados de localStorage
+  const storedLowStockSupplies = localStorage.getItem('lowStockSupplies');
 
-  const handleDelete = (supply) => {
-    setLowStockSupplies((prevSupplies) =>
-      prevSupplies.filter((s) => s.ID_Supplies !== supply.ID_Supplies)
-    );
+  // Verifica si el valor recuperado no es nulo ni indefinido
+  if (storedLowStockSupplies !== null && storedLowStockSupplies !== undefined) {
+    try {
+      // Intenta analizar el valor recuperado como JSON
+      const parsedData = JSON.parse(storedLowStockSupplies);
 
-    setSelectedSupplyToDelete(supply);
-    setDeleteModalOpen(true);
-  };
+      // Actualiza el estado con los datos analizados
+      setLowStockSupplies(parsedData);
+    } catch (error) {
+      console.error('Error al analizar JSON desde localStorage:', error);
+    }
+  }
 
-  const closeDeleteModal = () => {
-    setDeleteModalOpen(false);
-    setSelectedSupplyToDelete(null);
-  };
+  // Calcula lowStock y actualiza el estado
+  const lowStock = supplies.filter((supply) => supply.Unit <= supply.Stock);
+  setLowStockSupplies(lowStock);
+
+  // Almacena los datos actualizados en localStorage
+  localStorage.setItem('lowStockSupplies', JSON.stringify(lowStock));
+
+}, [supplies]);
 
   const handleNavigate = () => {
-    navigate('/tu-proxima-ruta');
-  };
-
-  const handleRemoveFromTable = (supplyId) => {
-    setLowStockSupplies((prevSupplies) =>
-      prevSupplies.filter((supply) => supply.ID_Supplies !== supplyId)
-    );
+    navigate('/shopping');
   };
 
 
@@ -67,7 +62,7 @@ function Alert() {
                 <div className="card-body">
                   <div className="row">
                     <div className="col-md-6 ml-3">
-                    <h5>Suministros con Existencias Bajas</h5>
+                      <h5>Suministros con Existencias Bajas</h5>
                     </div>
                   </div>
                   <div className="card-body">
@@ -89,17 +84,9 @@ function Alert() {
                               <td>{supply.Stock}</td>
                               <td>
                                 <button
-                                  onClick={() => {
-                                    handleDelete(supply);
-                                    handleRemoveFromTable(supply.ID_Supplies);
-                                  }}
-                                  className="btn btn-icon btn-danger"
-                                >
-                                  <AiFillDelete />
-                                </button>
-                                <button
                                   onClick={handleNavigate}
                                   className="btn btn-icon btn-primary"
+                                  title='Este boton lo llevará a la pestaña de compras'
                                 >
                                   <StoreIcon />
                                 </button>
@@ -110,25 +97,12 @@ function Alert() {
                       </table>
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {isDeleteModalOpen && (
-        <DeleteNotification
-          onClose={closeDeleteModal}
-          onDelete={() => {
-            if (selectedSupplyToDelete) {
-              deleteSupplies(selectedSupplyToDelete.ID_Supplies);
-              closeDeleteModal();
-            }
-          }}
-        />
-      )}
     </section>
   );
 }

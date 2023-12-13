@@ -102,7 +102,7 @@ function App() {
           </Module>
         </User>
       </Role>
-    </BrowserRouter >
+    </BrowserRouter>
   )
 }
 
