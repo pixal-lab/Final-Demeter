@@ -16,7 +16,7 @@ import "../css/style.css";
 import "../css/landing.css";
 
 function SuppliesCategoryPage() {
-  const { Category_supplies, getCategory_supplies, deleteCategory_supplies } = useCategorySupplies();
+  const { Category_supplies, getCategory_supplies, deleteCategory_supplies, toggleCategorySupplyStatus } = useCategorySupplies();
   const { supplies, getSupplies } = useSupplies();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -175,7 +175,7 @@ function SuppliesCategoryPage() {
                                   <button
                                     type="button"
                                     className={`btn btn-icon btn-success ${suppliesCategory.State ? 'active' : 'inactive'}`}
-                                    onClick={() => handleToggleStatus(suppliesCategory)}
+                                    onClick={() => toggleCategorySupplyStatus(suppliesCategory.ID_SuppliesCategory)}
                                     title="Este botón sirve para cambiar el estado de la categoría."
                                   >
                                     {suppliesCategory.State ? (
@@ -246,6 +246,7 @@ function SuppliesCategoryPage() {
         />
       )}
 
+     
     </section>
   );
 }

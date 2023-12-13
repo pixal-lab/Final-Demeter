@@ -16,7 +16,7 @@ import "../css/style.css";
 import "../css/landing.css";
 
 function ProductCategoryPage() {
-  const { Category_products, getCategory_products, deleteCategory_products } = useCategoryProducts();
+  const { Category_products, getCategory_products, deleteCategory_products, toggleCategoryProductStatus } = useCategoryProducts();
   const { Product, getProduct } = useProduct();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -174,7 +174,7 @@ function ProductCategoryPage() {
                                   <button
                                     type="button"
                                     className={`btn btn-icon btn-success ${productCategory.State ? "active" : "inactive"}`}
-                                    onClick={() => handleToggleStatus(productCategory)}
+                                    onClick={() => toggleCategoryProductStatus(productCategory.ID_ProductCategory)}
                                     title="Este botón sirve para cambiar el estado de la categoría."
                                   >
                                     {productCategory.State ? (
