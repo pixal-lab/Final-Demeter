@@ -8,7 +8,6 @@ import CreateProductCategory from "../Components/CreateProductCategory.jsx";
 import UpdateProductCategory from "../Components/UpdateProductCategory.jsx";
 import DeleteProductCategory from "../Components/DeleteProductCategory.jsx";
 import CannotDeleteCategory from "../Components/CannotDeleteProductsCategory.jsx";
-import CannotDisableCategoryProduct from '../Components/CannotDisableCategoryProduct.jsx';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -17,14 +16,13 @@ import "../css/style.css";
 import "../css/landing.css";
 
 function ProductCategoryPage() {
-  const { Category_products, getCategory_products, deleteCategory_products, toggleCategoryProductStatus } = useCategoryProducts();
+  const { Category_products, getCategory_products, deleteCategory_products } = useCategoryProducts();
   const { Product, getProduct } = useProduct();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProductCategoryToDelete, setSelectedProductCategoryToDelete] = useState(null);
   const [selectedProductCategoryToUpdate, setSelectedProductCategoryToUpdate] = useState(null);
   const [showWarning, setShowWarning] = useState(false);
-  const [showWarningDisable, setShowWarningDisable] = useState(false);
   const [showEnabledOnly, setShowEnabledOnly] = useState(
     localStorage.getItem("showEnabledOnlyProduct") === "true"
   );
@@ -90,19 +88,6 @@ function ProductCategoryPage() {
 
   const handleUpdateProductCategory = (productCategory) => {
     setSelectedProductCategoryToUpdate(productCategory);
-  };
-
-  const handleToggleStatus = async (productCategory) => {
-    const categoryID = productCategory.ID_ProductCategory;
-
-    const productInCategory = Product.filter((product) => product.ProductCategory_ID === categoryID);
-
-    if (productInCategory.length > 0) {
-      setShowWarningDisable(true);
-    } else {
-      setShowWarningDisable(false);
-      toggleCategoryProductStatus(categoryID);
-    }
   };
 
   const handlePageChange = (event, value) => {
@@ -260,11 +245,6 @@ function ProductCategoryPage() {
         />
       )}
 
-      {showWarningDisable && (
-        <CannotDisableCategoryProduct
-          onClose={() => setShowWarningDisable(false)}
-        />
-      )}
     </section>
   );
 }
