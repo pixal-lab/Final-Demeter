@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import { getRolesRequest, getRoleRequest, createRoleRequest, toggleRoleRequest, updateRoleRequest, deleteRoleRequest } from '../Api/Role.request.js'
+import { getRolesRequest, getRoleRequest, createRoleRequest, toggleRoleRequest, updateRoleRequest, deleteRoleRequest, AddModuleToRole, AddMultipleModuleAndRole, AddMultipleModuleAndRoleAndDeleteIfExists } from '../Api/Role.request.js'
 
 export const RoleContext = createContext();
 
@@ -75,6 +75,40 @@ export const Role = ({ children }) => {
         }
     }
 
+    
+    const addModuleToRole = async (Role) => {
+        try {
+            const createdRole = await AddModuleToRole(Role);
+            return createdRole.data
+        } catch (error) {
+            console.log(error);
+        }
+
+        return {}
+    }
+
+    const addMultipleModuleAndRole = async (roleId, Role) => {
+        try {
+            const createdRole = await AddMultipleModuleAndRole(roleId, Role);
+            return createdRole.data
+        } catch (error) {
+            console.log(error);
+        }
+
+        return {}
+    }
+
+    const addMultipleModuleAndRoleAndDeleteIfExists = async (roleId, Role) => {
+        try {
+            const createdRole = await AddMultipleModuleAndRoleAndDeleteIfExists(roleId, Role);
+            return createdRole.data
+        } catch (error) {
+            console.log(error);
+        }
+
+        return {}
+    }
+
     return (
         <RoleContext.Provider
             value={{
@@ -85,6 +119,9 @@ export const Role = ({ children }) => {
                 toggleRoleStatus,
                 updateRole,
                 deleteRole,
+                addModuleToRole,
+                addMultipleModuleAndRole,
+                addMultipleModuleAndRoleAndDeleteIfExists
             }}
         >
             {children}

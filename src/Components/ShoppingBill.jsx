@@ -6,19 +6,20 @@ import CancelShop from './CancelShop';
 import { useSupplier } from '../Context/Supplier.context';
 import { useUser } from '../Context/User.context';
 import Select from 'react-select';
-import { v4 } from "uuid"
 import useLocaStorage from '../hooks/useLocaStorage';
 
 
-function ShoppingBill({ total = 0, onConfirm, ...confirmValues }) {
+
+function ShoppingBill({ total = 0, onConfirm, onClose, ...confirmValues }) {
   const { register, handleSubmit } = useForm();
+  const [uuidv4, setUuidv4] = useState("")
   const { getSupplier } = useSupplier()
-  
+
   const [currentUser, setCurrentUser] = useState({})
 
   const { getCurrentUser } = useUser()
 
-  const uuidv4 = useMemo(() => v4(), [])
+  // const uuidv4 = useMemo(() => v4(), [])
   const [supplierState, setSupplierState] = useState([{
     Name_Supplier: "",
     ID_Supplier: "",
@@ -30,7 +31,7 @@ function ShoppingBill({ total = 0, onConfirm, ...confirmValues }) {
   useEffect(() => {
     return async () => {
       const newSupplier = await Promise.resolve(getSupplier());
-      const filteredSuppliers = newSupplier.filter((supplierItem) => supplierItem.State); 
+      const filteredSuppliers = newSupplier.filter((supplierItem) => supplierItem.State);
       setSupplierState(filteredSuppliers);
     };
   }, []);
@@ -52,6 +53,11 @@ function ShoppingBill({ total = 0, onConfirm, ...confirmValues }) {
 
   const beforeConfirm = (data) => {
     onConfirm(data)
+    destroy()
+  }
+
+  const beforeCancel = () => {
+    onClose()
     destroy()
   }
 
@@ -84,8 +90,10 @@ function ShoppingBill({ total = 0, onConfirm, ...confirmValues }) {
     label: Name_Supplier,
   }));
 
-
-
+  const confirmShopData = {
+    ...confirmValues,
+    uuidv4
+  }
 
 
   return (
@@ -100,7 +108,12 @@ function ShoppingBill({ total = 0, onConfirm, ...confirmValues }) {
         </div>
         <div className="flex mb-2 mr-2">
           <h5 className=' mt-2'>N. factura:</h5>
-          <input className='custom-input-facture' type="text" value={uuidv4.length > 20 ? uuidv4.slice(0, 20) + "..." : uuidv4} />
+          <input className='custom-input-facture' type="text"
+            value={uuidv4.length > 20 ? uuidv4.slice(0, 20) + "..." : uuidv4}
+            onChange={e => setUuidv4(e.target.value)}
+            placeholder='Identificador de la factura'
+          />
+          {/* <input className='custom-input-facture' type="text" value={uuidv4.length > 20 ? uuidv4.slice(0, 20) + "..." : uuidv4} /> */}
 
         </div>
         <div className="flex mt-3 mr-2">
@@ -125,11 +138,9 @@ function ShoppingBill({ total = 0, onConfirm, ...confirmValues }) {
         <div className="mt-auto ">
           <hr className="ml-2 mt-4 " />
           <div className="flex justify-between pt-3">
-            <ConfirmShop {...Object.assign(confirmValues, {
-              uuidv4
-            })} data={selectedSupplier}
+            <ConfirmShop {...confirmShopData} data={selectedSupplier}
               onConfirm={beforeConfirm} />
-            <CancelShop />
+            <CancelShop onClose={beforeCancel} />
           </div>
         </div>
       </form>

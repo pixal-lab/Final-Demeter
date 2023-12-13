@@ -23,7 +23,13 @@ function ShoppingPage() {
   const { getCurrentUser } = useUser();
   const [currentUser, setCurrentUser] = useState({})
   const [shoppingData, setShoppingData] = useState([])
-  const [showEnabledOnly, setShowEnabledOnly] = useState(false); // Estado para controlar la visibilidad
+  const [showEnabledOnly, setShowEnabledOnly] = useState(
+    localStorage.getItem("showEnabledOnly") === "true"
+  );
+
+  useEffect(() => {
+    localStorage.setItem("showEnabledOnly", showEnabledOnly);
+  }, [showEnabledOnly]);
 
 
   useLayoutEffect(() => {
@@ -90,6 +96,8 @@ function ShoppingPage() {
   const startIndex = (currentPage - 1) * itemsForPage;
   const endIndex = startIndex + itemsForPage;
   const visibleUsers = sortedUsers.slice(startIndex, endIndex);
+
+  console.log("visibleUsers", visibleUsers)
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);

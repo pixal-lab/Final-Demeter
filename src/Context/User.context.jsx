@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getUsersRequest, GetCurrentUser, getUserRequest, createUserRequest, statusUserRequest, updateUserRequest, deleteUserRequest, loginRequest, verifyTokenRequest, forgotPasswordRequest, NewPasswordRequest, GetUserCookies } from '../Api/User.request.js'
-import { getWaitersRequest, createWaiterRequest } from '../Api/User.request.js';
+import { getUsersRequest, GetCurrentUser, getUserRequest, createUserRequest, statusUserRequest, updateUserRequest, deleteUserRequest, loginRequest, verifyTokenRequest, forgotPasswordRequest, NewPasswordRequest, GetUserCookies, existUserByEmailOrIdRequest, getWaiterRequest } from '../Api/User.request.js'
+import { getWaitersRequest, createWaiterRequest, updateWaiterRequest } from '../Api/User.request.js';
+import { updateUserLoginRequest, updatePasswordLoginRequest } from '../Api/User.request.js';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
@@ -31,14 +32,15 @@ export const User = ({ children }) => {
 
   const getUsers = async () => {
     try {
-        const res = await getUsersRequest();
-        setUser(res.data);
-        
-        
+      const res = await getUsersRequest();
+      setUser(res.data);
+      return res.data
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-}
+
+    return []
+  }
   const getUser = async (id) => {
     try {
       const res = await getUserRequest(id);
@@ -46,6 +48,19 @@ export const User = ({ children }) => {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  const existUserByEmailOrId = async (document, email, userType) => {
+    try {
+      const res = await existUserByEmailOrIdRequest(document, email, userType);
+      return res.data
+    } catch (error) {
+      return true
+    }
+  }
+
+  const existSupplierByEmailOrId = async (document, email) => {
+    return await existUserByEmailOrId(document, email, "supplier")
   }
 
   const getUserCookies = async () => {
@@ -76,18 +91,22 @@ export const User = ({ children }) => {
   }
 
   const toggleUserStatus = async (id) => {
+
+    let userData = {}
+    let hasError = false
     try {
       const res = await statusUserRequest(id);
 
-      if (res.status === 200) {
-        setUser((prevUser) =>
-          prevUser.map((users) =>
-            users.ID_User === id ? { ...users, State: !users.State } : users
-          )
-        );
-      }
+      userData = res.data
+
     } catch (error) {
       console.log(error);
+      hasError = true
+    }
+
+    return {
+      userData,
+      hasError
     }
   }
 
@@ -260,36 +279,68 @@ export const User = ({ children }) => {
     navigate('/');
   }
 
-
   // --------------------------- Mesero --------------------------- //
 
   const getWaiters = async () => {
     try {
-        const res = await getWaitersRequest();
-        setUser(res.data)
-    } catch (error) {
-        console.log(error)
-    }
-    }
+      const res = await getWaitersRequest();
+      setUser(res.data)
 
-    const getWaiter = async (id) => {
-    try {
-        const res = await getWaiterRequest(id);
-        return res.data
+      return res.data
     } catch (error) {
-        console.error(error);
+      console.log(error)
     }
-}
+    return []
+  }
 
-const createWaiter = async (user) => {
+  const getWaiter = async (id) => {
     try {
-        const res = await createWaiterRequest(user);
-        getWaiters();
-        console.log(res)
+      const res = await getWaiterRequest(id);
+      return res.data
     } catch (error) {
-        console.log(error);
+      console.error(error);
     }
-}
+  }
+
+  const createWaiter = async (user) => {
+    try {
+      const res = await createWaiterRequest(user);
+      getWaiters();
+      console.log(res)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const updateWaiter = async (users) => {
+    try {
+      await updateWaiterRequest(users);
+      getUsers();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // --------------------------- Edit Profile --------------------------- //
+
+  const updateUserLogin = async (users) => {
+    try {
+      await updateUserLoginRequest(users);
+      getUsers();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const updatePasswordLogin = async (users) => {
+    try {
+      await updatePasswordLoginRequest(users);
+      getUsers();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -304,7 +355,11 @@ const createWaiter = async (user) => {
         getWaiters,
         getWaiter,
         createWaiter,
-        //-------------login------------//
+        updateWaiter,
+        //------------- Profile ------------//
+        updateUserLogin,
+        updatePasswordLogin,
+        //------------- Login ------------//
         isAuthenticated,
         isAuthenticated,
         signin,
@@ -320,7 +375,9 @@ const createWaiter = async (user) => {
         changePasswordSuccess,
         setChangePasswordSuccess,
         getUserCookies,
-        getCurrentUser
+        getCurrentUser,
+        existUserByEmailOrId,
+        existSupplierByEmailOrId
       }}
     >
       {children}

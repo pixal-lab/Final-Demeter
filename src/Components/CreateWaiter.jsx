@@ -91,37 +91,37 @@ function CreateWaiter({ onClose, onCreated }) {
                         <div className="card-body">
                             <form onSubmit={onSubmit}>
                                 <div className="control">
-                                    <div className="form-group col-md-6">
-                                        <div className="mb-3">
-                                            <label htmlFor="Type_Document" className="form-label mt-3">
-                                                Tipo de documento: <strong>*</strong>
-                                            </label>
-                                            <Select
-                                                options={typeOptions}
-                                                {...register("Type_Document")}
-                                                value={selectedType}
-                                                onChange={(selectedOption) => setSelectedType(selectedOption)}
-                                                menuPlacement="auto"
-                                                menuShouldScrollIntoView={false}
-                                                maxMenuHeight={132}
-                                                styles={customStyles}
-                                                theme={(theme) => ({
-                                                    ...theme,
-                                                    colors: {
-                                                        ...theme.colors,
-                                                        primary: '#201E1E',
-                                                    },
-                                                })}
-                                            />
-                                            {errors.Type_Document && (
-                                                <p className="text-red-500">
-                                                    {errors.Type_Document.message}
-                                                </p>
-                                            )}
-                                        </div>
+                                    <div className="form-group col-md-6 ml-3">
+                                        <label htmlFor="Type_Document" className="form-label mt-3">
+                                            Tipo de documento: <strong>*</strong>
+                                        </label>
+                                        <Select
+                                            className="form-control"
+                                            options={typeOptions}
+                                            {...register("Type_Document")}
+                                            value={selectedType}
+                                            onChange={(selectedOption) => setSelectedType(selectedOption)}
+                                            menuPlacement="auto"
+                                            menuShouldScrollIntoView={false}
+                                            maxMenuHeight={132}
+                                            styles={customStyles}
+                                            title='Se selecciona el tipo de documento del mesero.'
+                                            theme={(theme) => ({
+                                                ...theme,
+                                                colors: {
+                                                    ...theme.colors,
+                                                    primary: '#201E1E',
+                                                },
+                                            })}
+                                        />
+                                        {errors.Type_Document && (
+                                            <p className="text-red-500">
+                                                {errors.Type_Document.message}
+                                            </p>
+                                        )}
                                     </div>
 
-                                    <div className="form-group col-md-6">
+                                    <div className="form-group col-md-6 ml-3">
                                         <label htmlFor="Document" className="form-label">
                                             Número de identidad: <strong>*</strong>
                                         </label>
@@ -141,6 +141,7 @@ function CreateWaiter({ onClose, onCreated }) {
                                                 }
                                             })}
                                             className="form-control"
+                                            title='Se ingresa el numero de identificacion del mesero.'
                                         />
                                         {errors.Document && (
                                             <p className="text-red-500">
@@ -151,7 +152,7 @@ function CreateWaiter({ onClose, onCreated }) {
                                 </div>
 
                                 <div className="control">
-                                    <div className="form-group col-md-6">
+                                    <div className="form-group col-md-6 ml-3">
                                         <label htmlFor="Name_User" className="form-label">
                                             Nombres: <strong>*</strong>
                                         </label>
@@ -166,6 +167,7 @@ function CreateWaiter({ onClose, onCreated }) {
                                             })}
                                             type="text"
                                             className="form-control"
+                                            title='Se ingresa el nombre del mesero.'
                                         />
                                         {errors.Name_User && (
                                             <p className="text-red-500">
@@ -174,7 +176,7 @@ function CreateWaiter({ onClose, onCreated }) {
                                         )}
                                     </div>
 
-                                    <div className="form-group col-md-6">
+                                    <div className="form-group col-md-6 ml-3">
                                         <label htmlFor="LastName_User" className="form-label">
                                             Apellidos: <strong>*</strong>
                                         </label>
@@ -189,6 +191,7 @@ function CreateWaiter({ onClose, onCreated }) {
                                             })}
                                             type="text"
                                             className="form-control"
+                                            title='Se ingresa el apellido del mesero.'
                                         />
                                         {errors.LastName_User && (
                                             <p className="text-red-500">
@@ -199,7 +202,7 @@ function CreateWaiter({ onClose, onCreated }) {
                                 </div>
 
                                 <div className="control">
-                                    <div className="form-group col-md-6">
+                                    <div className="form-group col-md-6 ml-3">
                                         <label htmlFor="Restaurant" className="form-label">
                                             Restaurante: <strong>*</strong>
                                         </label>
@@ -214,6 +217,7 @@ function CreateWaiter({ onClose, onCreated }) {
                                             })}
                                             type="text"
                                             className="form-control"
+                                            title='Se ingresa el restaurante al que pertenece el mesero.'
                                         />
                                         {errors.Restaurant && (
                                             <p className="text-red-500">
@@ -224,21 +228,25 @@ function CreateWaiter({ onClose, onCreated }) {
                                 </div>
 
                                 <div className="buttonconfirm">
-                                    <div className="mb-3">
-                                        <button
-                                            className="btn btn-primary mr-5"
-                                            type="submit"
-                                            // disabled={!isValid}
-                                        >
-                                            Confirmar
-                                        </button>
+                                    <div className="ml-3">
+
                                         <button
                                             className="btn btn-primary"
                                             onClick={onCancel}
                                             type="button"
+                                            title='Se cancelan los datos del nuevo mesero.'
                                         >
                                             Cancelar
                                         </button>
+                                        <button
+                                            className="btn btn-primary mr-5"
+                                            type="submit"
+                                            // disabled={!isValid}
+                                            title='Se guardan los datos del nuevo mesero.'
+                                        >
+                                            Confirmar
+                                        </button>
+
                                     </div>
                                 </div>
                             </form>

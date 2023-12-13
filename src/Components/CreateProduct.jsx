@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 import Box from "@mui/material/Box";
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useProduct } from '../Context/Product.context.jsx';
 import { useCategoryProducts } from '../Context/CategoryProducts.context.jsx';
 
@@ -21,14 +21,14 @@ const style = {
 
 function CreateProducts({ onClose, onCreated }) {
 
-    const { register, handleSubmit, formState: { errors, isValid }, setError } = useForm();
+    const { control, register, handleSubmit, formState: { errors, isValid }, setError } = useForm();
     const { createProduct, product } = useProduct();
     const { Category_products } = useCategoryProducts();
     const [selectedCategory, setSelectedCategory] = useState(null);
 
     const handleCategoryChange = (selectedOption) => {
         setSelectedCategory(selectedOption);
-      
+
     };
 
     const customStyles = {
@@ -71,9 +71,9 @@ function CreateProducts({ onClose, onCreated }) {
         }
 
         values.ProductCategory_ID = selectedCategory.value;
-        
+
         createProduct(values)
-        
+
         onCreated();
         onClose();
     });
@@ -81,6 +81,13 @@ function CreateProducts({ onClose, onCreated }) {
     const onCancel = () => {
         onClose();
     };
+
+    const options = Category_products
+        .filter(category => category.State)
+        .map(category => ({
+            value: category.ID_ProductCategory,
+            label: category.Name_ProductCategory,
+        }));
 
     return (
         <Box sx={{ ...style, width: 600 }}>
@@ -122,25 +129,29 @@ function CreateProducts({ onClose, onCreated }) {
                                         <label htmlFor="ProductCategory_ID" className="form-label">
                                             Categoria: <strong>*</strong>
                                         </label>
-                                        <Select
-                                            
-                                            options={Category_products.map((category) => ({
-                                                value: category.ID_ProductCategory,
-                                                label: category.Name_ProductCategory,
-                                            }))}
-                                            value={selectedCategory}
-                                            onChange={handleCategoryChange}
-                                            menuPlacement="auto"
-                                            menuShouldScrollIntoView={false}
-                                            maxMenuHeight={132}
-                                            styles={customStyles}
-                                            theme={(theme) => ({
-                                                ...theme,
-                                                colors: {
-                                                    ...theme.colors,
-                                                    primary: '#201E1E',
-                                                },
-                                            })}
+                                        <Controller
+                                            control={control}
+                                            name="ProductCategory_ID"
+                                            rules={{ required: 'Este campo es obligatorio' }}
+                                            render={({ field }) => (
+                                                <Select
+                                                    options={options}
+                                                    value={selectedCategory}
+                                                    onChange={(selectedOption) => {
+                                                        setSelectedCategory(selectedOption);
+                                                        field.onChange(selectedOption);
+                                                    }}
+                                                    styles={customStyles}
+                                                    className="form-selects"
+                                                    theme={(theme) => ({
+                                                        ...theme,
+                                                        colors: {
+                                                            ...theme.colors,
+                                                            primary: '#e36209',
+                                                        },
+                                                    })}
+                                                />
+                                            )}
                                         />
                                         {errors.ProductCategory_ID && (
                                             <p className="text-red-500">{errors.ProductCategory_ID.message}</p>

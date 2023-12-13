@@ -70,7 +70,6 @@ function ShoppingView({ id, date }) {
                       <tr>
                         <th>Insumo</th>
                         <th>Cantidad</th>
-                        <th>Medida</th>
                         <th>Precio</th>
 
                       </tr>
@@ -84,14 +83,14 @@ function ShoppingView({ id, date }) {
                             Price_Supplier,
                             Supply: {
                               Name_Supplies,
-                              Measure
+                              // Measure
                             }
                           }) => (
                             <>
                               <tr >
                                 <td>{Name_Supplies}</td>
                                 <td>{Lot}</td>
-                                <td>{Measure}</td>
+                                {/* <td>{Measure}</td> */}
                                 <td>{Price_Supplier}</td>
                               </tr>
                             </>

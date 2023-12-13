@@ -17,7 +17,7 @@ function Sales() {
     const [newSaleID, setNewSaleID] =useState()
     useEffect(() => {
         fetchProductCategories();
-
+        
         if (Sales.length > 0 && action == 1) {
             setNewSaleID((Sales[Sales.length - 1].ID_Sale) + 1);
         }

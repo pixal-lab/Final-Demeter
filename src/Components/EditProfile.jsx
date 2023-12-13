@@ -1,12 +1,41 @@
-import React from 'react'
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useUser } from '../Context/User.context';
 
 const EditUser = () => {
 
-    const { register, formState: { errors } } = useForm({});
+    const { register, setValue, handleSubmit, formState: { errors } } = useForm();
+    const { getCurrentUser, updateUserLogin } = useUser();
+
+    useEffect(() => {
+        const fetchCurrentUser = async () => {
+            try {
+                const currentUserData = await getCurrentUser();
+                Object.keys(currentUserData).forEach((key) => {
+                    setValue(key, currentUserData[key]);
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchCurrentUser();
+    }, [getCurrentUser, setValue]);
+
+    const onSubmit = async (data) => {
+        try {
+            const userId = data.id;
+            await updateUserLogin(userId, data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
-        <form className='text-center col-md-10'>
+        <form
+            className='text-center col-md-10'
+            onSubmit={handleSubmit(onSubmit)}
+        >
             <div className="form-group p-3">
                 <label htmlFor="Name_User" className="form-label">
                     Nombres: <strong>*</strong>

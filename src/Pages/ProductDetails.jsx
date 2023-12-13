@@ -1,6 +1,15 @@
 import React from 'react'
+import UpdateProduct from '../Components/UpdateProduct.jsx';
+import CreateDetailProduct from '../Components/CreateDetailProduct.jsx';
+import ViewDetailProduct from '../Components/ViewDetailProduct.jsx';
+import { useProduct } from '../Context/Product.context.jsx'
+
 
 export default function ProductDetails() {
+
+    const { product, getProducts, toggleSupplyStatus, getCurrentProduct ,CurrentProd  } = useProduct();
+    
+
     return (
         <section className="pc-container">
             <div className="pcoded-content">
@@ -11,24 +20,21 @@ export default function ProductDetails() {
                                 <div className="card-header">
                                     <div className="row">
                                         <div className="col-md-6">
-                                            <h5>producto</h5>
+                                            <h5>PRODUCTO {CurrentProd}</h5>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="card-body">
                                     <div className="row">
-                                        Formulario producto
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-md-6">
-                                            <h5>Recetas</h5>
+                                        <div className="col-md-8">
+                                            <UpdateProduct />
                                         </div>
-                                        <div>
-                                            Tabla de detalles
+                                        <div className="col-md-4">
+                                            <CreateDetailProduct />
                                         </div>
                                     </div>
                                     <div className="row">
-                                        Formulario detalles
+                                        <ViewDetailProduct />
                                     </div>
                                 </div>
                             </div>
