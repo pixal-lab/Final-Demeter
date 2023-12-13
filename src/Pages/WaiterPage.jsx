@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { BiEdit } from "react-icons/bi";
 // Icons
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
 
@@ -21,8 +21,9 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 function WaiterPage() {
-    const { waiter, getWaiters, toggleUserStatus } = useUser();
+    const { user, getWaiters, toggleUserStatus } = useUser();
     const [searchTerm, setSearchTerm] = useState('');
+    const [allWaiter, setAllWaiter] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [waiterToEdit, setWaiterToEdit] = useState(null);
@@ -34,7 +35,11 @@ function WaiterPage() {
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        getWaiters();
+        // getWaiters();
+        return async () => {
+            const users = await getWaiters();
+            setAllWaiter(users)
+        }
         setCurrentPage(1);
     }, []);
 
@@ -63,7 +68,7 @@ function WaiterPage() {
         setShowEnabledOnly(!showEnabledOnly);
     };
 
-    const filteredWaiters = waiter.filter((waiter) => {
+    const filteredWaiters = allWaiter.filter((waiter) => {
         const { Type_Document, Document, Name_User, LastName_User, Restaurant } = waiter;
         const searchString = `${Type_Document} ${Document} ${Name_User} ${LastName_User} ${Restaurant}`.toLowerCase();
 
@@ -84,11 +89,23 @@ function WaiterPage() {
     const endIndex = startIndex + itemsForPage;
     const visibleWaiters = sortedWaiters.slice(startIndex, endIndex);
 
-    const barraClass = waiter.State ? "" : "desactivado";
+    const barraClass = user.State ? "" : "desactivado";
 
     const handlePageChange = (event, value) => {
         setCurrentPage(value);
     };
+
+    const onStatusChange = async (id) => {
+
+        const { hasError } = await toggleUserStatus(id)
+
+        if (hasError) return
+
+        setAllUsers((prevUser) =>
+            prevUser.map((users) =>
+                users.ID_User === id ? { ...users, State: !users.State } : users
+            ))
+    }
 
     return (
         <section className="pc-container">
@@ -180,7 +197,7 @@ function WaiterPage() {
                                                                     type="button"
                                                                     title='Cambiar el estado de un mesero.'
                                                                     className={`ml-1 btn btn-icon btn-success ${barraClass}`}
-                                                                    onClick={() => toggleUserStatus(waiter.ID_User)}
+                                                                    onClick={() => onStatusChange(waiter.ID_User)}
                                                                 >
                                                                     {waiter.State ? (
                                                                         <MdToggleOn className={`estado-icon active ${barraClass}`} />

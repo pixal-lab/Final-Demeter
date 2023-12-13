@@ -28,7 +28,7 @@ function CreateProducts({ onClose, onCreated }) {
 
     const handleCategoryChange = (selectedOption) => {
         setSelectedCategory(selectedOption);
-      
+
     };
 
     const customStyles = {
@@ -71,9 +71,9 @@ function CreateProducts({ onClose, onCreated }) {
         }
 
         values.ProductCategory_ID = selectedCategory.value;
-        
+
         createProduct(values)
-        
+
         onCreated();
         onClose();
     });
@@ -123,7 +123,7 @@ function CreateProducts({ onClose, onCreated }) {
                                             Categoria: <strong>*</strong>
                                         </label>
                                         <Select
-                                            
+
                                             options={Category_products.map((category) => ({
                                                 value: category.ID_ProductCategory,
                                                 label: category.Name_ProductCategory,

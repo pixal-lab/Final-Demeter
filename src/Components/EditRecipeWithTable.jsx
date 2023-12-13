@@ -34,8 +34,8 @@ const EditRecipeWithTable = ({ onClose }) => {
            
             {detailsArray.map((detail) => (
     <tr key={detail.ID_ProductDetail}>
-        <td>{detail.Lot_ProductDetail}  {detail.Supply.Measure}</td>
-        <td>{detail.Supply ? detail.Supply.Name_Supplies : ''}</td>
+        <td>{detail.Lot_ProductDetail} {detail.Supply.measure}</td>
+        <td>{detail.Supply ? detail.Supply.Name_Supplies : ''} </td>
     </tr>
 ))}
           </tbody>

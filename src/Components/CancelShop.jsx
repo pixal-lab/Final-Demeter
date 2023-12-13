@@ -35,7 +35,7 @@ function CancelShop() {
 
   return (
     <div>
-      <button className="btn btn-primary ml-2" onClick={handleOpen}>Cancelar compra</button>
+   <button className="btn btn-primary ml-2" onClick={handleOpen}>Cancelar compra</button>
       <Modal
         open={open}
         onClose={handleClose}
