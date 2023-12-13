@@ -61,41 +61,44 @@ function CreateSupplies({
   const [selectedMeasure, setSelectedMeasure] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
+  function formatName(inputName) {
+    const trimmedName = inputName.trim();
+    const formattedName = trimmedName.charAt(0).toUpperCase() + trimmedName.slice(1).toLowerCase();
+    return formattedName;
+  }
 
   const onSubmit = handleSubmit(async (values) => {
 
-
     const normalizedInputName = values.Name_Supplies
-    .toLowerCase()
-    .replace(/\s/g, '')
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-  const dataToSend = {
-    ...values,
-    Name_Supplies: normalizedInputName,
-    Measure: selectedMeasure.value,
-    SuppliesCategory_ID: selectedCategory.value,
-  };
-
-  // Normalizar los nombres existentes para la comparación
-  const normalizedExistingNames = supplies.map(supply =>
-    supply.Name_Supplies.toLowerCase().replace(/\s/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-  );
-
-  // Verificar si el nombre ya existe
-  const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
-
-  if (isNameDuplicate) {
-    setError('Name_Supplies', {
-      type: 'manual',
-      message: 'El nombre del insumo ya existe.',
-    });
-    return;
-  }
-
-  // Restaurar el nombre original antes de almacenar los datos
-  dataToSend.Name_Supplies = values.Name_Supplies;
-
+      .toLowerCase()
+      .replace(/\s/g, '')
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  
+    const formattedName = formatName(normalizedInputName);
+  
+    const dataToSend = {
+      ...values,
+      Name_Supplies: formattedName,
+      Measure: selectedMeasure.value,
+      SuppliesCategory_ID: selectedCategory.value,
+    };
+  
+    // Normalizar los nombres existentes para la comparación
+    const normalizedExistingNames = supplies.map(supply =>
+      supply.Name_Supplies.toLowerCase().replace(/\s/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    );
+  
+    // Verificar si el nombre ya existe
+    const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
+  
+    if (isNameDuplicate) {
+      setError('Name_Supplies', {
+        type: 'manual',
+        message: 'El nombre del insumo ya existe.',
+      });
+      return;
+    }
+  
     createSupplies(dataToSend);
     setOpen(false);
     reset();
@@ -185,7 +188,7 @@ function CreateSupplies({
                             isDouble: (value) => {
                               const parsedValue = parseFloat(value);
                               if (isNaN(parsedValue)) {
-                                return 'Debe ser un número decimal.';
+                                return 'Debe ser un número positivo.';
                               }
                             },
                             validRange: (value) => {
@@ -256,7 +259,7 @@ function CreateSupplies({
                             isDouble: (value) => {
                               const parsedValue = parseFloat(value);
                               if (isNaN(parsedValue)) {
-                                return 'Debe ser un número decimal.';
+                                return 'Debe ser un número positivo.';
                               }
                             },
                             validRange: (value, { Unit }) => {
@@ -268,7 +271,7 @@ function CreateSupplies({
                               }
 
                               if (parsedValue > parsedUnit) {
-                                return `No puede ser mayor que la cantidad: (${parsedUnit}).`;
+                                return `No puede ser mayor que la cantidad: ${parsedUnit}.`;
                               }
                             },
                           },

@@ -34,23 +34,39 @@ function CreateCategory_supplies({
     } = useForm();
 
     const { Category_supplies, createCategory_supplies } = useCategorySupplies();
-
     const [open, setOpen] = useState(false);
 
+    function formatName(inputName) {
+        const trimmedName = inputName.trim();
+        const formattedName = trimmedName.charAt(0).toUpperCase() + trimmedName.slice(1).toLowerCase();
+        return formattedName;
+    }
+
     const onSubmit = handleSubmit(async (values) => {
-        const isNameDuplicate = Category_supplies.some(
-            (SuppliesCategory) => SuppliesCategory.Name_SuppliesCategory === values.Name_SuppliesCategory
+        const normalizedInputName = values.Name_SuppliesCategory
+            .toLowerCase()
+            .replace(/\s/g, '')
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        const formattedName = formatName(normalizedInputName);
+
+        // Normalizar los nombres existentes para la comparación
+        const normalizedExistingNames = Category_supplies.map(category =>
+            category.Name_SuppliesCategory.toLowerCase().replace(/\s/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         );
+
+        // Verificar si el nombre ya existe
+        const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
 
         if (isNameDuplicate) {
             setError('Name_SuppliesCategory', {
                 type: 'manual',
-                message: 'El nombre de la categoria ya existe.',
+                message: 'El nombre de la categoría ya existe.',
             });
             return;
         }
 
-        createCategory_supplies(values);
+        createCategory_supplies({ ...values, Name_SuppliesCategory: formattedName });
         setOpen(false);
         reset();
     });
@@ -99,9 +115,8 @@ function CreateCategory_supplies({
                                                 {...register('Name_SuppliesCategory', {
                                                     required: 'Este campo es obligatorio',
                                                     pattern: {
-                                                        value: /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ\s]*[a-záéíóúñ]$/u,
-                                                        message:
-                                                            'Debe tener la primera letra en mayúscula, el resto en minúscula.',
+                                                        value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]*$/u,
+                                                        message: 'Solo se permiten letras y un espacio.',
                                                     },
                                                 })}
                                                 type="text"
