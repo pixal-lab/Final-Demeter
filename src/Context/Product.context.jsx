@@ -25,7 +25,7 @@ export function Product({ children }) {
     const getCurrentProduct = (id) => {
         try {
             setCurrentProd(id)
-            console.log(CurrentProd)
+            
             
             
         } catch (error) {

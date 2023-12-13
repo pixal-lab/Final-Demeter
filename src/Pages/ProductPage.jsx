@@ -22,6 +22,8 @@ function ProductPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditTableModalOpen, setIsEditTableModalOpen] = useState(false); // Agrega el estado para el nuevo modal
   const navigate = useNavigate();
+  
+  const barraClass = product?.State ? "" : "desactivado";
 
   const navigateToCreateProduct = () => {
     setIsCreateModalOpen(true);
@@ -39,6 +41,12 @@ function ProductPage() {
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
+
+  const entrar = (id) => {
+    getCurrentProduct(id)
+    navigate('/create_product');
+
+  }
 
   const filteredProduct = product.filter((produc) => {
     const { Name_Products, Price_Product, ProductCategory_ID, State } = produc;
@@ -101,44 +109,44 @@ function ProductPage() {
                               <td>
                                 {produc.ProductCategory_ID
                                   ? Category_products.find(
-                                      (category) =>
-                                        category.ID_ProductCategory ===
-                                        produc.ProductCategory_ID
-                                    )?.Name_ProductCategory || ''
+                                    (category) =>
+                                      category.ID_ProductCategory ===
+                                      produc.ProductCategory_ID
+                                  )?.Name_ProductCategory || ''
                                   : ''}
                               </td>
                               <td>{produc.Price_Product}</td>
-                              <td>{produc.State ? 'Habilitado' : 'Deshabilitado'}</td>
+                              <td className={`${barraClass}`}>
+                                {produc?.State ? "Habilitado" : "Deshabilitado"}
+                              </td>
                               <td>
-                                <div style={{ display: "flex", alignItems: "center" }} className="pl-[30vh]">
+                                <div style={{ display: "flex", alignItems: "center", padding: '3px' }}>
+                                  <button
+                                    onClick={() => {
+                                      entrar(produc.ID_Product)
+                                  }}
+                                    className={`ml-1 btn btn-icon btn-primary ${!produc.State ? "text-gray-400 cursor-not-allowed" : ""}`}
+                                    disabled={!produc?.State}
+                                  >
+                                    <BiEdit />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDelete(produc)}
+                                    className={`ml-1 btn btn-icon btn-danger ${!produc.State ? "text-gray-400 cursor-not-allowed" : ""}`}
+                                    disabled={!produc.State}
+                                  >
+                                    <AiFillDelete />
+                                  </button>
                                   <button
                                     type="button"
-                                    className={`btn btn-icon btn-success ${produc.State ? "active" : "inactive"}`}
-                                    onClick={() => toggleSupplyStatus(produc.ID_Product)}
-                                    style={{ marginRight: "10px" }}
+                                    className={`ml-1 btn btn-icon btn-success ${barraClass}`}
+                                    onClick={() => onStatusChange(produc.ID_Product)}
                                   >
                                     {produc.State ? (
-                                      <MdToggleOn className="estado-icon active" />
+                                      <MdToggleOn className={`estado-icon active ${barraClass}`} />
                                     ) : (
-                                      <MdToggleOff className="estado-icon inactive" />
+                                      <MdToggleOff className={`estado-icon inactive ${barraClass}`} />
                                     )}
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="btn btn-icon bg-gray"
-                                    onClick={() => {
-                                      getCurrentProduct(produc.ID_Product);
-                                      setIsEditTableModalOpen(true); // Abre el nuevo modal
-                                    }}
-                                  >
-                                    Ver Receta
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="btn btn-icon bg-gray"
-                                    onClick={() => setIsEditModalOpen(true)}
-                                  >
-                                    Agregar Insumo
                                   </button>
                                 </div>
                               </td>
