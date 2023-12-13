@@ -102,7 +102,7 @@ const Header = () => {
 										aria-expanded="false"
 										onClick={toggleDropdown}
 										// ref={dropdownRef}
-										title='Desplegar el submenu para cerrar sesion del sistema o ver los manuales de uso de cada modulo.'
+										title='Nombre de la persona que esta logueada y submenu para cerrar sesion del sistema o ver los manuales de uso de cada modulo.'
 									>
 										<span>
 											<span className="user-name"> {`${currentUser.Name_User} ${currentUser.LastName_User}`}</span>

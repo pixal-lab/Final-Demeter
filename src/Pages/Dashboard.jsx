@@ -19,6 +19,7 @@ const Dashboard = () => {
     fetchBP();
     fetchShops();
     fetchsupli();
+    console.log(shopsChart)
   }, []);
 
   // Utiliza los datos de salesChart para el gráfico
@@ -99,8 +100,16 @@ const Dashboard = () => {
           </LineChart>
         </div>
         <div className='flex flex-col mx-[5vh]'>
-          <h2 className='text-2xl font-bold mt-4 mb-2 whitespace-normal text-center'>El Insumo al que mas se le invirtio fue: {supli.userName}</h2>
-          <h2 className='text-2xl font-bold mb-4 whitespace-normal text-center'>Dinero Invertido: {supli.totalSpent}</h2>
+        <h2 className='text-2xl font-bold mt-4 mb-2 whitespace-normal text-center'>
+  {supli ? (
+    `El Insumo al que más se le invirtió fue: ${supli.userName}`
+  ) : (
+    'No hay datos disponibles'
+  )}
+</h2>
+<h2 className='text-2xl font-bold mb-4 whitespace-normal text-center'>
+  Dinero Invertido: {supli ? supli.totalSpent ?? "nada por ahora" : "No hay datos disponibles"}
+</h2>
         </div>
     </div></div>
   );

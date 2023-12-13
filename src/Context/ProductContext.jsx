@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { createContext, useState, useContext, useEffect } from 'react'
-import { getProducts, getAllProduct, createDetailPRequest} from '../api/product.request.js'
+import { getProducts, getAllProduct, createDetailPRequest} from '../Api/product.request.js'
 
 export const ProductContext = createContext();
 

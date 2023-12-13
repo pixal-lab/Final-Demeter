@@ -44,9 +44,8 @@ function CreateUser({ onClose, onCreated }) {
     const customStyles = {
         control: (provided, state) => ({
             ...provided,
-            border: state.isFocused ? '1px solid #201E1E' : '1px solid #201E1E',
             '&:hover': {
-                border: '1px solid #201E1E',
+                border: state.isFocused ? '1px solid #e36209' : '1px solid #ced4da',
             },
         }),
         option: (provided, state) => ({
@@ -62,24 +61,7 @@ function CreateUser({ onClose, onCreated }) {
     };
 
     const onSubmit = handleSubmit(async (values) => {
-        const isDocumentouplicate = user.some(users => users.Document === values.Document);
-        const isEmailDuplicate = user.some(users => users.Email === values.Email);
-
-        if (isDocumentouplicate) {
-            setError('Document', {
-                type: 'manual',
-                message: 'El documento del usuario ya existe.'
-            });
-            return;
-        }
-
-        if (isEmailDuplicate) {
-            setError('Email', {
-                type: 'manual',
-                message: 'El correo del usuario ya existe.'
-            });
-            return;
-        }
+        
 
         if (!selectedType || selectedType.value === '') {
             setError('Type_Document', {
@@ -130,15 +112,13 @@ function CreateUser({ onClose, onCreated }) {
                                                 {...register("Type_Document")}
                                                 value={selectedType}
                                                 onChange={(selectedOption) => setSelectedType(selectedOption)}
-                                                menuPlacement="auto"
-                                                menuShouldScrollIntoView={false}
-                                                maxMenuHeight={132}
                                                 styles={customStyles}
+                                                className='form-selects'
                                                 theme={(theme) => ({
                                                     ...theme,
                                                     colors: {
                                                         ...theme.colors,
-                                                        primary: '#201E1E',
+                                                        primary: '#e36209',
                                                     },
                                                 })}
                                             />
@@ -253,7 +233,7 @@ function CreateUser({ onClose, onCreated }) {
                                             </p>
                                         )}
                                     </div>
-                                
+
                                     <div className="form-group col-md-6">
                                         <label htmlFor="Password" className="form-label">
                                             Contraseña: <strong>*</strong>
@@ -299,15 +279,13 @@ function CreateUser({ onClose, onCreated }) {
                                             {...register("Role_ID")}
                                             value={selectRole}
                                             onChange={handleRolChange}
-                                            menuPlacement="auto"
-                                            menuShouldScrollIntoView={false}
-                                            maxMenuHeight={132}
                                             styles={customStyles}
+                                            className='form-selects'
                                             theme={(theme) => ({
                                                 ...theme,
                                                 colors: {
                                                     ...theme.colors,
-                                                    primary: '#201E1E',
+                                                    primary: '#e36209',
                                                 },
                                             })}
                                         />

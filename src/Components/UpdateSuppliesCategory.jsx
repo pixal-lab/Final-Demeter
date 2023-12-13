@@ -26,14 +26,15 @@ function UpdateSuppliesCategory({
   },
   supplyCategoryToEdit = null,
 }) {
-  const { updateCategory_supplies } = useCategorySupplies();
+  const { updateCategory_supplies, Category_supplies } = useCategorySupplies();
   const [open, setOpen] = useState(false);
 
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors, isValid },
+    formState: { errors },
+    setError,
   } = useForm();
 
   useEffect(() => {
@@ -43,15 +44,36 @@ function UpdateSuppliesCategory({
     }
   }, [supplyCategoryToEdit]);
 
+  function removeAccentsAndSpaces(str) {
+    return str
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f\s]/g, '');
+  }
 
   const onSubmit = handleSubmit(async (values) => {
     if (supplyCategoryToEdit) {
+      const normalizedInputName = removeAccentsAndSpaces(values.Name_SuppliesCategory);
+      const normalizedExistingNames = Category_supplies
+        .filter(category => category.ID_SuppliesCategory !== supplyCategoryToEdit.ID_SuppliesCategory)
+        .map(category => removeAccentsAndSpaces(category.Name_SuppliesCategory));
+
+      const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
+
+      if (isNameDuplicate) {
+        setError('Name_SuppliesCategory', {
+          type: 'manual',
+          message: 'El nombre de la categoría ya existe.',
+        });
+        return;
+      }
+
       const supplyCategory = { ...supplyCategoryToEdit, ...values };
       try {
         await updateCategory_supplies(supplyCategory.ID_SuppliesCategory, supplyCategory);
         setOpen(false);
       } catch (error) {
-        console.error('Error al actualizar la categoria', error);
+        console.error('Error al actualizar la categoría de insumo', error);
       }
     }
   });
@@ -79,68 +101,81 @@ function UpdateSuppliesCategory({
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
-                <Box sx={{ ...style, width: 600 }}>
-                    <div className="col-md-12">
-                        <div className="card">
-                            <div className="card-header">
-                                <h5>Edición de categoria de insumo</h5>
-                            </div>
-                            <div className="card-body">
-                                <form
-                                    onSubmit={(event) => onSubmit(event)}
-                                >
-                                    <div className="city">
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="Name_SuppliesCategory" className="form-label">
-                                                Nombre
-                                            </label>
-                                            <input
-                                                {...register('Name_SuppliesCategory', {
-                                                    required: 'Este campo es obligatorio',
-                                                    pattern: {
-                                                        value: /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ\s]*[a-záéíóúñ]$/,
-                                                        message:
-                                                            'El nombre de la categoria de insumo debe tener la primera letra en mayúscula, el resto en minúscula y solo se permiten letras.',
-                                                    },
-                                                })}
-                                                type="text"
-                                                className="form-control"
-                                                defaultValue={supplyCategoryToEdit ? supplyCategoryToEdit.Name_SuppliesCategory : ''}
-                                            />
-                                            {errors.Name_SuppliesCategory && (
-                                                <p className="text-red-500">
-                                                    {errors.Name_SuppliesCategory.message}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="buttonconfirm">
-                                        <div className="mb-3">
-                                            <button
-                                                className="btn btn-primary mr-5"
-                                                type="submit"
-                                                disabled={!isValid}
-                                            >
-                                                Confirmar
-                                            </button>
-                                            <button
-                                                className="btn btn-primary"
-                                                onClick={onCancel}
-                                                type="submit"
-                                            >
-                                                Cancelar
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+        <Box sx={{ ...style, width: 600 }}>
+          <div className="col-md-12">
+            <div className="card">
+              <div className="card-header">
+                <h5>Edición de categoria de insumo</h5>
+              </div>
+              <div className="card-body">
+                <form
+                  onSubmit={(event) => onSubmit(event)}
+                >
+                  <div className="city">
+                    <div className="form-group col-md-6">
+                      <label htmlFor="Name_SuppliesCategory" className="form-label">
+                        Nombre:
+                      </label>
+                      <input
+                        {...register('Name_SuppliesCategory', {
+                          required: 'Este campo es obligatorio',
+                          pattern: {
+                            value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ]+(\s[A-Za-zÁÉÍÓÚÑáéíóúñ]+)?$/,
+                            message: 'Solo se permiten letras, tildes y hasta un espacio entre letras.',
+                          },
+                          minLength: {
+                            value: 3,
+                            message: 'El nombre debe tener al menos 3 caracteres.',
+                          },
+                          maxLength: {
+                            value: 30,
+                            message: 'El nombre no puede tener más de 30 caracteres.',
+                          },
+                          setValueAs: (value) =>
+                            value
+                              .trim() 
+                              .replace(/\s+/g, ' ') 
+                              .toLowerCase()
+                              .replace(/^(.)/, (match) => match.toUpperCase()), 
+                        })}
+                        type="text"
+                        className="form-control"
+                      />
+                      {errors.Name_SuppliesCategory && (
+                        <p className="text-red-500">
+                          {errors.Name_SuppliesCategory.message}
+                        </p>
+                      )}
                     </div>
-                </Box>
-            </Modal>
-        </React.Fragment>
-    );
+                  </div>
+
+                  <div className="buttonconfirm">
+                    <div className="mb-3">
+                      <button
+                        className="btn btn-primary mr-5"
+                        type="submit"
+                        title="Este botón sirve para guardar la información y cerrar la ventana modal."
+                      >
+                        Confirmar
+                      </button>
+                      <button
+                        className="btn btn-primary"
+                        onClick={onCancel}
+                        type="submit"
+                        title="Este botón sirve para cerrar la ventana modal sin guardar la información."
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+    </React.Fragment>
+  );
 }
 
 export default UpdateSuppliesCategory;

@@ -15,25 +15,12 @@ export const useSupplies = () => {
 export function Supplies({ children }) {
     const [supplies, setSupplies] = useState([]);
 
-    
-        const getSupplies = async () => {
-            try {
-                const res = await getSuppliesRequest();
-                setSupplies(res?.data || []);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-
-    const getShopSupplies = async () => {
+    const getSupplies = async () => {
         try {
-            const { data } = await getSuppliesRequest() || {
-                data: []
-            };
-            return data
-            // setSupplies(res.data);
+            const res = await getSuppliesRequest();
+            setSupplies(res.data);
         } catch (error) {
-            return []
+            console.error(error);
         }
     }
 
@@ -74,7 +61,7 @@ export function Supplies({ children }) {
     const updateSupplies = async (id, supplie) => {
         try {
             await updateSuppliesRequest(id, supplie);
-            getSupplies();
+            getSupplies(); 
         } catch (error) {
             console.error(error);
         }
@@ -90,6 +77,18 @@ export function Supplies({ children }) {
 
     }
 
+    const getShopSupplies = async () => {
+        try {
+            const { data } = await getSuppliesRequest() || {
+                data: []
+            };
+            return data
+            // setSupplies(res.data);
+        } catch (error) {
+            return []
+        }
+    }
+
     return (
         <SuppliesContext.Provider value={{
             supplies,
@@ -98,7 +97,7 @@ export function Supplies({ children }) {
             createSupplies,
             toggleSupplyStatus,
             updateSupplies,
-            deleteSupplies, 
+            deleteSupplies,
             getShopSupplies
         }}>
             {children}

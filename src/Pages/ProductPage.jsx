@@ -6,22 +6,18 @@ import { useNavigate } from "react-router-dom";
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
 import "../css/style.css";
 import "../css/landing.css";
-import { useSupplies } from "../Context/Supplies.context.jsx";
 import { useProduct } from '../Context/Product.context.jsx'
 import { useCategoryProducts } from '../Context/CategoryProducts.context.jsx'
 import CreateProducts from '../Components/CreateProduct.jsx'
-import EditRecipe from '../Components/EditRecipe.jsx';
-import EditRecipeWithTable from '../Components/EditRecipeWithTable.jsx';  // Importa el nuevo componente
 
 function ProductPage() {
-  const { product, getProducts, toggleSupplyStatus, getCurrentProduct } = useProduct();
+  const { product, getProducts, toggleProducStatus, getCurrentProduct, deleteProduct } = useProduct();
   const { Category_products } = useCategoryProducts();
-  const { supplies, getSupplies, deleteSupplies } = useSupplies();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isEditTableModalOpen, setIsEditTableModalOpen] = useState(false); // Agrega el estado para el nuevo modal
   const navigate = useNavigate();
+
+  const barraClass = product?.State ? "" : "desactivado";
 
   const navigateToCreateProduct = () => {
     setIsCreateModalOpen(true);
@@ -33,12 +29,22 @@ function ProductPage() {
 
   useEffect(() => {
     getProducts();
-    getSupplies();
+    // setCurrentPage(1);
   }, []);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
+  
+  const handledelete = (produc) => {
+    deleteProduct(produc)
+    navigate('/product')
+  }
+
+  const entrar = (id) => {
+    getCurrentProduct(id)
+    navigate('/create_product');
+  }
 
   const filteredProduct = product.filter((produc) => {
     const { Name_Products, Price_Product, ProductCategory_ID, State } = produc;
@@ -101,44 +107,44 @@ function ProductPage() {
                               <td>
                                 {produc.ProductCategory_ID
                                   ? Category_products.find(
-                                      (category) =>
-                                        category.ID_ProductCategory ===
-                                        produc.ProductCategory_ID
-                                    )?.Name_ProductCategory || ''
+                                    (category) =>
+                                      category.ID_ProductCategory ===
+                                      produc.ProductCategory_ID
+                                  )?.Name_ProductCategory || ''
                                   : ''}
                               </td>
                               <td>{produc.Price_Product}</td>
-                              <td>{produc.State ? 'Habilitado' : 'Deshabilitado'}</td>
+                              <td className={`${barraClass}`}>
+                                {produc?.State ? "Habilitado" : "Deshabilitado"}
+                              </td>
                               <td>
-                                <div style={{ display: "flex", alignItems: "center" }} className="pl-[30vh]">
+                                <div style={{ display: "flex", alignItems: "center", padding: '3px' }}>
+                                  <button
+                                    onClick={() => {
+                                      entrar(produc.ID_Product)
+                                    }}
+                                    className={`ml-1 btn btn-icon btn-primary ${!produc.State ? "text-gray-400 cursor-not-allowed" : ""}`}
+                                    disabled={!produc?.State}
+                                  >
+                                    <BiEdit />
+                                  </button>
+                                  <button
+                                    onClick={() => handledelete(produc.ID_Product)}
+                                    className={`ml-1 btn btn-icon btn-danger ${!produc.State ? "text-gray-400 cursor-not-allowed" : ""}`}
+                                    disabled={!produc.State}
+                                  >
+                                    <AiFillDelete />
+                                  </button>
                                   <button
                                     type="button"
-                                    className={`btn btn-icon btn-success ${produc.State ? "active" : "inactive"}`}
-                                    onClick={() => toggleSupplyStatus(produc.ID_Product)}
-                                    style={{ marginRight: "10px" }}
+                                    className={`ml-1 btn btn-icon btn-success ${barraClass}`}
+                                    onClick={() => toggleProducStatus(produc.ID_Product)}
                                   >
                                     {produc.State ? (
-                                      <MdToggleOn className="estado-icon active" />
+                                      <MdToggleOn className={`estado-icon active ${barraClass}`} />
                                     ) : (
-                                      <MdToggleOff className="estado-icon inactive" />
+                                      <MdToggleOff className={`estado-icon inactive ${barraClass}`} />
                                     )}
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="btn btn-icon bg-gray"
-                                    onClick={() => {
-                                      getCurrentProduct(produc.ID_Product);
-                                      setIsEditTableModalOpen(true); // Abre el nuevo modal
-                                    }}
-                                  >
-                                    Ver Receta
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="btn btn-icon bg-gray"
-                                    onClick={() => setIsEditModalOpen(true)}
-                                  >
-                                    Agregar Insumo
                                   </button>
                                 </div>
                               </td>
@@ -151,22 +157,6 @@ function ProductPage() {
                           <div className="modal-overlay" onClick={() => setIsCreateModalOpen(false)}></div>
                           <div className="modal-container">
                             <CreateProducts onClose={() => setIsCreateModalOpen(false)} onCreated={handleCreated} />
-                          </div>
-                        </div>
-                      )}
-                      {isEditModalOpen && (
-                        <div className="fixed inset-0 flex items-center justify-center z-50">
-                          <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}></div>
-                          <div className="modal-container">
-                            <EditRecipe onClose={() => setIsEditModalOpen(false)} />
-                          </div>
-                        </div>
-                      )}
-                      {isEditTableModalOpen && (
-                        <div className="fixed inset-0 flex items-center justify-center z-50">
-                          <div className="modal-overlay" onClick={() => setIsEditTableModalOpen(false)}></div>
-                          <div className="modal-container">
-                            <EditRecipeWithTable onClose={() => setIsEditTableModalOpen(false)} />
                           </div>
                         </div>
                       )}

@@ -27,7 +27,8 @@ export default function CreateSupplier({
   },
   isDisabled = false,
   onOpen = () => null,
-  whenSubmit = () => null
+  whenSubmit = () => null,
+  beforeSubmit = null
 }) {
   const {
     register,
@@ -36,14 +37,78 @@ export default function CreateSupplier({
     reset,
     setValue,
     trigger,
+    getValues,
     formState: { errors }
   } = useForm();
   const { createSupplier, supplier } = useSupplier();
 
   const handleInputChange = async (field, value) => {
-    setValue(field, value); // Actualiza el valor en el formulario
+
+    console.log("field", field)
+    console.log("value", value)
+    const newValue = validate(field, value)
+    console.log("newValue", newValue)
+
+    setValue(field, newValue); // Actualiza el valor en el formulario
     await trigger(field); // Activa la validación para el campo específico
   };
+
+  /**
+   * 
+   * @param {"Email" | "Document" | "Name_Supplier" | "Name_Business" | "Phone"} type 
+   * @param {Object} target 
+   */
+  const validate = (type, target) => {
+
+    let value = "";
+    switch (type) {
+      case "Email": {
+        value = target.replace(/\s+/g, "")
+        value = value.trim()
+        break
+      }
+      case "Document": {
+
+        value = target.replace(/[^0-9]/g, '').replace(/\s/g, "")
+        if (getValues().Type_Document === "CE") {
+          value = target.replace(/\s/g, "")
+        }
+        break
+      }
+
+      case "Name_Business":
+      case "Name_Supplier": {
+        value = target.replace(/\s+/g, " ").toUpperCase()
+        break
+
+      }
+      case "Phone": {
+        value = target.replace(/[^0-9]/g, '')
+        if (value.length > 10) {
+          value = target.slice(0, -1)
+
+        }
+        break
+      }
+ case "Name_Supplier": {
+        value = target.replace(/\s+/g, " ").toUpperCase()
+        break
+
+      }
+
+      case "City": {
+        value = target.replace(/\s+/g, " ").toUpperCase()
+        break
+
+      }
+
+
+      default: break
+    }
+    // value = value.trim()
+
+    return value
+  }
 
 
   const [open, setOpen] = React.useState(false);
@@ -54,6 +119,7 @@ export default function CreateSupplier({
   };
 
   const onSubmit = handleSubmit(async (values) => {
+
     const isDocumentoDuplicate = supplier.some(
       (supplier) => supplier.Document === values.Document
     );
@@ -99,6 +165,8 @@ export default function CreateSupplier({
       return;
     }
 
+    if (typeof beforeSubmit === "function" && !(await Promise.resolve(beforeSubmit(values)))) return
+
     createSupplier(values);
     reset();
     setOpen(false);
@@ -117,10 +185,11 @@ export default function CreateSupplier({
     setOpen(false);
   };
 
-  const defaultSubmit = (event) => {
-    onDefaultSubmit(event, setOpen)
+  const defaultSubmit = handleSubmit(async (data) => {
+    if (typeof beforeSubmit === "function" && !(await Promise.resolve(beforeSubmit(data)))) return
+    onDefaultSubmit(data, setOpen)
     whenSubmit()
-  }
+  })
 
   return (
     <React.Fragment>
@@ -187,7 +256,10 @@ export default function CreateSupplier({
                             {...register("Type_Document", {
                               required: "El tipo de documento es requerido"
                             })}
-                            className="form-select"
+                            className=" form-control"
+                            onChange={() => {
+                              setValue("Document", "")
+                            }}
                             required
                           >
                             <option value="" disabled>
@@ -251,7 +323,7 @@ export default function CreateSupplier({
                           {...register("Name_Supplier", {
                             required: "El nombre es obligatorio",
                             pattern: {
-                              value:/^[A-ZÁÉÍÓÚÑ][a-zA-Z\sáéíóúñ]*$/,
+                              value: /^[A-ZÁÉÍÓÚÑ][a-zA-Z\sáéíóúñ]*$/,
                               message:
                                 "La primera letra debe ser mayúscula"
                             }
@@ -259,7 +331,7 @@ export default function CreateSupplier({
                           type="text"
                           className="form-control"
                           required
-                          onChange={(e) => handleInputChange("Name_Supplier", e.target.value)}
+                          onChange={(e) => handleInputChange("Name_Supplier", e.target.value, e)}
 
                         />
                         {errors.Name_Supplier && (
@@ -277,7 +349,7 @@ export default function CreateSupplier({
                           {...register("Name_Business", {
                             required: false,
                             pattern: {
-                              value:/^[A-ZÁÉÍÓÚÑ][a-zA-Z\sáéíóúñ]*$/,
+                              value: /^[A-ZÁÉÍÓÚÑ][a-zA-Z\sáéíóúñ]*$/,
                               message:
                                 "La primera letra debe ser mayúscula y solo letras."
                             }
@@ -343,40 +415,40 @@ export default function CreateSupplier({
 
                     <div className="city">
                       <div className="form-group col-md-6">
-                        <label htmlFor="City" className="form-label">
+                        <label htmlFor="City" className="form-label text-city">
                           Ciudad
                         </label>
                         <input
                           {...register("City", {
                             required: "La ciudad es requerida",
                             pattern: {
-                              value:/^[A-ZÁÉÍÓÚÑ][a-zA-Z\sáéíóúñ]*$/,
+                              value: /^[A-ZÁÉÍÓÚÑ][a-zA-Z\sáéíóúñ]*$/,
                               message:
                                 "La primera letra debe ser mayúscula y solo letras."
                             }
                           })}
                           type="text"
-                          className="form-control"
+                          className="form-control tamañoS"
                           required
                           onChange={(e) => handleInputChange("City", e.target.value)}
 
                         />
-                    {errors.City && (
+                        {errors.City && (
                           <p className="text-red-500">{errors.City.message}</p>
                         )}
 
                       </div>
                     </div>
                     <div className="buttonconfirm">
-                      <div className="mb-3">
+                      <div className="mb-4 ">
                         <button
-                          className="btn btn-primary mr-5"
+                          className="btn btn-primary mr-5 mt-5"
                           type="submit"
                         >
                           Confirmar
                         </button>
                         <button
-                          className="btn btn-primary"
+                          className="btn btn-primary mt-5"
                           onClick={handleClose}
                           type="button"
                         >

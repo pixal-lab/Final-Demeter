@@ -48,7 +48,6 @@ export const ShoppingProvider = ({ children }) => {
   const getShopingByProvider = async () => {
     try {
       const res = await GetShopingByProvider();
-      console.log(res)
       return res.data
     } catch (error) {
       return []
