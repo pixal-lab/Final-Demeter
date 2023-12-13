@@ -26,7 +26,7 @@ function UpdateSuppliesCategory({
   },
   supplyCategoryToEdit = null,
 }) {
-  const { updateCategory_supplies } = useCategorySupplies();
+  const { updateCategory_supplies, Category_supplies } = useCategorySupplies();
   const [open, setOpen] = useState(false);
 
   const {
@@ -34,6 +34,7 @@ function UpdateSuppliesCategory({
     handleSubmit,
     setValue,
     formState: { errors },
+    setError,
   } = useForm();
 
   useEffect(() => {
@@ -43,15 +44,36 @@ function UpdateSuppliesCategory({
     }
   }, [supplyCategoryToEdit]);
 
+  function removeAccentsAndSpaces(str) {
+    return str
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f\s]/g, '');
+  }
 
   const onSubmit = handleSubmit(async (values) => {
     if (supplyCategoryToEdit) {
+      const normalizedInputName = removeAccentsAndSpaces(values.Name_SuppliesCategory);
+      const normalizedExistingNames = Category_supplies
+        .filter(category => category.ID_SuppliesCategory !== supplyCategoryToEdit.ID_SuppliesCategory)
+        .map(category => removeAccentsAndSpaces(category.Name_SuppliesCategory));
+
+      const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
+
+      if (isNameDuplicate) {
+        setError('Name_SuppliesCategory', {
+          type: 'manual',
+          message: 'El nombre de la categoría ya existe.',
+        });
+        return;
+      }
+
       const supplyCategory = { ...supplyCategoryToEdit, ...values };
       try {
         await updateCategory_supplies(supplyCategory.ID_SuppliesCategory, supplyCategory);
         setOpen(false);
       } catch (error) {
-        console.error('Error al actualizar la categoria', error);
+        console.error('Error al actualizar la categoría de insumo', error);
       }
     }
   });
@@ -98,14 +120,26 @@ function UpdateSuppliesCategory({
                         {...register('Name_SuppliesCategory', {
                           required: 'Este campo es obligatorio',
                           pattern: {
-                            value: /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ\s]*[a-záéíóúñ]$/u,
-                            message:
-                              'Debe tener la primera letra en mayúscula y el resto en minúscula.',
+                            value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ]+(\s[A-Za-zÁÉÍÓÚÑáéíóúñ]+)?$/,
+                            message: 'Solo se permiten letras, tildes y hasta un espacio entre letras.',
                           },
+                          minLength: {
+                            value: 3,
+                            message: 'El nombre debe tener al menos 3 caracteres.',
+                          },
+                          maxLength: {
+                            value: 30,
+                            message: 'El nombre no puede tener más de 30 caracteres.',
+                          },
+                          setValueAs: (value) =>
+                            value
+                              .trim() 
+                              .replace(/\s+/g, ' ') 
+                              .toLowerCase()
+                              .replace(/^(.)/, (match) => match.toUpperCase()), 
                         })}
                         type="text"
                         className="form-control"
-                        defaultValue={supplyCategoryToEdit ? supplyCategoryToEdit.Name_SuppliesCategory : ''}
                       />
                       {errors.Name_SuppliesCategory && (
                         <p className="text-red-500">

@@ -61,36 +61,18 @@ function CreateSupplies({
   const [selectedMeasure, setSelectedMeasure] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  function formatName(inputName) {
-    const trimmedName = inputName.trim();
-    const formattedName = trimmedName.charAt(0).toUpperCase() + trimmedName.slice(1).toLowerCase();
-    return formattedName;
+  function removeAccentsAndSpaces(str) {
+    return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
   }
 
   const onSubmit = handleSubmit(async (values) => {
-
-    const normalizedInputName = values.Name_Supplies
-      .toLowerCase()
-      .replace(/\s/g, '')
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  
-    const formattedName = formatName(normalizedInputName);
-  
-    const dataToSend = {
-      ...values,
-      Name_Supplies: formattedName,
-      Measure: selectedMeasure.value,
-      SuppliesCategory_ID: selectedCategory.value,
-    };
-  
-    // Normalizar los nombres existentes para la comparación
+    const normalizedInputName = removeAccentsAndSpaces(values.Name_Supplies);
     const normalizedExistingNames = supplies.map(supply =>
-      supply.Name_Supplies.toLowerCase().replace(/\s/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      removeAccentsAndSpaces(supply.Name_Supplies)
     );
-  
-    // Verificar si el nombre ya existe
+
     const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
-  
+
     if (isNameDuplicate) {
       setError('Name_Supplies', {
         type: 'manual',
@@ -98,7 +80,14 @@ function CreateSupplies({
       });
       return;
     }
-  
+
+    const dataToSend = {
+      ...values,
+      Name_Supplies: values.Name_Supplies,
+      Measure: selectedMeasure.value,
+      SuppliesCategory_ID: selectedCategory.value,
+    };
+
     createSupplies(dataToSend);
     setOpen(false);
     reset();
@@ -163,9 +152,24 @@ function CreateSupplies({
                         {...register('Name_Supplies', {
                           required: 'Este campo es obligatorio',
                           pattern: {
-                            value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]*$/u,
-                            message: 'Solo se permiten letras y un espacio.',
+                            value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ]+(\s[A-Za-zÁÉÍÓÚÑáéíóúñ]+)?$/,
+                            message:
+                              'Solo se permiten letras, tildes y hasta un espacio entre letras.',
                           },
+                          minLength: {
+                            value: 3,
+                            message: 'El nombre debe tener al menos 3 caracteres.',
+                          },
+                          maxLength: {
+                            value: 30,
+                            message: 'El nombre no puede tener más de 30 caracteres.',
+                          },
+                          setValueAs: (value) =>
+                            value
+                              .trim() 
+                              .replace(/\s+/g, ' ') 
+                              .toLowerCase()
+                              .replace(/^(.)/, (match) => match.toUpperCase()),
                         })}
                         type="text"
                         className="form-control"

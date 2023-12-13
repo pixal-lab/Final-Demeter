@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { useSupplies } from '../Context/Supplies.context';
 import { useCategorySupplies } from '../Context/CategorySupplies.context';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import Select from 'react-select';
 
 const style = {
@@ -49,16 +49,18 @@ function UpdateSupplies({
     supplyToEdit = null,
 }) {
     const { Category_supplies } = useCategorySupplies();
-    const { updateSupplies } = useSupplies();
+    const { updateSupplies, supplies } = useSupplies();
     const [open, setOpen] = useState(false);
     const [selectedMeasure, setSelectedMeasure] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
     const {
+        control,
         register,
         handleSubmit,
         setValue,
         formState: { errors },
+        setError,
     } = useForm();
 
     useEffect(() => {
@@ -88,8 +90,27 @@ function UpdateSupplies({
         setSelectedMeasure(selectedOption);
     };
 
+    function removeAccentsAndSpaces(str) {
+        return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+    }
+
     const onSubmit = handleSubmit(async (values) => {
         if (supplyToEdit) {
+            const normalizedInputName = removeAccentsAndSpaces(values.Name_Supplies);
+            const normalizedExistingNames = supplies
+                .filter((supply) => supply.ID_Supplies !== supplyToEdit.ID_Supplies)
+                .map((supply) => removeAccentsAndSpaces(supply.Name_Supplies));
+
+            const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
+
+            if (isNameDuplicate) {
+                setError('Name_Supplies', {
+                    type: 'manual',
+                    message: 'El nombre del insumo ya existe.',
+                });
+                return;
+            }
+
             const supplie = { ...supplyToEdit, ...values };
             supplie.Measure = selectedMeasure.value;
             try {
@@ -151,14 +172,27 @@ function UpdateSupplies({
                                                 {...register('Name_Supplies', {
                                                     required: 'Este campo es obligatorio',
                                                     pattern: {
-                                                        value: /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ\s]*[a-záéíóúñ]$/u,
+                                                        value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ]+(\s[A-Za-zÁÉÍÓÚÑáéíóúñ]+)?$/,
                                                         message:
-                                                            'Debe tener la primera letra en mayúscula y el resto en minúscula.',
+                                                            'Solo se permiten letras, tildes y hasta un espacio entre letras.',
                                                     },
+                                                    minLength: {
+                                                        value: 3,
+                                                        message: 'El nombre debe tener al menos 3 caracteres.',
+                                                    },
+                                                    maxLength: {
+                                                        value: 30,
+                                                        message: 'El nombre no puede tener más de 30 caracteres.',
+                                                    },
+                                                    setValueAs: (value) =>
+                                                        value
+                                                            .trim()
+                                                            .replace(/\s+/g, ' ') 
+                                                            .toLowerCase() 
+                                                            .replace(/^(.)/, (match) => match.toUpperCase()),
                                                 })}
                                                 type="text"
                                                 className="form-control"
-                                                defaultValue={supplyToEdit ? supplyToEdit.Name_Supplies : ''}
                                             />
                                             {errors.Name_Supplies && (
                                                 <p className="text-red-500">
@@ -174,16 +208,23 @@ function UpdateSupplies({
                                             <input
                                                 {...register('Unit', {
                                                     required: 'Este campo es obligatorio',
-                                                    validate: (value) => {
-                                                        const parsedValue = parseInt(value);
-                                                        if (isNaN(parsedValue)) {
-                                                            return 'Debe ser un número entero.';
-                                                        }
+                                                    validate: {
+                                                        isDouble: (value) => {
+                                                            const parsedValue = parseFloat(value);
+                                                            if (isNaN(parsedValue)) {
+                                                                return 'Debe ser un número positivo.';
+                                                            }
+                                                        },
+                                                        validRange: (value) => {
+                                                            const parsedValue = parseFloat(value);
+                                                            if (parsedValue < 0 || parsedValue > 99999999) {
+                                                                return 'La cantidad debe estar entre 0 y 99999999.';
+                                                            }
+                                                        },
                                                     },
                                                 })}
                                                 type="text"
                                                 className="form-control"
-                                                defaultValue={supplyToEdit ? supplyToEdit.Unit : ''}
                                             />
                                             {errors.Unit && (
                                                 <p className="text-red-500">{errors.Unit.message}</p>
@@ -196,30 +237,39 @@ function UpdateSupplies({
                                             <label htmlFor="Measure" className="form-label">
                                                 Medida:
                                             </label>
-                                            <Select
-                                                options={[
-                                                    { value: 'Unidad(es)', label: 'Unidad(es)' },
-                                                    { value: 'Kilogramos (kg)', label: 'Kilogramos (kg)' },
-                                                    { value: 'Gramos (g)', label: 'Gramos (g)' },
-                                                    { value: 'Litros (L)', label: 'Litros (L)' },
-                                                    { value: 'Mililitros (ml)', label: 'Mililitros (ml)' },
-                                                ]}
-                                                value={selectedMeasure}
-                                                onChange={handleMeasureChange}
-                                                styles={customStyles}
-                                                className="form-selects"
-                                                theme={(theme) => ({
-                                                    ...theme,
-                                                    colors: {
-                                                        ...theme.colors,
-                                                        primary: '#e36209',
-                                                    },
-                                                })}
+                                            <Controller
+                                                control={control}
+                                                name="Measure"
+                                                rules={{ required: 'Este campo es obligatorio' }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        options={[
+                                                            { value: 'Unidad(es)', label: 'Unidad(es)' },
+                                                            { value: 'Kilogramos (kg)', label: 'Kilogramos (kg)' },
+                                                            { value: 'Gramos (g)', label: 'Gramos (g)' },
+                                                            { value: 'Litros (L)', label: 'Litros (L)' },
+                                                            { value: 'Mililitros (ml)', label: 'Mililitros (ml)' },
+                                                        ]}
+                                                        value={selectedMeasure}
+                                                        onChange={(selectedOption) => {
+                                                            setSelectedMeasure(selectedOption);
+                                                            field.onChange(selectedOption.value);
+                                                        }}
+                                                        styles={customStyles}
+                                                        className="form-selects"
+                                                        theme={(theme) => ({
+                                                            ...theme,
+                                                            colors: {
+                                                                ...theme.colors,
+                                                                primary: '#e36209',
+                                                            },
+                                                        })}
+                                                    />
+                                                )}
                                             />
                                             {errors.Measure && (
                                                 <p className="text-red-500">{errors.Measure.message}</p>
                                             )}
-                                            <div className="invalid-feedback">Ingrese la medida</div>
                                         </div>
 
                                         <div className="form-group col-md-6">
@@ -229,26 +279,29 @@ function UpdateSupplies({
                                             <input
                                                 {...register('Stock', {
                                                     required: 'Este campo es obligatorio',
-                                                    validate: (value, { Unit }) => {
-                                                        const parsedValue = parseInt(value);
-                                                        const parsedUnit = parseInt(Unit);
+                                                    validate: {
+                                                        isDouble: (value) => {
+                                                            const parsedValue = parseFloat(value);
+                                                            if (isNaN(parsedValue)) {
+                                                                return 'Debe ser un número positivo.';
+                                                            }
+                                                        },
+                                                        validRange: (value, { Unit }) => {
+                                                            const parsedValue = parseFloat(value);
+                                                            const parsedUnit = parseFloat(Unit);
 
-                                                        if (isNaN(parsedValue)) {
-                                                            return 'Debe ser un número entero.';
-                                                        }
+                                                            if (parsedValue < 0 || parsedValue > 9999) {
+                                                                return 'La existencia mínima debe estar entre 0 y 9999.';
+                                                            }
 
-                                                        if (parsedValue < 0 || parsedValue > 999) {
-                                                            return 'Debe ser un número entero entre 0 y 999.';
-                                                        }
-
-                                                        if (parsedValue > parsedUnit) {
-                                                            return `No puede ser mayor que la cantidad: (${parsedUnit}).`;
-                                                        }
+                                                            if (parsedValue > parsedUnit) {
+                                                                return `No puede ser mayor que la cantidad: ${parsedUnit}.`;
+                                                            }
+                                                        },
                                                     },
                                                 })}
                                                 type="text"
                                                 className="form-control"
-                                                defaultValue={supplyToEdit ? supplyToEdit.Stock : ''}
                                             />
                                             {errors.Stock && (
                                                 <p className="text-red-500">{errors.Stock.message}</p>
@@ -261,22 +314,29 @@ function UpdateSupplies({
                                             <label htmlFor="SuppliesCategory_ID" className="form-label">
                                                 Categoría:
                                             </label>
-                                            <Select
-                                                options={options}
-                                                value={selectedCategory}
-                                                onChange={(selectedOption) => {
-                                                    setSelectedCategory(selectedOption);
-                                                    setValue('SuppliesCategory_ID', selectedOption.value);
-                                                }}
-                                                styles={customStyles}
-                                                className="form-selects"
-                                                theme={(theme) => ({
-                                                    ...theme,
-                                                    colors: {
-                                                        ...theme.colors,
-                                                        primary: '#e36209',
-                                                    },
-                                                })}
+                                            <Controller
+                                                control={control}
+                                                name="SuppliesCategory_ID"
+                                                rules={{ required: 'Este campo es obligatorio' }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        options={options}
+                                                        value={selectedCategory}
+                                                        onChange={(selectedOption) => {
+                                                            setSelectedCategory(selectedOption);
+                                                            field.onChange(selectedOption.value);
+                                                        }}
+                                                        styles={customStyles}
+                                                        className="form-selects"
+                                                        theme={(theme) => ({
+                                                            ...theme,
+                                                            colors: {
+                                                                ...theme.colors,
+                                                                primary: '#e36209',
+                                                            },
+                                                        })}
+                                                    />
+                                                )}
                                             />
                                             {errors.SuppliesCategory_ID && (
                                                 <p className="text-red-500">

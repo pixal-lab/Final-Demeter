@@ -26,7 +26,7 @@ function ProductCategoryPage() {
   const [showEnabledOnly, setShowEnabledOnly] = useState(
     localStorage.getItem("showEnabledOnlyProduct") === "true"
   );
-  const ITEMS_PER_PAGE = 2;
+  const ITEMS_PER_PAGE = 7;
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
