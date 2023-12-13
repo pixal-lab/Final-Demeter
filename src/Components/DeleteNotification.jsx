@@ -28,9 +28,9 @@ const overlayStyles = {
 };
 
 const buttonStyles = {
-  marginTop: '80px', 
-  marginRight: '-10%', 
-  marginLeft: '17%',
+    marginTop: '80px',
+    marginRight: '10%',
+    marginLeft: '10%',
 };
 
 function DeleteNotification({ onClose, onDelete }) {
