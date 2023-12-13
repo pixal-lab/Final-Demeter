@@ -175,7 +175,7 @@ function SuppliesCategoryPage() {
                                   <button
                                     type="button"
                                     className={`ml-1 btn btn-icon btn-success ${suppliesCategory.State ? 'active' : 'inactive'}`}
-                                    onClick={() => toggleCategorySupplyStatus(suppliesCategory)}
+                                    onClick={() => toggleCategorySupplyStatus(suppliesCategory.ID_SuppliesCategory)}
                                     title="Este botón sirve para cambiar el estado de la categoría."
                                   >
                                     {suppliesCategory.State ? (

@@ -174,7 +174,7 @@ function ProductCategoryPage() {
                                   <button
                                     type="button"
                                     className={`ml-1 btn btn-icon btn-success ${productCategory.State ? "active" : "inactive"}`}
-                                    onClick={() => toggleCategoryProductStatus(productCategory)}
+                                    onClick={() => toggleCategoryProductStatus(productCategory.ID_ProductCategory)}
                                     title="Este botón sirve para cambiar el estado de la categoría."
                                   >
                                     {productCategory.State ? (
