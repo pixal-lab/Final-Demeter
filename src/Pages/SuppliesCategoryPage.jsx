@@ -157,7 +157,7 @@ function SuppliesCategoryPage() {
                                 <div style={{ display: "flex", alignItems: "center" }}>
                                   <UpdateSuppliesCategory
                                     buttonProps={{
-                                      buttonClass: `btn btn-icon btn-primary ${!suppliesCategory.State ? "text-gray-400 cursor-not-allowed" : ""}`,
+                                      buttonClass: `ml-1 btn btn-icon btn-primary ${!suppliesCategory.State ? "text-gray-400 cursor-not-allowed" : ""}`,
                                       isDisabled: !suppliesCategory.State,
                                       buttonText: <BiEdit />,
                                     }}
@@ -166,7 +166,7 @@ function SuppliesCategoryPage() {
                                   />
                                   <button
                                     onClick={() => handleDelete(suppliesCategory)}
-                                    className={`btn btn-icon btn-danger ${!suppliesCategory.State ? "text-gray-400 cursor-not-allowed" : ""}`}
+                                    className={`ml-1 btn btn-icon btn-danger ${!suppliesCategory.State ? "text-gray-400 cursor-not-allowed" : ""}`}
                                     disabled={!suppliesCategory.State}
                                     title="Este botón sirve para eliminar la categoría."
                                   >
@@ -174,7 +174,7 @@ function SuppliesCategoryPage() {
                                   </button>
                                   <button
                                     type="button"
-                                    className={`btn btn-icon btn-success ${suppliesCategory.State ? 'active' : 'inactive'}`}
+                                    className={`ml-1 btn btn-icon btn-success ${suppliesCategory.State ? 'active' : 'inactive'}`}
                                     onClick={() => handleToggleStatus(suppliesCategory)}
                                     title="Este botón sirve para cambiar el estado de la categoría."
                                   >
