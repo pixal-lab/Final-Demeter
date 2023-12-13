@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "vite",
-    "build": "CI=false",
+    "start": "serve build -s -n -L -p $PORT",
+    "build": "CI=true",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
