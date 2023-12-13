@@ -11,6 +11,12 @@ import CreateUser from "../Components/CreateUser";
 import UpdateUser from '../Components/UpdateUser';
 import DeleteUser from "../Components/DeleteUser";
 
+// Paginado
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+
 function UserPage() {
     const { user, getUsers, toggleUserStatus, deleteUser } = useUser()
     const { role } = useRole();
@@ -21,6 +27,12 @@ function UserPage() {
     const [userToEdit, setUserToEdit] = useState(null);
     const [userToDelete, setUserToDelete] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+
+    const [showEnabledOnly, setShowEnabledOnly] = useState(
+        localStorage.getItem("showEnabledOnly") === "true"
+    );
+    const itemsForPage = 5;
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         getUsers();
@@ -67,11 +79,31 @@ function UserPage() {
         setSearchTerm(event.target.value);
     };
 
+    const handleCheckboxChange = () => {
+        setShowEnabledOnly(!showEnabledOnly);
+    };
+
     const filteredUsers = allUsers.filter((users) => {
         const { Type_Document, Document, Name_User, LastName_User, Email, State } = users;
         const searchString = `${Type_Document} ${Document} ${Name_User} ${LastName_User} ${Email} ${State}`.toLowerCase();
+
+        if (showEnabledOnly) {
+            return users.State && searchString.includes(searchTerm.toLowerCase());
+        }
+
         return searchString.includes(searchTerm.toLowerCase());
     })
+
+    const enabledUsers = filteredUsers.filter((rol) => rol.State);
+    const disabledUsers = filteredUsers.filter((rol) => !rol.State);
+    const sortedUsers = [...enabledUsers, ...disabledUsers];
+
+    const pageCount = Math.ceil(sortedUsers.length / itemsForPage);
+
+    const startIndex = (currentPage - 1) * itemsForPage;
+    const endIndex = startIndex + itemsForPage;
+    const visibleUsers = sortedUsers.slice(startIndex, endIndex);
+
 
     const barraClass = user?.State ? "" : "desactivado";
 
@@ -86,6 +118,10 @@ function UserPage() {
                 users.ID_User === id ? { ...users, State: !users.State } : users
             ))
     }
+
+    const handlePageChange = (event, value) => {
+        setCurrentPage(value);
+    };
 
     return (
         <section className="pc-container">
@@ -122,6 +158,19 @@ function UserPage() {
                                                 />
                                             </div>
                                         </div>
+                                        <div className="form-check ml-4 mt-1">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id="showEnabledOnly"
+                                                checked={showEnabledOnly}
+                                                onChange={handleCheckboxChange}
+                                                title="Este interruptor sirve para visualizar únicamente las roles habilitadas."
+                                            />
+                                            <label className="form-check-label" htmlFor="showEnabledOnly">
+                                                Mostrar solo habilitados
+                                            </label>
+                                        </div>
                                     </div>
 
 
@@ -141,7 +190,7 @@ function UserPage() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {filteredUsers.map((users) => (
+                                                    {visibleUsers.map((users) => (
                                                         <tr key={users.ID_User}>
                                                             <td>{users.Type_Document}</td>
                                                             <td>{users.Document}</td>
@@ -193,6 +242,36 @@ function UserPage() {
                                                     ))}
                                                 </tbody>
                                             </table>
+
+                                            <div
+                                                className="pagination-container pagination"
+                                                title="Para moverse mas rapido por el modulo cuando hay varios registros en el sistema."
+                                            >
+                                                <Stack spacing={2}>
+                                                    <Pagination
+                                                        count={pageCount}
+                                                        page={currentPage}
+                                                        siblingCount={2}
+                                                        onChange={handlePageChange}
+                                                        variant="outlined"
+                                                        shape="rounded"
+                                                    />
+                                                </Stack>
+                                            </div>
+
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    marginTop: 2,
+                                                    title:
+                                                        "Muestra la pagina en la que se encuentra actualmente de las paginas en total que existen."
+                                                }}
+                                            >
+                                                <Typography variant="body2" color="text.secondary">
+                                                    Página {currentPage} de {pageCount}
+                                                </Typography>
+                                            </Box>
 
                                             {isDeleteModalOpen && (
                                                 <DeleteUser

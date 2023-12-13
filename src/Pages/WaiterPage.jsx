@@ -161,20 +161,18 @@ function WaiterPage() {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="movement">
-                                                <div className="form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        title="Mostrar los meseros que estan habilitados en la primeras paginas."
-                                                        className="form-check-input"
-                                                        id="showEnabledOnly"
-                                                        checked={showEnabledOnly}
-                                                        onChange={handleCheckboxChange}
-                                                    />
-                                                    <label className="form-check-label" htmlFor="showEnabledOnly">
-                                                        Mostrar solo habilitados.
-                                                    </label>
-                                                </div>
+                                            <div className="form-check ml-4 mt-1">
+                                                <input
+                                                    type="checkbox"
+                                                    className="form-check-input"
+                                                    id="showEnabledOnly"
+                                                    checked={showEnabledOnly}
+                                                    onChange={handleCheckboxChange}
+                                                    title="Este interruptor sirve para visualizar únicamente las roles habilitadas."
+                                                />
+                                                <label className="form-check-label" htmlFor="showEnabledOnly">
+                                                    Mostrar solo habilitados
+                                                </label>
                                             </div>
                                         </div>
 

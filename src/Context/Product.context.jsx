@@ -62,7 +62,7 @@ export function Product({ children }) {
         }
     }
 
-    const toggleSupplyStatus = async (id) => {
+    const toggleProducStatus = async (id) => {
         try {
             const res = await statusProductsRequest(id);
 
@@ -172,7 +172,7 @@ export function Product({ children }) {
             getProducts,
             getProductByCategory,
             createProduct,
-            toggleSupplyStatus,
+            toggleProducStatus,
             updateProduct,
             deleteProduct,
             getCurrentProduct,

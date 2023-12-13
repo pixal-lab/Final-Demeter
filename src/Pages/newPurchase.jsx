@@ -219,7 +219,49 @@ function NewPurchase() {
                   <div className=''>
                     <label>
                       Cantidad:
-                      <input className="custom-input" type="number" {...register("Lot")} />
+                      <input className="custom-input" type="text" {...register("Lot",{
+                         required: 'Este campo es obligatorio',
+                         validate: {
+                           isDouble: (value) => {
+                             const parsedValue = parseFloat(value);
+                             if (isNaN(parsedValue)) {
+                               return 'Debe ser un número positivo.';
+                             }
+                           },
+                           validRange: (value) => {
+                             const parsedValue = parseFloat(value);
+                             if (parsedValue < 0 || parsedValue > 99999999) {
+                               return 'La cantidad debe estar entre 0 y 99999999.';
+                             }
+                           },
+                         },
+                      })}
+                      />
+
+
+                      {/* <input
+                        {...register('Unit', {
+                          required: 'Este campo es obligatorio',
+                          validate: {
+                            isDouble: (value) => {
+                              const parsedValue = parseFloat(value);
+                              if (isNaN(parsedValue)) {
+                                return 'Debe ser un número positivo.';
+                              }
+                            },
+                            validRange: (value) => {
+                              const parsedValue = parseFloat(value);
+                              if (parsedValue < 0 || parsedValue > 99999999) {
+                                return 'La cantidad debe estar entre 0 y 99999999.';
+                              }
+                            },
+                          },
+                        })}
+                        type="text"
+                        className="form-control"
+                      /> */}
+
+
                     </label>
                   </div>
                   <div className='ml-2'>

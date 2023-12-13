@@ -8,6 +8,7 @@ import { useProduct } from '../Context/Product.context.jsx'
 export default function ProductDetails() {
 
     const { product, getProducts, toggleSupplyStatus, getCurrentProduct ,CurrentProd  } = useProduct();
+    
 
     return (
         <section className="pc-container">

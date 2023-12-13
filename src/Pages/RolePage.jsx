@@ -45,7 +45,7 @@ function RolePage() {
 
     useEffect(() => {
         getRoles(),
-        setCurrentPage(1);
+            setCurrentPage(1);
     }, []);
 
     const navigateToCreateRole = () => {
@@ -160,23 +160,18 @@ function RolePage() {
                                                 />
                                             </div>
                                         </div>
-                                        <div className="movement">
-                                            <div className="form-check">
-                                                <input
-                                                    type="checkbox"
-                                                    title="Mostrar los roles que estan habilitados en la primeras paginas."
-                                                    className="form-check-input"
-                                                    id="showEnabledOnly"
-                                                    checked={showEnabledOnly}
-                                                    onChange={handleCheckboxChange}
-                                                />
-                                                <label
-                                                    className="form-check-label"
-                                                    htmlFor="showEnabledOnly"
-                                                >
-                                                    Mostrar solo habilitados.
-                                                </label>
-                                            </div>
+                                        <div className="form-check ml-4 mt-1">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id="showEnabledOnly"
+                                                checked={showEnabledOnly}
+                                                onChange={handleCheckboxChange}
+                                                title="Este interruptor sirve para visualizar únicamente las roles habilitadas."
+                                            />
+                                            <label className="form-check-label" htmlFor="showEnabledOnly">
+                                                Mostrar solo habilitados
+                                            </label>
                                         </div>
                                     </div>
 
@@ -233,8 +228,8 @@ function RolePage() {
                                                                         <button
                                                                             onClick={() => handleEdit(rol)}
                                                                             className={`ml-1 btn btn-icon btn-primary ${!rol.State
-                                                                                    ? "text-gray-400 cursor-not-allowed"
-                                                                                    : ""
+                                                                                ? "text-gray-400 cursor-not-allowed"
+                                                                                : ""
                                                                                 }`}
                                                                             disabled={!rol.State}
                                                                             title="Para editar el nombre del rol seleccionado en el sistema."
@@ -244,8 +239,8 @@ function RolePage() {
                                                                         <button
                                                                             onClick={() => handleDelete(rol)}
                                                                             className={`ml-1 btn btn-icon btn-danger ${!rol.State
-                                                                                    ? "text-gray-400 cursor-not-allowed"
-                                                                                    : ""
+                                                                                ? "text-gray-400 cursor-not-allowed"
+                                                                                : ""
                                                                                 }`}
                                                                             disabled={!rol.State}
                                                                             title="Para eliminar el rol de forma permanente del sistema."

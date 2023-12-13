@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSupplies } from "../Context/Supplies.context.jsx";
 import { useProduct } from '../Context/Product.context.jsx'
 
-const CreateDetailProduct = ({ onClose }) => {
+const CreateDetailProduct = () => {
   const { CurrentProd, createDetailP } = useProduct();
   const { supplies } = useSupplies();
   const [selectedIngredient, setSelectedIngredient] = useState('');
@@ -18,17 +18,13 @@ const CreateDetailProduct = ({ onClose }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    // Crear el objeto 'data' con los datos del formulario y CurrentProd
     const data = {
-      id: CurrentProd,
+      Product_ID: CurrentProd,
       Supplies_ID: selectedIngredient,
       Lot_ProductDetail: quantity,
     };
 
     createDetailP(data)
-
-    onClose();
   };
 
   return (
@@ -61,9 +57,6 @@ const CreateDetailProduct = ({ onClose }) => {
       <div className="modal-footer">
         <button type="submit" className="btn btn-primary">
           Guardar
-        </button>
-        <button type="button" className="btn btn-secondary" onClick={onClose}>
-          Cancelar
         </button>
       </div>
     </form>
