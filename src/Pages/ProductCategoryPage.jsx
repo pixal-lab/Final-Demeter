@@ -8,7 +8,6 @@ import CreateProductCategory from "../Components/CreateProductCategory.jsx";
 import UpdateProductCategory from "../Components/UpdateProductCategory.jsx";
 import DeleteProductCategory from "../Components/DeleteProductCategory.jsx";
 import CannotDeleteCategory from "../Components/CannotDeleteProductsCategory.jsx";
-import CannotDisableCategoryProduct from '../Components/CannotDisableCategoryProduct.jsx';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -24,7 +23,6 @@ function ProductCategoryPage() {
   const [selectedProductCategoryToDelete, setSelectedProductCategoryToDelete] = useState(null);
   const [selectedProductCategoryToUpdate, setSelectedProductCategoryToUpdate] = useState(null);
   const [showWarning, setShowWarning] = useState(false);
-  const [showWarningDisable, setShowWarningDisable] = useState(false);
   const [showEnabledOnly, setShowEnabledOnly] = useState(
     localStorage.getItem("showEnabledOnlyProduct") === "true"
   );
@@ -90,19 +88,6 @@ function ProductCategoryPage() {
 
   const handleUpdateProductCategory = (productCategory) => {
     setSelectedProductCategoryToUpdate(productCategory);
-  };
-
-  const handleToggleStatus = async (productCategory) => {
-    const categoryID = productCategory.ID_ProductCategory;
-
-    const productInCategory = Product.filter((product) => product.ProductCategory_ID === categoryID);
-
-    if (productInCategory.length > 0) {
-      setShowWarningDisable(true);
-    } else {
-      setShowWarningDisable(false);
-      toggleCategoryProductStatus(categoryID);
-    }
   };
 
   const handlePageChange = (event, value) => {
@@ -189,7 +174,7 @@ function ProductCategoryPage() {
                                   <button
                                     type="button"
                                     className={`ml-1 btn btn-icon btn-success ${productCategory.State ? "active" : "inactive"}`}
-                                    onClick={() => handleToggleStatus(productCategory)}
+                                    onClick={() => toggleCategoryProductStatus(productCategory)}
                                     title="Este botón sirve para cambiar el estado de la categoría."
                                   >
                                     {productCategory.State ? (
@@ -260,11 +245,6 @@ function ProductCategoryPage() {
         />
       )}
 
-      {showWarningDisable && (
-        <CannotDisableCategoryProduct
-          onClose={() => setShowWarningDisable(false)}
-        />
-      )}
     </section>
   );
 }
