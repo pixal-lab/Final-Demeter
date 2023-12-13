@@ -166,10 +166,10 @@ function CreateSupplies({
                           },
                           setValueAs: (value) =>
                             value
-                              .trim() // Eliminar espacios al principio y al final
-                              .replace(/\s+/g, ' ') // Reducir múltiples espacios a un solo espacio
-                              .toLowerCase() // Convertir a minúsculas
-                              .replace(/^(.)/, (match) => match.toUpperCase()), // Capitalizar la primera letra
+                              .trim() 
+                              .replace(/\s+/g, ' ') 
+                              .toLowerCase()
+                              .replace(/^(.)/, (match) => match.toUpperCase()),
                         })}
                         type="text"
                         className="form-control"

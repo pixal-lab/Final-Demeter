@@ -135,9 +135,9 @@ function CreateLosses({ supply, onLossCreated }) {
                                                 },
                                                 setValueAs: (value) => {
                                                     const capitalizedValue = value
-                                                        .replace(/^\w/, (match) => match.toUpperCase()) // Capitalizar solo la primera letra
-                                                        .replace(/\. (\w)/g, (match) => `${match.toUpperCase()}`) // Capitalizar después de un punto y espacio
-                                                        .trim(); // Eliminar espacios al principio y al final
+                                                        .replace(/^\w/, (match) => match.toUpperCase()) 
+                                                        .replace(/\. (\w)/g, (match) => `${match.toUpperCase()}`) 
+                                                        .trim(); 
 
                                                     return capitalizedValue.endsWith('.') ? capitalizedValue : `${capitalizedValue}.`;
                                                 },
