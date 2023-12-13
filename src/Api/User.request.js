@@ -9,10 +9,18 @@ export const updateUserRequest = (ID_User, user) => axios.put(`/user/${ID_User}`
 export const deleteUserRequest = (ID_User) => axios.delete(`/user/${ID_User}`);
 export const existUserByEmailOrIdRequest = (document, email, userType) => axios.get(`/existUserByEmailOrId/${document}/${email}/${userType}`);
 
+// --------------------------- Edit Profile --------------------------- //
+
+export const updateUserLoginRequest = (ID_User, user) => axios.put(`/edit_profile`, user);
+export const updatePasswordLoginRequest = (ID_User, user) => axios.put(`/change_password`, user);
+
 // --------------------------- Mesero --------------------------- //
+
 export const getWaitersRequest = () => axios.get(`waiter`);
 export const getWaiterRequest = (ID_User) => axios.get(`/waiter/${ID_User}`);
 export const createWaiterRequest = (waiter) => axios.post(`/add_waiter`, waiter);
+export const updateWaiterRequest = (ID_User, waiter) => axios.put(`/waiter/${ID_User}`, waiter);
+
 //----------------------Login------------------------------//
 
 export const loginRequest = user => axios.post(`/login`, user)

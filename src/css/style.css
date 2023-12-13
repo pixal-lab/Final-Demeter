@@ -2447,6 +2447,17 @@ progress {
     margin-inline-end: 1rem;
 }
 
+.form-control[type="search"] {
+    position: absolute;
+    width: 25%;
+    margin-left: 23%;
+}
+
+.form-control[type="textarea"] {
+    width: 200%;
+    height: 120px;
+}
+
 textarea.form-control {
     min-height: calc(1.5em + 1.15rem + 4px);
 }

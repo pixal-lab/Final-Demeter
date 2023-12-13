@@ -5,7 +5,7 @@ import { useUser } from '../Context/User.context';
 const EditUser = () => {
 
     const { register, setValue, handleSubmit, formState: { errors } } = useForm();
-    const { getCurrentUser, updateUser } = useUser();
+    const { getCurrentUser, updateUserLogin } = useUser();
 
     useEffect(() => {
         const fetchCurrentUser = async () => {
@@ -25,7 +25,7 @@ const EditUser = () => {
     const onSubmit = async (data) => {
         try {
             const userId = data.id;
-            await updateUser(userId, data);
+            await updateUserLogin(userId, data);
         } catch (error) {
             console.error(error);
         }

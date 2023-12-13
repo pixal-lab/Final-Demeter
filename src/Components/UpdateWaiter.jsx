@@ -20,7 +20,7 @@ const style = {
 
 function UpdateWaiter({ onClose, waiterToEdit }) {
     const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: waiterToEdit });
-    const { UpdateWaiter, user } = useUser();
+    const { updateWaiter, user } = useUser();
     const [selectedType, setSelectedType] = useState(waiterToEdit.Type_Document);
 
     const typeOptions = [
@@ -71,7 +71,7 @@ function UpdateWaiter({ onClose, waiterToEdit }) {
     const onSubmit = handleSubmit(async (values) => {
         values.Type_Document = selectedType;
 
-        UpdateWaiter(waiterToEdit.ID_User, values);
+        updateWaiter(waiterToEdit.ID_User, values);
         onClose();
     });
 
