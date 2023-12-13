@@ -171,7 +171,7 @@ function ProductCategoryPage() {
                                 <div style={{ display: "flex", alignItems: "center" }}>
                                   <UpdateProductCategory
                                     buttonProps={{
-                                      buttonClass: `btn btn-icon btn-primary ${!productCategory.State ? "text-gray-400 cursor-not-allowed" : ""}`,
+                                      buttonClass: `ml-1 btn btn-icon btn-primary ${!productCategory.State ? "text-gray-400 cursor-not-allowed" : ""}`,
                                       isDisabled: !productCategory.State,
                                       buttonText: <BiEdit />,
                                     }}
@@ -180,7 +180,7 @@ function ProductCategoryPage() {
                                   />
                                   <button
                                     onClick={() => handleDelete(productCategory)}
-                                    className={`btn btn-icon btn-danger ${!productCategory.State ? "text-gray-400 cursor-not-allowed" : ""}`}
+                                    className={`ml-1 btn btn-icon btn-danger ${!productCategory.State ? "text-gray-400 cursor-not-allowed" : ""}`}
                                     disabled={!productCategory.State}
                                     title="Este botón sirve para eliminar la categoría."
                                   >
@@ -188,7 +188,7 @@ function ProductCategoryPage() {
                                   </button>
                                   <button
                                     type="button"
-                                    className={`btn btn-icon btn-success ${productCategory.State ? "active" : "inactive"}`}
+                                    className={`ml-1 btn btn-icon btn-success ${productCategory.State ? "active" : "inactive"}`}
                                     onClick={() => handleToggleStatus(productCategory)}
                                     title="Este botón sirve para cambiar el estado de la categoría."
                                   >
