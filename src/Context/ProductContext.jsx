@@ -12,7 +12,7 @@ import {
     deleteDetailProductRequest,
     getAllProduct,
     getProducts
-} from "../Api/Product.request.js";
+} from "../Api/product.req.js";
 
 
 const ProductContext = createContext();
@@ -30,7 +30,6 @@ export const useProduct = () => {
 export const ProductProvider = ({ children }) => {
     const [product, setProduct] = useState([]);
     const [detailP, setDetailP] = useState([]);
-    const [Products, setProducts] = useState([]);
     const [Product, setproduct] = useState([]);
     const [AllProducts, setAllProducts] = useState([]);
     const [CurrentProd, setCurrentProd] = useState();
