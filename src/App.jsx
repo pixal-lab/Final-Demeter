@@ -17,7 +17,7 @@ import { Product } from './Context/Product.context.jsx'
 import { ProductCategoriesProvider } from './Context/ProductCategoriesContext'
 import { ProductProvider } from './Context/ProductContext.jsx'
 import { Module } from './Context/Module.context.jsx'
-import { Losses } from './Context/Losses.context.jsx'
+
 
 // Pages
 import UserPage from './Pages/UserPage.jsx'
@@ -56,7 +56,6 @@ function App() {
                 <CategoryProducts>
                   <Product>
                     <Supplies>
-                      <Losses>
                         <ShoppingProvider>
                           <SaleProvider>
                             <ProductCategoriesProvider>
@@ -93,7 +92,6 @@ function App() {
                             </ProductCategoriesProvider>
                           </SaleProvider>
                         </ShoppingProvider>
-                      </Losses>
                     </Supplies>
                   </Product>
                 </CategoryProducts>
