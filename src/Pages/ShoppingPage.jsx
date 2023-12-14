@@ -6,7 +6,7 @@ import { useUser } from '../Context/User.context';
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
 import ShoppingView from '../Components/ShoppingView';
 import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import '../css/style.css';
 import "../css/landing.css";
 import Pagination from '@mui/material/Pagination';
