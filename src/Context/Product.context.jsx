@@ -136,14 +136,6 @@ export function Product({ children }) {
         }
     }
     
-    const fetchProduct = async (id) => {
-        try {
-            const res = await getProductSale(id);
-            return(res.data)
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
 
     const getProduct = async (id) => {
@@ -155,14 +147,6 @@ export function Product({ children }) {
         }
     }
 
-    const getwholeProducts = async () => {
-        try {
-            const res = await getAllProduct();
-            setAllProducts(res.data)
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
 
     return (
