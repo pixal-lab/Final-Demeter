@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { getProductsRequest, getProductByCategoryRequest, createProductsRequest, statusProductsRequest, updateProductsRequest, deleteProductsRequest,getProductSale, getAllProduct, getDetailProductRequest,getDetailProductRequest2, createDetailPRequest, deleteDetailProductRequest  } from "../Api/Product.request.js"
+import { getProductsRequest, getProductByCategoryRequest, createProductsRequest, statusProductsRequest, updateProductsRequest, deleteProductsRequest,getProductSale, getAllProduct, getDetailProductRequest,getDetailProductRequest2, createDetailPRequest, deleteDetailProductRequest  } from "../api/Product.request.js"
 
 const ProductContext = createContext();
 
