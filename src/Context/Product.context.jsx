@@ -181,13 +181,7 @@ export function Product({ children }) {
             getDetailProduct2,
             detailP,
             deleteDetailProduct,
-            Product,
-            Products,
-            AllProducts,
             CurrentProd,
-            fetchProduct,
-            getProduct,
-            getwholeProducts 
             
         }}>
             {children}
