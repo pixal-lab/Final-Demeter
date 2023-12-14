@@ -102,7 +102,7 @@ function Sales() {
         <div className=" ">
             <h1 className="text-3xl font-bold mb-4">Ventas 1.0 </h1>
             <div className='flex flex-grid'>
-                <div className="w-[100vh] min-h-[87vh] ml-[30vh]">
+            <div className="w-full md:w-[70%] lg:w-[60%] xl:w-[50%] min-h-screen md:min-h-[70%] lg:min-h-[80%] mx-auto md:mx-[25%] lg:mx-[30%] xl:mx-[35%] mr-5">
                     <div className="float-left mt-[3vh]">
                         <label htmlFor="categorias" className="text-lg font-medium text-gray-700">Seleccione categorías: </label>
                         <select

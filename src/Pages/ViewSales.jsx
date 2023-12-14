@@ -74,10 +74,8 @@ function ViewSales() {
      
 
      const displaySales = Sales.filter(sale => 
-      sale.User_ID 
-       ? getUserById(sale.User_ID)?.Name_User.includes(searchTerm) 
-       : false
-     ).slice(pagesVisited, pagesVisited + salesPerPage);
+      (sale.User_ID ?? '').toString().includes(searchTerm)
+         ).slice(pagesVisited, pagesVisited + salesPerPage);
      
   return (
     <div>
