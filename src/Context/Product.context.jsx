@@ -1,47 +1,55 @@
-import { createContext, useContext, useState } from "react";
-import { getProductsRequest, getProductByCategoryRequest, createProductsRequest, statusProductsRequest, updateProductsRequest, deleteProductsRequest,getProductSale, getAllProduct, getDetailProductRequest,getDetailProductRequest2, createDetailPRequest, deleteDetailProductRequest  } from "../api/Product.request.js"
+import { createContext, useContext, useState, useEffect } from "react";
+import { 
+    getProductsRequest, 
+    getProductByCategoryRequest, 
+    createProductsRequest, 
+    statusProductsRequest, 
+    updateProductsRequest, 
+    deleteProductsRequest, 
+    getDetailProductRequest, 
+    getDetailProductRequest2, 
+    createDetailPRequest, 
+    deleteDetailProductRequest,
+    getAllProduct,
+    getProduct as getProductById,
+} from "../api/Product.request.js";
 
 const ProductContext = createContext();
 
 export const useProduct = () => {
     const context = useContext(ProductContext);
 
-    if (!context)
+    if (!context) {
         throw new Error("Ha ocurrido un error con el uso del contexto de los insumos");
+    }
 
     return context;
-}
+};
 
-export function Product({ children }) {
+export const ProductProvider = ({ children }) => {
     const [product, setProduct] = useState([]);
     const [detailP, setDetailP] = useState([]);
     const [Products, setProducts] = useState([]);
     const [Product, setproduct] = useState([]);
     const [AllProducts, setAllProducts] = useState([]);
     const [CurrentProd, setCurrentProd] = useState();
-    
 
     const getCurrentProduct = (id) => {
         try {
-            setCurrentProd(id)
-            
-            
-            
+            setCurrentProd(id);
         } catch (error) {
             console.error(error);
         }
-    }
-    
+    };
 
     const getProducts = async () => {
         try {
             const res = await getProductsRequest();
             setProduct(res.data);
-            
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const getProductByCategory = async (id) => {
         try {
@@ -50,7 +58,7 @@ export function Product({ children }) {
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const createProduct = async (products) => {
         try {
@@ -59,7 +67,7 @@ export function Product({ children }) {
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const toggleProducStatus = async (id) => {
         try {
@@ -75,7 +83,7 @@ export function Product({ children }) {
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     const updateProduct = async (id, product) => {
         try {
@@ -84,17 +92,17 @@ export function Product({ children }) {
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const deleteProduct = async (id) => {
         try {
-            const res = await deleteProductsRequest(id)
+            const res = await deleteProductsRequest(id);
             if (res.status === 204)
-                setProduct(product.filter(product => product.ID_Product !== id))
+                setProduct(product.filter(product => product.ID_Product !== id));
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     // Detalles
 
@@ -105,49 +113,65 @@ export function Product({ children }) {
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const getDetailProduct2 = async (id) => {
         try {
             const res = await getDetailProductRequest2(id);
-            
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
-
-    const createDetailP = async ( datilsP) => {
+    const createDetailP = async (datilsP) => {
         try {
-            await createDetailPRequest( datilsP);
+            await createDetailPRequest(datilsP);
             getDetailProduct();
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const deleteDetailProduct = async (id) => {
         try {
-            const res = await deleteDetailProductRequest(id)
+            const res = await deleteDetailProductRequest(id);
             if (res.status === 204)
-                setDetailP(detailP.filter(detail => detail.ID_ProductDetail !== id))
+                setDetailP(detailP.filter(detail => detail.ID_ProductDetail !== id));
         } catch (error) {
             console.log(error);
         }
-    }
-    
+    };
 
-
-    const getProduct = async (id) => {
+    const getProductById = async (id) => {
         try {
-            const res = await getProduct(id);
-            setproduct(res.data)
+            const res = await getProductById(id);
+            setproduct(res.data);
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
 
+    const fetchProduct = async (id) => {
+        try {
+            const res = await getAllProduct(id);
+            return (res.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
+    const getwholeProducts = async () => {
+        try {
+            const res = await getAllProduct();
+            setAllProducts(res.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        // Additional logic if needed
+    }, []);
 
     return (
         <ProductContext.Provider value={{
@@ -159,16 +183,19 @@ export function Product({ children }) {
             updateProduct,
             deleteProduct,
             getCurrentProduct,
-            // Datalles
+            // Detalles
             getDetailProduct,
             createDetailP,
             getDetailProduct2,
             detailP,
             deleteDetailProduct,
             CurrentProd,
-            
+            // Additional functions
+            fetchProduct,
+            getwholeProducts,
+            getProductById,
         }}>
             {children}
         </ProductContext.Provider>
     );
-}
+};
