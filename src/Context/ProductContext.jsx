@@ -11,7 +11,7 @@ import {
     createDetailPRequest, 
     deleteDetailProductRequest,
     getAllProduct,
-    getProduct as getProductById,
+    getProducts
 } from "../api/Product.request.js";
 
 const ProductContext = createContext();
@@ -20,7 +20,7 @@ export const useProduct = () => {
     const context = useContext(ProductContext);
 
     if (!context) {
-        throw new Error("Ha ocurrido un error con el uso del contexto de los insumos");
+        throw new Error("Ha ocurrido un error con el uso del contexto de los PRODUCTOS");
     }
 
     return context;
@@ -42,7 +42,7 @@ export const ProductProvider = ({ children }) => {
         }
     };
 
-    const getProducts = async () => {
+    const getProductsa = async () => {
         try {
             const res = await getProductsRequest();
             setProduct(res.data);
@@ -50,6 +50,8 @@ export const ProductProvider = ({ children }) => {
             console.error(error);
         }
     };
+
+  
 
     const getProductByCategory = async (id) => {
         try {
@@ -153,21 +155,30 @@ export const ProductProvider = ({ children }) => {
 
     const fetchProduct = async (id) => {
         try {
-            const res = await getAllProduct(id);
-            return (res.data);
+            const res = await getProducts(id);
+            return(res.data)
         } catch (error) {
-            console.log(error);
+            console.log(error)
         }
-    };
+    }
+    const getProduct = async (id) => {
+        try {
+            const res = await getProduct(id);
+            setProduct(res.data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     const getwholeProducts = async () => {
         try {
             const res = await getAllProduct();
-            setAllProducts(res.data);
+            setAllProducts(res.data)
         } catch (error) {
-            console.log(error);
+            console.log(error)
         }
-    };
+    }
 
     useEffect(() => {
         // Additional logic if needed
@@ -176,7 +187,7 @@ export const ProductProvider = ({ children }) => {
     return (
         <ProductContext.Provider value={{
             product,
-            getProducts,
+            getProductsa,
             getProductByCategory,
             createProduct,
             toggleProducStatus,
@@ -194,6 +205,7 @@ export const ProductProvider = ({ children }) => {
             fetchProduct,
             getwholeProducts,
             getProductById,
+            AllProducts
         }}>
             {children}
         </ProductContext.Provider>

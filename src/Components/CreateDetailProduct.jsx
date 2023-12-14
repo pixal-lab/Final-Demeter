@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSupplies } from "../Context/Supplies.context.jsx";
-import { useProduct } from '../Context/Product.context.jsx'
+import { useProduct } from '../Context/ProductContext.jsx'
 
 const CreateDetailProduct = () => {
   const { CurrentProd, createDetailP } = useProduct();

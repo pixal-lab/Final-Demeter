@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSaleContext } from '../Context/SaleContext';
-import { useProduct } from '../Context/Product.context.jsx'
+import { useProduct } from '../Context/ProductContext.jsx'
 import ReactPaginate from 'react-paginate';
 import '../fonts/feather.css'; 
 import '../fonts/fontawesome.css'; 
@@ -22,7 +22,7 @@ function ViewSales() {
   const [idSale, setID] = useState();
   const salesPerPage = 6;
   const pagesVisited = pageNumber * salesPerPage;
-  const { getDetailProduct2 } = useProduct();
+const { getDetailProduct2, getwholeProducts, AllProducts } = useProduct();
   const { user, getWaiters, toggleUserStatus } = useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const handlePageClick = ({ selected }) => {
@@ -34,6 +34,8 @@ function ViewSales() {
   useEffect(() => {
     fetchSales();
     getWaiters();
+    getwholeProducts().then(console.log(AllProducts))
+
     newDetails.forEach((detail, index) => {
       getDetailProduct2(detail.Product_ID);
       

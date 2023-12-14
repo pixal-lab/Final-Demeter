@@ -13,7 +13,6 @@ import { CategorySupplies } from './Context/CategorySupplies.context.jsx'
 import { CategoryProducts } from './Context/CategoryProducts.context.jsx'
 import { SaleProvider } from './Context/SaleContext.jsx'
 import { DashboardProvider } from './Context/Dashboard.context.jsx'
-import { Product } from './Context/Product.context.jsx'
 import { ProductCategoriesProvider } from './Context/ProductCategoriesContext'
 import { ProductProvider } from './Context/ProductContext.jsx'
 import { Module } from './Context/Module.context.jsx'
@@ -54,7 +53,6 @@ function App() {
             <DashboardProvider>
               <CategorySupplies>
                 <CategoryProducts>
-                  <Product>
                     <Supplies>
                         <ShoppingProvider>
                           <SaleProvider>
@@ -93,7 +91,6 @@ function App() {
                           </SaleProvider>
                         </ShoppingProvider>
                     </Supplies>
-                  </Product>
                 </CategoryProducts>
               </CategorySupplies>
             </DashboardProvider>

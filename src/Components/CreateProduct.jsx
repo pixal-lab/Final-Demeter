@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import Box from "@mui/material/Box";
 import { useForm, Controller } from 'react-hook-form';
-import { useProduct } from '../Context/Product.context.jsx';
+import { useProduct } from '../Context/ProductContext.jsx';
 import { useCategoryProducts } from '../Context/CategoryProducts.context.jsx';
 
 const style = {

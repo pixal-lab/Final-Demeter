@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useProductCategories } from '../Context/ProductCategoriesContext';
-import { useProduct } from '../Context/ProductContext';
+import { useProduct } from '../Context/ProductContext.jsx';
 import { useSaleContext } from '../Context/SaleContext';
 import Bill from './Bill_Sale';
 import Edit_Bill from './EditSale';
@@ -9,7 +9,7 @@ function Sales() {
     const { ProductCategories, fetchProductCategories } = useProductCategories();
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
-    const { fetchProduct } = useProduct();
+    const { fetchProduct, getwholeProducts } = useProduct();
     const [selectedCategoryName, setSelectedCategoryName] = useState({});
     const [categoryImages, setCategoryImages] = useState({});
     const [productNames, setProductNames] = useState({});
@@ -17,6 +17,7 @@ function Sales() {
     const [newSaleID, setNewSaleID] =useState()
     useEffect(() => {
         fetchProductCategories();
+        
         
         if (Sales.length > 0 && action == 1) {
             setNewSaleID((Sales[Sales.length - 1].ID_Sale) + 1);
@@ -64,6 +65,7 @@ function Sales() {
     const fetchProductsForCategory = (categoryID) => {
         fetchProduct(categoryID)
             .then(data => {
+                console.log(data)
                 const images = data.map(product => product.Image);
                 const names = data.map(product => product.Name_Products);
                 setCategoryImages({ ...categoryImages, [categoryID]: images });

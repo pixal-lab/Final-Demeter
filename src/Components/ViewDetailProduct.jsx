@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useProduct } from '../Context/Product.context.jsx';
+import { useProduct } from '../Context/ProductContext.jsx';
 
 function ViewDetailProduct() {
 
