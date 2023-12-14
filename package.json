@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "serve dist -s -n -L -p $PORT",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "serve dist -s -n -L -p $PORT"
+   
   },
   "dependencies": {
     "@emotion/react": "11.11.1",
