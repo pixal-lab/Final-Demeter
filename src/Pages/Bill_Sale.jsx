@@ -64,12 +64,13 @@ function Bill() {
     }, [newDetails, AllProducts, Sales]);
 
     const decreaseLot = (index) => {
-        if (newDetails[index].Lot > 0) {
+        if (newDetails[index].Lot > 1) { 
             newDetails[index].Lot -= 1;
             forceUpdate();
             updateTotal();
         }
     }
+    
 
     const increaseLot = (index) => {
         newDetails[index].Lot += 1;
