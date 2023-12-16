@@ -4,7 +4,18 @@ import { useSupplies } from "../Context/Supplies.context.jsx";
 import { useProduct } from '../Context/Product.context.jsx'
 import { useForm, Controller } from 'react-hook-form';
 
-const customStyles = {
+const CreateDetailProduct = () => {
+  const { CurrentProd, createDetailP, getDetailProduct, detailP } = useProduct();
+  const { supplies } = useSupplies();
+  const [selectedMeasure, setSelectedMeasure] = useState('');
+  const [selectedSupply, setSelectedSupply] = useState(null);
+  const { control, register, handleSubmit, setError, formState: { errors }, reset, } = useForm();
+
+  useLayoutEffect(() => {
+    getDetailProduct(CurrentProd)
+  }, [])
+
+  const customStyles = {
     control: (provided, state) => ({
       ...provided,
       border: state.isFocused ? '1px solid #201E1E' : '1px solid #201E1E',
@@ -24,17 +35,6 @@ const customStyles = {
     }),
   };
 
-const CreateDetailProduct = () => {
-  const { CurrentProd, createDetailP, getDetailProduct, detailP } = useProduct();
-  const { supplies } = useSupplies();
-  const [selectedMeasure, setSelectedMeasure] = useState('');
-  const [selectedSupply, setSelectedSupply] = useState(null);
-  const { control, register, handleSubmit, setError, formState: { errors }, reset, } = useForm();
-
-  useLayoutEffect(() => {
-    getDetailProduct(CurrentProd)
-  }, [])
-
   const suppliesOptions = supplies
     .filter(supply => supply.State && !detailP.some(d => d.Supply.Name_Supplies === supply.Name_Supplies))
     .map(supply => ({
@@ -51,6 +51,7 @@ const CreateDetailProduct = () => {
       });
       return;
     }
+
     values.Supplies_ID = selectedSupply.value;
     values.Product_ID = CurrentProd;
 
@@ -59,6 +60,7 @@ const CreateDetailProduct = () => {
 
   return (
     <form onSubmit={onSubmit}>
+
       <div className="control">
         <div className="form-group col-md-6">
           <label htmlFor="Supplies_ID" className="form-label">
@@ -101,7 +103,7 @@ const CreateDetailProduct = () => {
             {...register("Lot_ProductDetail", {
               required: "La cantidad es obligatoria",
               validate: (value) => {
-                const parsedValue = parseFloat(value.replace(',', '.'));
+                const parsedValue = parseFloat(value.replace(',', '.')); // Reemplaza la coma por un punto antes de convertir a número
                 if (isNaN(parsedValue) || !isFinite(parsedValue)) {
                   return 'El valor debe ser un número válido.';
                 }
@@ -116,6 +118,7 @@ const CreateDetailProduct = () => {
               {errors.Lot_ProductDetail.message}
             </p>
           )}
+
           {selectedMeasure && (
             <p className="text-muted">{`Medida: ${selectedMeasure}`}</p>
           )}
