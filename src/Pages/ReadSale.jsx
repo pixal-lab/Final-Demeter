@@ -11,7 +11,7 @@ function ReadSale() {
 
 
     useEffect(() => {
-        getwholeProducts();
+        getwholeProducts().then(console.log(AllProducts));
     }, []);
     const getUserById = (userId) => {
         return user.find(user => user.ID_User === userId);

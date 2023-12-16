@@ -13,7 +13,7 @@ function Bill() {
     const forceUpdate = useForceUpdate();
     const { user, getWaiters, toggleUserStatus } = useUser();
     const [waiters, setWaiters] = useState([]);
-    const [selectedWaiter, setSelectedWaiter] = useState("11");
+    const [selectedWaiter, setSelectedWaiter] = useState();
 
     const CreateSale = () => {
         if (newDetails.length > 0) {
@@ -37,10 +37,15 @@ function Bill() {
     useEffect(() => {
         // Mapear la lista de usuarios para obtener nombres y crear las opciones del select
         const waiterOptions = user.map((userData) => (
-          <option key={userData.ID_User} value={userData.ID_User}>
-            {userData.Name_User} {userData.LastName_User}
-          </option>
+            <option key={userData.ID_User} value={userData.ID_User}>
+              {userData.Name_User} {userData.LastName_User}
+            </option>
         ));
+        waiterOptions.unshift(
+            <option key="quickSale" value={null}>
+              Venta rapida
+            </option>
+          );
     
         setWaiters(waiterOptions);
       }, [user]);
@@ -59,12 +64,13 @@ function Bill() {
     }, [newDetails, AllProducts, Sales]);
 
     const decreaseLot = (index) => {
-        if (newDetails[index].Lot > 0) {
+        if (newDetails[index].Lot > 1) { 
             newDetails[index].Lot -= 1;
             forceUpdate();
             updateTotal();
         }
     }
+    
 
     const increaseLot = (index) => {
         newDetails[index].Lot += 1;
