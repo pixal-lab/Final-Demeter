@@ -30,7 +30,6 @@ function ShoppingView({ id, date }) {
     return async () => {
       if (open || !id || !date) return
       const data = await getShoppingAndSuppliesBySupplierIdAndDateTime(id, date)
-      
       setShoppingData(data)
     }
   }, [open])
