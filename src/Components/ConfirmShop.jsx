@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Link, useNavigate, useNavigation } from 'react-router-dom';
 
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -16,10 +17,12 @@ const style = {
   p: 4,
 };
 
+
 function ConfirmShop({ onConfirm, data, ...onConfirmValues }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
   const navigation = useNavigate()
 
   const navigateToMainMenu = () => {
@@ -42,6 +45,8 @@ function ConfirmShop({ onConfirm, data, ...onConfirmValues }) {
           <button className="bg-red-500 text-white font-bold py-2 px-4 rounded ml-5 mt-3 " {...onConfirmValues} onClick={() => onConfirm({ navigateToMainMenu, ...data, ...onConfirmValues })}>
             Confirmar
           </button>
+
+
           <button onClick={handleClose} className="btn btn-danger bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded m-3 j">
             Cancelar
           </button>
@@ -50,5 +55,7 @@ function ConfirmShop({ onConfirm, data, ...onConfirmValues }) {
     </div>
   )
 }
+
+export default ConfirmShop
 
 export default ConfirmShop
