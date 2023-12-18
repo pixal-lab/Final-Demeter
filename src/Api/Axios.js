@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'https://demeter-final-back-production.up.railway.app',
+    baseURL: 'https://final-demeter-b-production.up.railway.app/',
     withCredentials: true
 })
 
