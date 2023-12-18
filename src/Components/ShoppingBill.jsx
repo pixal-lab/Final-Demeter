@@ -13,7 +13,7 @@ function ShoppingBill({ total = 0, onConfirm, onClose, ...confirmValues }) {
   
 
 
-  return 1
+  return 2
 }
 
 export default ShoppingBill

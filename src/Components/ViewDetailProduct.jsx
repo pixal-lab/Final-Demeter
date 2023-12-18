@@ -10,6 +10,6 @@ function ViewDetailProduct() {
 
     // const detailsArray = Array.isArray(detailP) ? detailP : [];
 
-    return 1
+    return 3
 }
 export default ViewDetailProduct
