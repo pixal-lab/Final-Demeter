@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'http://localhost:5080',
+    baseURL: 'https://final-demeter-b-production.up.railway.app/',
     withCredentials: true
 })
 
