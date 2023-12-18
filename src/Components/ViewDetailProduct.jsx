@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { useProduct } from '../Context/Productcontext.jsx';
+import { useProduct } from '../Context/Product.context.jsx';
 import { AiFillDelete } from 'react-icons/ai';
 
 function ViewDetailProduct() {
