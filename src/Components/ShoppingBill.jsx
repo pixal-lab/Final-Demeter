@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import '../css/style.css'
-import ConfirmShop from './CofirmShop.jsx';
+import ConfirmShop from './ConfirmShop.jsx';
 import CancelShop from './CancelShop';
 import { useSupplier } from '../Context/Supplier.context';
 import { useUser } from '../Context/User.context';
