@@ -586,10 +586,6 @@ footer .b-footer .bottom-tag {
 
 /* Codigo de css propio para las modal */
 
-strong {
-    color: #ff0000;
-}
-
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -614,10 +610,6 @@ strong {
 }
 
 .modal-container-denegate {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     background-color: #fff;
     border-radius: 8px;
     padding: 16px;
@@ -637,9 +629,9 @@ strong {
 }
 
 .modal-container button {
+    margin-top: 100px;
     margin-right: 10px;
     min-width: 100px;
-    align-content: center;
 }
 
 .deleteText {
@@ -654,18 +646,4 @@ strong {
     margin-top: -10px;
     margin-bottom: -10px;
     margin-left: 105px;
-}
-
-.estado-icon.active {
-    color: white;
-}
-
-.estado-icon.inactive {
-    color: #012200;
-}
-
-.permissions {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: flex-start;
 }

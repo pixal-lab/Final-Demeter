@@ -8,7 +8,6 @@ import SecurityIcon from '@mui/icons-material/Security';
 import PeopleIcon from '@mui/icons-material/People';
 import StoreIcon from '@mui/icons-material/Store';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useUser } from '../Context/User.context';
 
@@ -36,12 +35,12 @@ const Navbar = () => {
     }
 
     return (
-        <nav className="pc-sidebar ">
+        <nav className="pc-sidebar">
             <div className="navbar-wrapper">
                 <div className="m-header">
                     <button
                         onClick={() => {
-                            navigate('/dashboard');
+                            navigate('/');
                         }}
                         className="b-brand"
                         title='Dirigirse a la pagina principal del sistema.'
@@ -57,7 +56,7 @@ const Navbar = () => {
                         <li className="pc-item">
                             <button
                                 onClick={() => {
-                                    navigate('/dashboard');
+                                    navigate('/');
                                 }}
                                 className="pc-link"
                                 title='Dirigirse al DashBoard del sistema.'
@@ -258,27 +257,6 @@ const Navbar = () => {
                                     </li>
                                 </ul>
                             )}
-                        </li>
-                        <li className="pc-item pc-caption">
-                            <span>Manuales</span>
-                        </li>
-                        <li className="pc-item pc-hasmenu">
-                            <button
-                                onClick={() => {
-                                    navigate('/instructions');
-                                }}
-                                className="pc-link"
-                                title='Dirigirse al modulo de roles con asignacion de permisos del sistema.'
-                            >
-                                <span className="pc-micon">
-                                    <i className="material-icons-two-tone">
-                                        <AutoStoriesIcon />
-                                    </i>
-                                </span>
-                                <span className="pc-mtext">
-                                    Manuales
-                                </span>
-                            </button>
                         </li>
                     </ul>
                 </div>

@@ -18,14 +18,7 @@ const style = {
   pt: 2,
   px: 4,
   pb: 3,
-  '@media (max-width: 770px)': {
-    width: '75%',
-  },
-  '@media (max-width: 315px)': {
-    width: '240px',
-  },
 };
-
 
 const customStyles = {
   control: (provided, state) => ({
@@ -73,7 +66,6 @@ function CreateSupplies({
   }
 
   const onSubmit = handleSubmit(async (values) => {
-
     const normalizedInputName = removeAccentsAndSpaces(values.Name_Supplies);
     const normalizedExistingNames = supplies.map(supply =>
       removeAccentsAndSpaces(supply.Name_Supplies)
@@ -168,17 +160,17 @@ function CreateSupplies({
                             value: 3,
                             message: 'El nombre debe tener al menos 3 caracteres.',
                           },
+                          maxLength: {
+                            value: 30,
+                            message: 'El nombre no puede tener más de 30 caracteres.',
+                          },
                           setValueAs: (value) =>
                             value
-                              .trim()
-                              .replace(/\s+/g, ' ')
+                              .trim() 
+                              .replace(/\s+/g, ' ') 
                               .toLowerCase()
                               .replace(/^(.)/, (match) => match.toUpperCase()),
                         })}
-                        maxLength={30}
-                        onInput={(e) => {
-                          e.target.value = e.target.value.replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ\s]/g, '');
-                        }}
                         type="text"
                         className="form-control"
                       />
@@ -206,15 +198,11 @@ function CreateSupplies({
                             validRange: (value) => {
                               const parsedValue = parseFloat(value);
                               if (parsedValue < 0 || parsedValue > 99999999) {
-                                return 'La cantidad debe estar entre 0 y 99.999.999.';
+                                return 'La cantidad debe estar entre 0 y 99999999.';
                               }
                             },
                           },
                         })}
-                        maxLength={8}
-                        onInput={(e) => {
-                          e.target.value = e.target.value.replace(/[^\d.]/g, '');
-                        }}
                         type="text"
                         className="form-control"
                       />
@@ -235,7 +223,6 @@ function CreateSupplies({
                         rules={{ required: 'Este campo es obligatorio' }}
                         render={({ field }) => (
                           <Select
-                            type="select"
                             options={[
                               { value: 'Kilogramos (kg)', label: 'Kilogramos (kg)' },
                               { value: 'Gramos (g)', label: 'Gramos (g)' },
@@ -284,7 +271,7 @@ function CreateSupplies({
                               const parsedUnit = parseFloat(Unit);
 
                               if (parsedValue < 0 || parsedValue > 9999) {
-                                return 'La existencia mínima debe estar entre 0 y 9.999.';
+                                return 'La existencia mínima debe estar entre 0 y 9999.';
                               }
 
                               if (parsedValue > parsedUnit) {
@@ -293,10 +280,6 @@ function CreateSupplies({
                             },
                           },
                         })}
-                        maxLength={4}
-                        onInput={(e) => {
-                          e.target.value = e.target.value.replace(/[^\d.]/g, ''); 
-                        }}
                         type="text"
                         className="form-control"
                       />
@@ -317,7 +300,6 @@ function CreateSupplies({
                         rules={{ required: 'Este campo es obligatorio' }}
                         render={({ field }) => (
                           <Select
-                            type="select"
                             options={options}
                             value={selectedCategory}
                             onChange={(selectedOption) => {
@@ -352,7 +334,7 @@ function CreateSupplies({
                         Confirmar
                       </button>
                       <button
-                        className="btn btn-danger"
+                        className="btn btn-primary"
                         onClick={onCancel}
                         type="submit"
                         title="Este botón sirve para cerrar la ventana modal sin guardar la información."

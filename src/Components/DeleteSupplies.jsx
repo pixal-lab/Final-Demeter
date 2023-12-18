@@ -6,7 +6,7 @@ const modalStyles = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    maxWidth: '80%',  
+    height: '250px',
     width: '400px',
     padding: '20px',
     backgroundColor: 'white',
@@ -29,29 +29,24 @@ const overlayStyles = {
 
 const buttonStyles = {
     marginTop: '80px',
-    width: '45%',
-    display: 'flex',
-    flexDirection: 'column',  
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '10px',  
+    marginRight: '10%',
+    marginLeft: '10%',
 };
-
 
 function DeleteSupplies({ onClose, onDelete }) {
     return (
         <div style={overlayStyles} onClick={onClose}>
             <div style={modalStyles}>
-                <h1 className="text-3xl font-semibold title-delete">Eliminar insumo</h1>
+                <h1 className="text-3xl font-semibold">Eliminar insumo</h1>
                 <p className="deleteText">¿Está seguro de que desea eliminar este insumo?</p>
-                <div className="flex justify-between flex-wrap buttons-columns">  
+                <div className="flex justify-between ">
                     <button
                         onClick={onDelete}
                         style={buttonStyles}
-                        className="btn btn-icon btn-danger button-column-one"
+                        className="btn btn-icon btn-danger"
                         title="Este botón sirve para eliminar el insumo y cerrar la ventana modal."
                     >
-                        <span>Eliminar</span>
+                        Eliminar
                     </button>
                     <button
                         onClick={onClose}
@@ -59,7 +54,7 @@ function DeleteSupplies({ onClose, onDelete }) {
                         className="btn btn-icon btn-primary"
                         title="Este botón sirve para cerrar la ventana modal sin eliminar el insumo."
                     >
-                        <span>Cancelar</span>
+                        Cancelar
                     </button>
                 </div>
             </div>

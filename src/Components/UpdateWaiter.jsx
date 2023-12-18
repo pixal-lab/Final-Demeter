@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import Box from "@mui/material/Box";
 import { useForm } from 'react-hook-form';
@@ -49,7 +49,7 @@ function UpdateWaiter({ onClose, waiterToEdit }) {
         }),
     };
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         register('Document', {
             required: 'El documento es obligatorio',
             validate: (value) => {
@@ -235,7 +235,7 @@ function UpdateWaiter({ onClose, waiterToEdit }) {
                                             Guardar
                                         </button>
                                         <button
-                                            className="btn btn-danger"
+                                            className="btn btn-primary"
                                             onClick={onCancel}
                                             type="button"
                                         >

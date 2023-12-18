@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
 import { useForm } from "react-hook-form";
@@ -6,11 +6,11 @@ import { useModule } from "../Context/Module.context";
 import { useRole } from "../Context/Role.context";
 
 const style = {
-  position: "absolute",
+  position: "fixed",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 680,
+  width: 600,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -24,6 +24,7 @@ export default function AssignPermissions({ onClose, onCreated = () => null, rol
     register,
     handleSubmit,
     formState: { errors },
+    setError
   } = useForm();
 
   const { getModuleNamesAndRoleState, removeMultipleModulePermissions } = useModule();
@@ -41,14 +42,13 @@ export default function AssignPermissions({ onClose, onCreated = () => null, rol
     if (newDisabledRoles.length > 0) {
       await removeMultipleModulePermissions(roleId, newDisabledRoles.map(n => n.moduleId))
     }
-
     onCreated();
     onClose();
   });
 
   const [modules, setModules] = useState([]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     return async () => {
       const data = await getModuleNamesAndRoleState(roleId);
       setModules(data);
@@ -86,9 +86,8 @@ export default function AssignPermissions({ onClose, onCreated = () => null, rol
       roleState: p.ID_Module === moduleId ? !p.roleState : p.roleState
     })))
   }
-
   return (
-    <Box sx={{ ...style, height: 585, overflow: "auto", display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <Box sx={{ ...style, width: 600, height: 500, overflow: "auto" }}>
       <div className="col-md-12">
         <div className="card">
           <div className="card-header">
@@ -108,37 +107,34 @@ export default function AssignPermissions({ onClose, onCreated = () => null, rol
                     {roleState ? (
                       <>
                         <p>Desactivar</p>
-                        <MdToggleOn className="btn btn-success" />
+                        <MdToggleOn className={`estado-icon active`} />
                       </>
                     ) : (
                       <>
                         <p>Activar</p>
-                        <MdToggleOff className="btn btn-danger" />
+                        <MdToggleOff className={`estado-icon inactive`} />
                       </>
                     )}
                   </button>
                 </div>
               ))}
-            </form>
-            <div className="buttonconfirm pt-5">
-              <div className="mb-3">
-                <button
-                  className="btn btn-primary mr-5"
-                  type="submit"
-                  title='Se guarda la información recien ingresado en el sistema.'
-                >
-                  Confirmar
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={onCancel}
-                  type="button"
-                  title='Se cancela la información recien ingresada en el sistema.'
-                >
-                  Cancelar
-                </button>
+
+              <div className="buttonconfirm">
+                <div className="mb-3">
+                  <button
+                    className="btn btn-primary"
+                    onClick={onCancel}
+                    type="button"
+                    title="Cancelar el rol no creado actualemente en el sistema"
+                  >
+                    Cancelar
+                  </button>
+                  <button className="btn btn-primary mr-5" type="submit">
+                    Confirmar
+                  </button>
+                </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>

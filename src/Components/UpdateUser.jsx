@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import Box from "@mui/material/Box";
 import { useForm } from 'react-hook-form';
@@ -23,12 +23,16 @@ function UpdateUser({ onClose, userToEdit }) {
     const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: userToEdit });
     const { updateUser, user } = useUser();
     const [selectedType, setSelectedType] = useState(userToEdit.Type_Document);
+    const { role } = useRole();
+    const [selectedRole, setSelectedRole] = useState(userToEdit.Role_ID);
 
     const typeOptions = [
         { label: 'Cédula de ciudadanía', value: 'CC' },
         { label: 'Cédula de extranjería', value: 'CE' },
         { label: 'Pasaporte', value: 'PB' },
     ];
+
+    const rolOpcions = role.map(option => ({ label: option.Name_Role, value: option.ID_Role }));
 
     const customStyles = {
         control: (provided, state) => ({
@@ -50,42 +54,42 @@ function UpdateUser({ onClose, userToEdit }) {
         }),
     };
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         register('Document', {
             required: 'El documento es obligatorio',
-            // validate: (value) => {
-            //     const duplicateUser = user.find(
-            //         (users) =>
-            //             users.Document === value &&
-            //             users.ID_User !== userToEdit.ID_User
-            //     );
+            validate: (value) => {
+                const duplicateUser = user.find(
+                    (users) =>
+                        users.Document === value &&
+                        users.ID_User !== userToEdit.ID_User
+                );
 
-            //     if (duplicateUser) {
-            //         return 'Este número de documento ya existe.';
-            //     }
-            //     return true;
-            // },
+                if (duplicateUser) {
+                    return 'Este número de documento ya existe.';
+                }
+                return true;
+            },
         });
         register('Email', {
             required: 'El correo es obligatorio',
-            // validate: (value) => {
-            //     const duplicateEmail = user.find(
-            //         (users) =>
-            //             users.Email === value &&
-            //             users.ID_User !== userToEdit.ID_User
-            //     );
+            validate: (value) => {
+                const duplicateEmail = user.find(
+                    (users) =>
+                        users.Email === value &&
+                        users.ID_User !== userToEdit.ID_User
+                );
 
-            //     if (duplicateEmail) {
-            //         return 'Este correo ya existe.';
-            //     }
-            //     return true;
-            // },
+                if (duplicateEmail) {
+                    return 'Este correo ya existe.';
+                }
+                return true;
+            },
         });
     }, [register, user, userToEdit.ID_User]);
 
     const onSubmit = handleSubmit(async (values) => {
         values.Type_Document = selectedType;
-        // values.Role_ID = selectedRole;
+        values.Role_ID = selectedRole;
 
         updateUser(userToEdit.ID_User, values);
         onClose();
@@ -239,6 +243,34 @@ function UpdateUser({ onClose, userToEdit }) {
                                             </p>
                                         )}
                                     </div>
+
+                                    <div className="form-group col-md-6">
+                                        <label htmlFor="Role_ID" className="form-label">
+                                            Rol: <strong>*</strong>
+                                        </label>
+                                        <Select
+                                            options={[
+                                                ...rolOpcions
+                                            ]}
+                                            {...register("Role_ID")}
+                                            value={rolOpcions.find(option => option.value === selectedRole)}
+                                            onChange={(selectedRole) => setSelectedRole(selectedRole)}
+                                            styles={customStyles}
+                                                className='form-selects'
+                                                theme={(theme) => ({
+                                                    ...theme,
+                                                    colors: {
+                                                        ...theme.colors,
+                                                        primary: '#e36209',
+                                                    },
+                                                })}
+                                        />
+                                        {errors.Role_ID && (
+                                            <p className="text-red-500">
+                                                {errors.Role_ID.message}
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="buttonconfirm">
@@ -250,7 +282,7 @@ function UpdateUser({ onClose, userToEdit }) {
                                             Guardar
                                         </button>
                                         <button
-                                            className="btn btn-danger"
+                                            className="btn btn-primary"
                                             onClick={onCancel}
                                             type="button"
                                         >

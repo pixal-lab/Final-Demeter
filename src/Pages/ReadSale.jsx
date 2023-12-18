@@ -10,18 +10,18 @@ function ReadSale() {
     const { user, toggleUserStatus } = useUser();
 
 
-    useLayoutEffect(() => {
-        getwholeProducts();
+    useEffect(() => {
+        getwholeProducts().then(console.log(AllProducts));
     }, []);
     const getUserById = (userId) => {
         return user.find(user => user.ID_User === userId);
        };
        
-    useLayoutEffect(() => {
+    useEffect(() => {
         getDetailsSale(Sale.ID_Sale);
     }, [Sale]);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const subtotal = details.reduce((acc, item) => {
             const product = AllProducts.find(product => product.ID_Product === item.Product_ID);
             return acc + (product.Price_Product * item.Lot);
@@ -78,7 +78,7 @@ function ReadSale() {
                     </div>
 
                     <div className="mb-4">
-                        <p>Total: {total}</p>
+                        <p>SubTotal: {total} Total: {total}</p>
                     </div>
                 </form>
                 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { AiOutlineFileText } from 'react-icons/ai';
@@ -16,19 +16,13 @@ const style = {
     pt: 2,
     px: 4,
     pb: 3,
-    '@media (max-width: 770px)': {
-      width: '75%',
-    },
-    '@media (max-width: 315px)': {
-      width: '240px',
-    },
-  };
+};
 
 function SeeLosses({ supply }) {
     const { losses, getLosses } = useLosses();
     const [open, setOpen] = useState(false);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         getLosses();
     }, []);
 
@@ -94,7 +88,7 @@ function SeeLosses({ supply }) {
                         <div className="buttonconfirm">
                             <div className="mb-3">
                                 <button
-                                    className="btn btn-danger"
+                                    className="btn btn-primary"
                                     onClick={handleClose}
                                     type="button"
                                     title="Este botón sirve para cerrar la ventana modal."

@@ -24,16 +24,6 @@ export function CategoryProducts({ children }) {
         }
     }
 
-    const getCategory_products_without_state = async () => {
-        try {
-            const res = await getCategory_productsRequest();
-            return res.data
-        } catch (error) {
-            console.error(error);
-            return []
-        }
-    }
-
     const getOneCategory_products = async (id) => {
         try {
             const res = await getOne_Category_productsRequest(id);
@@ -54,7 +44,7 @@ export function CategoryProducts({ children }) {
 
             if (res.status === 200) {
                 setCategory_products((prevCategoryProducts) =>
-                    prevCategoryProducts.map((category) =>
+                prevCategoryProducts.map((category) =>
                         category.ID_ProductCategory === id ? { ...category, State: !category.State } : category
                     )
                 );
@@ -91,8 +81,7 @@ export function CategoryProducts({ children }) {
             createCategory_products,
             toggleCategoryProductStatus,
             updateCategory_products,
-            deleteCategory_products,
-            getCategory_products_without_state
+            deleteCategory_products
         }}>
             {children}
         </CategoryProductsContext.Provider>

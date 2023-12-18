@@ -38,7 +38,7 @@ function SupplierPage() {
   }, [showEnabledOnly]);
 
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     getSupplierByState();
   }, []);
 

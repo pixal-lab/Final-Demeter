@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Icons
@@ -36,23 +36,23 @@ function WaiterPage() {
     );
     const itemsForPage = 5;
     const [currentPage, setCurrentPage] = useState(1);
+    const [authorized, setAuthorized] = useState(true);
 
     const navigate = useNavigate();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const fetchData = async () => {
             try {
                 const users = await getWaiters();
                 setAllWaiter(users);
             } catch (error) {
                 console.error(error);
-                console.log('Mostrar autenticacion useE', authorized);
+                setAuthorized(false);
             }
         };
         fetchData();
         setCurrentPage(1);
     }, [getWaiters]);
-
 
     const navigateToCreateWaiter = () => {
         setIsModalOpen(true);
@@ -67,7 +67,7 @@ function WaiterPage() {
         setIsEditModalOpen(true);
     };
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         localStorage.setItem("showEnabledOnly", showEnabledOnly);
     }, [showEnabledOnly]);
 
@@ -125,8 +125,10 @@ function WaiterPage() {
 
     return (
         <section className="pc-container">
-                <div className="pcoded-content">
-
+            <div className="pcoded-content">
+                {!authorized ? (
+                    <AuthorizationModal onClose={closeModal} />
+                ) : (
                     <div className="row w-100">
                         <div className="col-md-12">
                             <div className=" w-100 col-sm-12">
@@ -255,11 +257,11 @@ function WaiterPage() {
                             </Typography>
                         </Box>
                     </div>
-
-                </div>
+                )}
+            </div>
 
             {isModalOpen && (
-                <div className="absolute inset-0 flex items-center justify-center z-50">
+                <div className="fixed inset-0 flex items-center justify-center z-50">
                     <div className="modal-overlay" onClick={() => setIsModalOpen(false)}></div>
                     <div className="modal-container">
                         <CreateWaiter onClose={() => setIsModalOpen(false)} onCreated={handleCreated} />
@@ -268,13 +270,15 @@ function WaiterPage() {
             )}
 
             {isEditModalOpen && (
-                <div className="absolute inset-0 flex items-center justify-center z-50">
+                <div className="fixed inset-0 flex items-center justify-center z-50">
                     <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}></div>
                     <div className="modal-container">
                         <UpdateWaiter onClose={() => setIsEditModalOpen(false)} waiterToEdit={waiterToEdit} />
                     </div>
                 </div>
             )}
+
+
         </section>
     )
 }

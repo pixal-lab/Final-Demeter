@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { useCategoryProducts } from '../Context/CategoryProducts.context';
@@ -9,18 +9,13 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
+  width: 400,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
   pt: 2,
   px: 4,
   pb: 3,
-  '@media (max-width: 770px)': {
-    width: '50%',
-},
-'@media (max-width: 410px)': {
-    width: '200px',
-},
 };
 
 function UpdateProductCategory({
@@ -42,7 +37,7 @@ function UpdateProductCategory({
     setError,
   } = useForm();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (productCategoryToEdit) {
       setValue('Name_ProductCategory', productCategoryToEdit.Name_ProductCategory);
 
@@ -51,37 +46,37 @@ function UpdateProductCategory({
 
   function removeAccentsAndSpaces(str) {
     return str
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f\s]/g, '');
-  }
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f\s]/g, '');
+}
 
-  const onSubmit = handleSubmit(async (values) => {
-    if (productCategoryToEdit) {
-      const normalizedInputName = removeAccentsAndSpaces(values.Name_ProductCategory);
-      const normalizedExistingNames = Category_products
-        .filter(category => category.ID_ProductCategory !== productCategoryToEdit.ID_ProductCategory)
-        .map(category => removeAccentsAndSpaces(category.Name_ProductCategory));
+const onSubmit = handleSubmit(async (values) => {
+  if (productCategoryToEdit) {
+    const normalizedInputName = removeAccentsAndSpaces(values.Name_ProductCategory);
+    const normalizedExistingNames = Category_products
+      .filter(category => category.ID_ProductCategory !== productCategoryToEdit.ID_ProductCategory)
+      .map(category => removeAccentsAndSpaces(category.Name_ProductCategory));
 
-      const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
+    const isNameDuplicate = normalizedExistingNames.includes(normalizedInputName);
 
-      if (isNameDuplicate) {
-        setError('Name_ProductCategory', {
-          type: 'manual',
-          message: 'El nombre de la categoría ya existe.',
-        });
-        return;
-      }
-
-      const productCategory = { ...productCategoryToEdit, ...values };
-      try {
-        await updateCategory_products(productCategory.ID_ProductCategory, productCategory);
-        setOpen(false);
-      } catch (error) {
-        console.error('Error al actualizar la categoría de producto', error);
-      }
+    if (isNameDuplicate) {
+      setError('Name_ProductCategory', {
+        type: 'manual',
+        message: 'El nombre de la categoría ya existe.',
+      });
+      return;
     }
-  });
+
+    const productCategory = { ...productCategoryToEdit, ...values };
+    try {
+      await updateCategory_products(productCategory.ID_ProductCategory, productCategory);
+      setOpen(false);
+    } catch (error) {
+      console.error('Error al actualizar la categoría de producto', error);
+    }
+  }
+});
 
   const onCancel = () => {
     setOpen(false);
@@ -106,7 +101,7 @@ function UpdateProductCategory({
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
-        <Box sx={{ ...style, width: 400 }}>
+        <Box sx={{ ...style, width: 600 }}>
           <div className="col-md-12">
             <div className="card">
               <div className="card-header">
@@ -116,7 +111,7 @@ function UpdateProductCategory({
                 <form
                   onSubmit={(event) => onSubmit(event)}
                 >
-                  <div className="city-two">
+                  <div className="city">
                     <div className="form-group col-md-6">
                       <label htmlFor="Name_ProductCategory" className="form-label">
                         Nombre:
@@ -139,14 +134,10 @@ function UpdateProductCategory({
                           setValueAs: (value) =>
                             value
                               .trim()
-                              .replace(/\s+/g, ' ')
-                              .toLowerCase()
+                              .replace(/\s+/g, ' ') 
+                              .toLowerCase() 
                               .replace(/^(.)/, (match) => match.toUpperCase()),
                         })}
-                        maxLength={30}
-                        onInput={(e) => {
-                          e.target.value = e.target.value.replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ\s]/g, '');
-                        }}
                         type="text"
                         className="form-control"
                       />
@@ -158,17 +149,17 @@ function UpdateProductCategory({
                     </div>
                   </div>
 
-                  <div className="buttonconfirm-two">
+                  <div className="buttonconfirm">
                     <div className="mb-3">
                       <button
-                        className="btn btn-primary mr-4"
+                        className="btn btn-primary mr-5"
                         type="submit"
                         title="Este botón sirve para guardar la información y cerrar la ventana modal."
                       >
                         Confirmar
                       </button>
                       <button
-                        className="btn btn-danger"
+                        className="btn btn-primary"
                         onClick={onCancel}
                         type="submit"
                         title="Este botón sirve para cerrar la ventana modal sin guardar la información."

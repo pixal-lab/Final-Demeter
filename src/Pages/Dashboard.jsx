@@ -1,24 +1,25 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDashboard } from '../Context/Dashboard.context';
 import { useUser } from '../Context/User.context.jsx';
-import { useProduct } from '../Context/Product.context.jsx';
+import { useProduct } from '../Context/ProductContext.jsx';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 
 const Dashboard = () => {
   const { user, getUsers, toggleUserStatus, deleteUser } = useUser();
-  const { product, getProducts, toggleSupplyStatus, getCurrentProduct } = useProduct();
+  const { product, getProductsa, toggleSupplyStatus, getCurrentProduct } = useProduct();
   const { salesChart, fetchSales, fetchSalesusers, salesuserChart, fetchBP, besProd , shopsChart, fetchShops,
     fetchsupli,
     supli } = useDashboard();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     getUsers();
-    getProducts();
+    getProductsa();
     fetchSales();
     fetchSalesusers();
     fetchBP();
     fetchShops();
     fetchsupli();
+    console.log(shopsChart)
   }, []);
 
   // Utiliza los datos de salesChart para el gráfico

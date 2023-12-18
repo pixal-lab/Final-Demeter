@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useSaleContext } from '../Context/SaleContext';
 import { useProduct } from '../Context/ProductContext';
@@ -13,7 +13,7 @@ function Bill() {
     const forceUpdate = useForceUpdate();
     const { user, getWaiters, toggleUserStatus } = useUser();
     const [waiters, setWaiters] = useState([]);
-    const [selectedWaiter, setSelectedWaiter] = useState("11");
+    const [selectedWaiter, setSelectedWaiter] = useState();
 
     const CreateSale = () => {
         if (newDetails.length > 0) {
@@ -30,7 +30,7 @@ function Bill() {
         setnewDetails(updatedDetails);
     };
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         getwholeProducts();
         getWaiters();
     }, []);
@@ -38,15 +38,20 @@ function Bill() {
     useLayoutEffect(() => {
         // Mapear la lista de usuarios para obtener nombres y crear las opciones del select
         const waiterOptions = user.map((userData) => (
-          <option key={userData.ID_User} value={userData.ID_User}>
-            {userData.Name_User} {userData.LastName_User}
-          </option>
+            <option key={userData.ID_User} value={userData.ID_User}>
+              {userData.Name_User} {userData.LastName_User}
+            </option>
         ));
+        waiterOptions.unshift(
+            <option key="quickSale" value={null}>
+              Venta rapida
+            </option>
+          );
     
         setWaiters(waiterOptions);
       }, [user]);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (Sales.length > 0) {
             setNewSaleID((Sales[Sales.length - 1].ID_Sale) + 1);
         } else {
@@ -60,12 +65,13 @@ function Bill() {
     }, [newDetails, AllProducts, Sales]);
 
     const decreaseLot = (index) => {
-        if (newDetails[index].Lot > 0) {
+        if (newDetails[index].Lot > 1) { 
             newDetails[index].Lot -= 1;
             forceUpdate();
             updateTotal();
         }
     }
+    
 
     const increaseLot = (index) => {
         newDetails[index].Lot += 1;
@@ -74,9 +80,9 @@ function Bill() {
     }
 
     const updateTotal = () => {
-            const newTotal = newDetails.reduce((acc, item) => {
-                const product = AllProducts.find(product => product.ID_Product === item.Product_ID);
-                return acc + (product.Price_Product * item.Lot);
+        const newTotal = newDetails.reduce((acc, item) => {
+            const product = AllProducts.find(product => product.ID_Product === item.Product_ID);
+            return acc + (product.Price_Product * item.Lot);
         }, 0);
         fetchGain(newTotal);
     }
@@ -146,8 +152,8 @@ function Bill() {
                     </table>
                 </div>
 
-                <div className="mb-4 p-3">
-                    <p>Total: {total}</p>
+                <div className="mb-4">
+                    <p>SubTotal: {total} Total: {total}</p>
                 </div>
             </form>
 

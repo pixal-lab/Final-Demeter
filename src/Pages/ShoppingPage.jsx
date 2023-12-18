@@ -5,6 +5,8 @@ import { useSupplier } from "../Context/Supplier.context";
 import { useUser } from '../Context/User.context';
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
 import ShoppingView from '../Components/ShoppingView';
+
+
 import '../css/style.css';
 import "../css/landing.css";
 import Pagination from '@mui/material/Pagination';
@@ -159,20 +161,8 @@ function ShoppingPage() {
       },
     };
 
+    
   };
-
-  const handleDisableShopping = async (id) => {
-    const disabledShopping = await disableShopping(id)
-
-    if (disabledShopping == null) return
-
-    setShoppingData(prev =>
-      prev.map((data) =>
-        data.ID_Shopping === disabledShopping.ID_Shopping
-          ? { ...data, State: !data.State }
-          : data
-      ))
-  }
 
   return (
     <section className="pc-container">
@@ -276,7 +266,7 @@ function ShoppingPage() {
                                   type="button"
                                   title='Presiona para inhabilitar o habilitar la compra'
                                   className={`btn  btn-icon btn-success ${status}`}
-                                  onClick={() => handleDisableShopping(ID_Shopping)}
+                                  onClick={() => disableShopping(ID_Shopping)}
 
                                 >
                                   {State ? (

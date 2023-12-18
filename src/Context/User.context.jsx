@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { getUsersRequest, GetCurrentUser, getUserRequest, createUserRequest, statusUserRequest, updateUserRequest, deleteUserRequest, loginRequest, verifyTokenRequest, forgotPasswordRequest, NewPasswordRequest, GetUserCookies, existUserByEmailOrIdRequest, getWaiterRequest } from '../Api/User.request.js'
 import { getWaitersRequest, createWaiterRequest, updateWaiterRequest } from '../Api/User.request.js';
+import { updateUserLoginRequest, updatePasswordLoginRequest } from '../Api/User.request.js';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
@@ -32,7 +33,7 @@ export const User = ({ children }) => {
   const getUsers = async () => {
     try {
       const res = await getUsersRequest();
-      setUser(res);
+      setUser(res.data);
       return res.data
     } catch (error) {
       console.log(error);
@@ -303,6 +304,26 @@ export const User = ({ children }) => {
     }
   }
 
+  // --------------------------- Edit Profile --------------------------- //
+
+  const updateUserLogin = async (users) => {
+    try {
+      await updateUserLoginRequest(users);
+      getUsers();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const updatePasswordLogin = async (users) => {
+    try {
+      await updatePasswordLoginRequest(users);
+      getUsers();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -318,7 +339,11 @@ export const User = ({ children }) => {
         getWaiter,
         createWaiter,
         updateWaiter,
+        //------------- Profile ------------//
+        updateUserLogin,
+        updatePasswordLogin,
         //------------- Login ------------//
+        isAuthenticated,
         isAuthenticated,
         signin,
         loading,

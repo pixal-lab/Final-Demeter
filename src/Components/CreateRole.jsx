@@ -18,29 +18,11 @@ const style = {
 };
 
 function CreateRole({ onClose, onCreated }) {
-
     const { register, handleSubmit, formState: { errors }, setError } = useForm();
     const { createRole, role } = useRole();
 
-    function removeAccentsAndSpaces(str) {
-        return str
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f\s]/g, '');
-    }
-
     const onSubmit = handleSubmit(async (values) => {
-
-        const normalizedInputName = removeAccentsAndSpaces(
-            values.Name_Role
-        );
-        const normalizedExistingNames = role.map((rol) =>
-            removeAccentsAndSpaces(rol.Name_Role)
-        );
-
-        const isNameDuplicate = normalizedExistingNames.includes(
-            normalizedInputName
-        );
+        const isNameDuplicate = role.some(rol => rol.Name_Role === values.Name_Role);
 
         if (isNameDuplicate) {
             setError('Name_Role', {
@@ -70,36 +52,20 @@ function CreateRole({ onClose, onCreated }) {
                         <div className="card-body">
                             <form onSubmit={onSubmit}>
 
-                                <div className="city">
+                                <div className="control">
                                     <div className="form-group col-md-6">
                                         <label htmlFor="Name_Role" className="form-label">
                                             Nombre: <strong>*</strong>
                                         </label>
                                         <input
                                             {...register("Name_Role", {
+                                                required: "El nombre es obligatorio",
                                                 pattern: {
-                                                    value: /^[A-Za-zÁÉÍÓÚÑáéíóúñ]+(\s[A-Za-zÁÉÍÓÚÑáéíóúñ]+)?$/,
-                                                    message: 'Solo se permiten letras, tildes y hasta un espacio entre letras.',
-                                                },
-                                                minLength: {
-                                                    value: 3,
-                                                    message: 'El nombre debe tener al menos 3 caracteres.',
-                                                },
-                                                maxLength: {
-                                                    value: 30,
-                                                    message: 'El nombre no puede tener más de 30 caracteres.',
-                                                },
-                                                setValueAs: (value) =>
-                                                    value
-                                                        .trim()
-                                                        .replace(/\s+/g, ' ')
-                                                        .toLowerCase()
-                                                        .replace(/^(.)/, (match) => match.toUpperCase()),
+                                                    value: /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ\s]*[a-záéíóúñ]$/,
+                                                    message:
+                                                        "El nombre del rol debe tener la primera letra en mayúscula y solo letras."
+                                                }
                                             })}
-                                            maxLength={30}
-                                            onInput={(e) => {
-                                                e.target.value = e.target.value.replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ\s]/g, '');
-                                            }}
                                             type="text"
                                             placeholder='Nombre'
                                             className="form-control"
@@ -116,19 +82,19 @@ function CreateRole({ onClose, onCreated }) {
                                 <div className="buttonconfirm">
                                     <div className="mb-3">
                                         <button
-                                            className="btn btn-primary mr-5"
-                                            type="submit"
-                                            title='Se guarda la información recien ingresado en el sistema.'
-                                        >
-                                            Confirmar
-                                        </button>
-                                        <button
-                                            className="btn btn-danger"
+                                            className="btn btn-primary"
                                             onClick={onCancel}
                                             type="button"
-                                            title='Se cancela la información recien ingresada en el sistema.'
+                                            title='Cancelar el rol no creado actualmente en el sistema'
                                         >
                                             Cancelar
+                                        </button>
+                                        <button
+                                            className="btn btn-primary mr-5"
+                                            type="submit"
+                                            title='Se guarda el rol recien ingresado en el sistema.'
+                                        >
+                                            Confirmar
                                         </button>
                                     </div>
                                 </div>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default (key, defaultData = {}) => {
     const [storage, setStorage] = useState(() => {
@@ -6,7 +6,7 @@ export default (key, defaultData = {}) => {
         return storedData ? JSON.parse(storedData) : defaultData;
     });
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         localStorage.setItem(key, JSON.stringify(storage));
     }, [key, storage]);
 

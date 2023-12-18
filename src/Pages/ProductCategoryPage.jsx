@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
 import { useCategoryProducts } from '../Context/CategoryProducts.context.jsx';
-import { useProduct } from '../Context/Product.context.jsx';
+import { useProduct } from '../Context/ProductContext.jsx';
 import CreateProductCategory from "../Components/CreateProductCategory.jsx";
 import UpdateProductCategory from "../Components/UpdateProductCategory.jsx";
 import DeleteProductCategory from "../Components/DeleteProductCategory.jsx";
@@ -29,7 +29,7 @@ function ProductCategoryPage() {
   const ITEMS_PER_PAGE = 7;
   const [currentPage, setCurrentPage] = useState(1);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     getCategory_products();
     setCurrentPage(1);
   }, []);

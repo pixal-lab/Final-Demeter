@@ -1,7 +1,11 @@
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import '../css/style.css'
+<<<<<<< HEAD
 import ConfirmShop from './ConfirmShop';
+=======
+import ConfirmShop from './CofirmShop.jsx';
+>>>>>>> parent of 24419f9 (.2)
 import CancelShop from './CancelShop';
 import { useSupplier } from '../Context/Supplier.context';
 import { useUser } from '../Context/User.context';
@@ -28,7 +32,7 @@ function ShoppingBill({ total = 0, onConfirm, onClose, ...confirmValues }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedSupplier, setSelectedSupplier, destroy] = useLocaStorage("supplier", {});
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     return async () => {
       const newSupplier = await Promise.resolve(getSupplier());
       const filteredSuppliers = newSupplier.filter((supplierItem) => supplierItem.State);

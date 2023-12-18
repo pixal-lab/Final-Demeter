@@ -10,12 +10,13 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
+    width: 400,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
     pt: 2,
     px: 4,
-    pb: 2,
+    pb: 3,
 };
 
 function CreateLosses({ supply, onLossCreated }) {
@@ -83,7 +84,7 @@ function CreateLosses({ supply, onLossCreated }) {
                                 <form onSubmit={(event) => onSubmit(event)}>
 
                                     <div className="form-group col-md-6">
-                                        <label htmlFor="Unit" className="form-label unit-losses">
+                                        <label htmlFor="Unit" className="form-label">
                                             Cantidad pérdida:
                                         </label>
                                         <input
@@ -109,7 +110,7 @@ function CreateLosses({ supply, onLossCreated }) {
                                                 e.target.value = e.target.value.replace(/[^\d.]/g, '');
                                             }}
                                             type="text"
-                                            className="form-control unit-losses"
+                                            className="form-control"
                                         />
                                         {errors.Unit && (
                                             <p className="text-red-500">{errors.Unit.message}</p>
@@ -117,7 +118,7 @@ function CreateLosses({ supply, onLossCreated }) {
                                     </div>
 
                                     <div className="form-group col-md-6">
-                                        <label htmlFor="Reason" className="form-label reason-losses">
+                                        <label htmlFor="Reason" className="form-label">
                                             Razón de la pérdida:
                                         </label>
                                         <textarea
@@ -149,24 +150,24 @@ function CreateLosses({ supply, onLossCreated }) {
                                                 e.target.value = e.target.value.replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ\s,.]/g, '');
                                             }}
                                             type="textarea"
-                                            className="form-control reason-losses"
+                                            className="form-control"
                                         />
                                         {errors.Reason && (
                                             <p className="text-red-500">{errors.Reason.message}</p>
                                         )}
                                     </div>
 
-                                    <div className="buttonconfirm-losses">
+                                    <div className="buttonconfirm">
                                         <div className="mb-3">
                                             <button
-                                                className="btn btn-primary mr-3 btn-losses btn-losses-one"
+                                                className="btn btn-primary mr-5"
                                                 type="submit"
                                                 title="Este botón sirve para guardar la información y cerrar la ventana modal."
                                             >
                                                 Confirmar
                                             </button>
                                             <button
-                                                className="btn btn-danger btn-losses"
+                                                className="btn btn-danger"
                                                 onClick={onCancel}
                                                 type="button"
                                                 title="Este botón sirve para cerrar la ventana modal sin guardar la información."

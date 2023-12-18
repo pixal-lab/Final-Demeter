@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
@@ -6,7 +6,7 @@ import { useCategorySupplies } from '../Context/CategorySupplies.context.jsx';
 import { useSupplies } from "../Context/Supplies.context.jsx";
 import CreateSuppliesCategory from "../Components/CreateSuppliesCategory.jsx";
 import UpdateSuppliesCategory from "../Components/UpdateSuppliesCategory.jsx";
-import DeleteSuppliesCategory from "../Components/DeleteSuppliesCategory.jsx";
+import DeleteSuppliesCategory from "../Components/DeleteSupplies.jsx";
 import CannotDeleteCategory from "../Components/CannotDeleteSuppliesCategory.jsx";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
@@ -30,7 +30,7 @@ function SuppliesCategoryPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     getCategory_supplies();
     getSupplies();
     setCurrentPage(1);
@@ -220,36 +220,30 @@ function SuppliesCategoryPage() {
       </Box>
 
       {isDeleteModalOpen && (
-        <div className="absolute inset-0 flex items-center justify-center z-50">
-          <DeleteSuppliesCategory
-            onClose={closeDeleteModal}
-            onDelete={() => {
-              if (selectedSupplyCategoryToDelete) {
-                deleteCategory_supplies(selectedSupplyCategoryToDelete.ID_SuppliesCategory);
-                closeDeleteModal();
-              }
-            }}
-          />
-        </div>
+        <DeleteSuppliesCategory
+          onClose={closeDeleteModal}
+          onDelete={() => {
+            if (selectedSupplyCategoryToDelete) {
+              deleteCategory_supplies(selectedSupplyCategoryToDelete.ID_SuppliesCategory);
+              closeDeleteModal();
+            }
+          }}
+        />
       )}
 
       {showWarning && (
-        <div className="absolute inset-0 flex items-center justify-center z-50">
-          <CannotDeleteCategory
-            onClose={closeDeleteModal}
-          />
-        </div>
+        <CannotDeleteCategory
+          onClose={closeDeleteModal}
+        />
       )}
 
       {selectedSupplyCategoryToUpdate && (
-        <div className="absolute inset-0 flex items-center justify-center z-50">
-          <UpdateSuppliesCategory
-            supplyCategoryToEdit={selectedSupplyCategoryToUpdate}
-            onUpdate={() => {
-              setSelectedSupplyCategoryToUpdate(null);
-            }}
-          />
-        </div>
+        <UpdateSuppliesCategory
+          supplyCategoryToEdit={selectedSupplyCategoryToUpdate}
+          onUpdate={() => {
+            setSelectedSupplyCategoryToUpdate(null);
+          }}
+        />
       )}
 
     </section>

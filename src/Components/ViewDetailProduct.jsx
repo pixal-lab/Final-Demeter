@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProduct } from '../Context/Product.context.jsx';
 import { AiFillDelete } from 'react-icons/ai';
 
@@ -6,7 +6,7 @@ function ViewDetailProduct() {
 
     const { getDetailProduct, detailP, deleteDetailProduct, CurrentProd } = useProduct();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         getDetailProduct(CurrentProd);
     }, []);
 
