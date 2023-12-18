@@ -100,7 +100,7 @@ export const User = ({ children }) => {
 
     } catch (error) {
       console.log(error);
-      hasError = true
+      hasError = false
     }
 
     return {
