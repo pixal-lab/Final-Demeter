@@ -34,7 +34,7 @@ function UserPage() {
     const itemsForPage = 5;
     const [currentPage, setCurrentPage] = useState(1);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         getUsers();
         return async () => {
             const users = await getUsers();
@@ -116,7 +116,8 @@ function UserPage() {
         setAllUsers((prevUser) =>
             prevUser.map((users) =>
                 users.ID_User === id ? { ...users, State: !users.State } : users
-            ))
+            )
+        )
     }
 
     const handlePageChange = (event, value) => {
@@ -190,56 +191,58 @@ function UserPage() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {visibleUsers.map((users) => (
-                                                        <tr key={users.ID_User}>
-                                                            <td>{users.Type_Document}</td>
-                                                            <td>{users.Document}</td>
-                                                            <td>{users.Name_User}</td>
-                                                            <td>{users.LastName_User}</td>
-                                                            <td>{users.Email}</td>
-                                                            <td>
-                                                                {users?.Role_ID
-                                                                    ? role.find(
-                                                                        (rol) =>
-                                                                            rol.ID_Role ===
-                                                                            users.Role_ID
-                                                                    )?.Name_Role || '' : ''
-                                                                }
-                                                            </td>
-                                                            <td className={`${barraClass}`}>
-                                                                {users?.State ? "Habilitado" : "Deshabilitado"}
-                                                            </td>
-                                                            <td>
-                                                                <div style={{ display: "flex", alignItems: "center", padding: '3px' }}>
-                                                                    <button
-                                                                        onClick={() => handleEdit(users)}
-                                                                        className={`ml-1 btn btn-icon btn-primary ${!users.State ? "text-gray-400 cursor-not-allowed" : ""}`}
-                                                                        disabled={!users?.State}
-                                                                    >
-                                                                        <BiEdit />
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={() => handleDelete(users)}
-                                                                        className={`ml-1 btn btn-icon btn-danger ${!users.State ? "text-gray-400 cursor-not-allowed" : ""}`}
-                                                                        disabled={!users.State}
-                                                                    >
-                                                                        <AiFillDelete />
-                                                                    </button>
-                                                                    <button
-                                                                        type="button"
-                                                                        className={`ml-1 btn btn-icon btn-success ${barraClass}`}
-                                                                        onClick={() => onStatusChange(users.ID_User)}
-                                                                    >
-                                                                        {users.State ? (
-                                                                            <MdToggleOn className={`estado-icon active ${barraClass}`} />
-                                                                        ) : (
-                                                                            <MdToggleOff className={`estado-icon inactive ${barraClass}`} />
-                                                                        )}
-                                                                    </button>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
+                                                    {visibleUsers
+                                                        .filter((user) => user.ID_User !== 1)
+                                                        .map((users) => (
+                                                            <tr key={users.ID_User}>
+                                                                <td>{users.Type_Document}</td>
+                                                                <td>{users.Document}</td>
+                                                                <td>{users.Name_User}</td>
+                                                                <td>{users.LastName_User}</td>
+                                                                <td>{users.Email}</td>
+                                                                <td>
+                                                                    {users?.Role_ID
+                                                                        ? role.find(
+                                                                            (rol) =>
+                                                                                rol.ID_Role ===
+                                                                                users.Role_ID
+                                                                        )?.Name_Role || '' : ''
+                                                                    }
+                                                                </td>
+                                                                <td className={`${barraClass}`}>
+                                                                    {users?.State ? "Habilitado" : "Deshabilitado"}
+                                                                </td>
+                                                                <td>
+                                                                    <div style={{ display: "flex", alignItems: "center", padding: '3px' }}>
+                                                                        <button
+                                                                            onClick={() => handleEdit(users)}
+                                                                            className={`ml-1 btn btn-icon btn-primary ${!users.State ? "text-gray-400 cursor-not-allowed" : ""}`}
+                                                                            disabled={!users?.State}
+                                                                        >
+                                                                            <BiEdit />
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={() => handleDelete(users)}
+                                                                            className={`ml-1 btn btn-icon btn-danger ${!users.State ? "text-gray-400 cursor-not-allowed" : ""}`}
+                                                                            disabled={!users.State}
+                                                                        >
+                                                                            <AiFillDelete />
+                                                                        </button>
+                                                                        <button
+                                                                            type="button"
+                                                                            className={`ml-1 btn btn-icon btn-success ${barraClass}`}
+                                                                            onClick={() => onStatusChange(users.ID_User)}
+                                                                        >
+                                                                            {users.State ? (
+                                                                                <MdToggleOn className={`estado-icon active ${barraClass}`} />
+                                                                            ) : (
+                                                                                <MdToggleOff className={`estado-icon inactive ${barraClass}`} />
+                                                                            )}
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
                                                 </tbody>
                                             </table>
 
@@ -274,14 +277,16 @@ function UserPage() {
                                             </Box>
 
                                             {isDeleteModalOpen && (
-                                                <DeleteUser
-                                                    onClose={cancelDelete}
-                                                    onDelete={confirmDelete}
-                                                />
+                                                <div className="absolute inset-0 flex items-center justify-center z-50">
+                                                    <DeleteUser
+                                                        onClose={cancelDelete}
+                                                        onDelete={confirmDelete}
+                                                    />
+                                                </div>
                                             )}
 
                                             {isModalOpen && (
-                                                <div className="fixed inset-0 flex items-center justify-center z-50">
+                                                <div className="absolute inset-0 flex items-center justify-center z-50">
                                                     <div className="modal-overlay" onClick={() => setIsModalOpen(false)}></div>
                                                     <div className="modal-container">
                                                         <CreateUser onClose={() => setIsModalOpen(false)} onCreated={handleCreated} />
@@ -290,7 +295,7 @@ function UserPage() {
                                             )}
 
                                             {isEditModalOpen && (
-                                                <div className="fixed inset-0 flex items-center justify-center z-50">
+                                                <div className="absolute inset-0 flex items-center justify-center z-50">
                                                     <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}></div>
                                                     <div className="modal-container">
                                                         <UpdateUser onClose={() => setIsEditModalOpen(false)} userToEdit={userToEdit} />

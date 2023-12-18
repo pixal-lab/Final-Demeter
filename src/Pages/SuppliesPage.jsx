@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
 import { useSupplies } from "../Context/Supplies.context.jsx";
 import { useCategorySupplies } from '../Context/CategorySupplies.context.jsx';
 import CreateSupplies from "../Components/CreateSupplies.jsx";
+import SeeLosses from "../Components/SeeLosses.jsx";
+import CreateLosses from '../Components/CreateLosses';
 import UpdateSupplies from "../Components/UpdateSupplies.jsx";
 import DeleteSupplies from "../Components/DeleteSupplies.jsx";
 import Pagination from '@mui/material/Pagination';
@@ -28,7 +30,7 @@ function SuppliesPage() {
   const ITEMS_PER_PAGE = 7;
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getSupplies();
   }, []);
 
@@ -179,7 +181,10 @@ function SuppliesPage() {
                                     onUpdate={handleUpdateSupply}
                                   />
 
-                            
+                                  <CreateLosses supply={supply} onLossCreated={handleLossCreated} />
+
+                                  <SeeLosses supply={supply} />
+
                                   <button
                                     onClick={() => handleDelete(supply)}
                                     className={`ml-1 btn btn-icon btn-danger ${!supply.State ? "text-gray-400 cursor-not-allowed" : ""}`}

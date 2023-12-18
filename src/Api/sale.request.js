@@ -1,4 +1,4 @@
-import axios from './Axios.js'
+import axios from './axios.js'
 
 export const Createsale = (data) => axios.post(`/Csale`, data);
 export const CreatesaleDetail = (data) => axios.post(`/Csaledetail`, data);

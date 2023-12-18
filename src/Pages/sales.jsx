@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useProductCategories } from '../Context/ProductCategoriesContext';
-import { useProduct } from '../Context/ProductContext.jsx';
+import { useProduct } from '../Context/ProductContext';
 import { useSaleContext } from '../Context/SaleContext';
 import Bill from './Bill_Sale';
 import Edit_Bill from './EditSale';
@@ -9,7 +9,7 @@ function Sales() {
     const { ProductCategories, fetchProductCategories } = useProductCategories();
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
-    const { fetchProduct, getwholeProducts } = useProduct();
+    const { fetchProduct } = useProduct();
     const [selectedCategoryName, setSelectedCategoryName] = useState({});
     const [categoryImages, setCategoryImages] = useState({});
     const [productNames, setProductNames] = useState({});
@@ -17,7 +17,6 @@ function Sales() {
     const [newSaleID, setNewSaleID] =useState()
     useEffect(() => {
         fetchProductCategories();
-        
         
         if (Sales.length > 0 && action == 1) {
             setNewSaleID((Sales[Sales.length - 1].ID_Sale) + 1);
@@ -65,7 +64,6 @@ function Sales() {
     const fetchProductsForCategory = (categoryID) => {
         fetchProduct(categoryID)
             .then(data => {
-                console.log(data)
                 const images = data.map(product => product.Image);
                 const names = data.map(product => product.Name_Products);
                 setCategoryImages({ ...categoryImages, [categoryID]: images });
@@ -104,7 +102,7 @@ function Sales() {
         <div className=" ">
             <h1 className="text-3xl font-bold mb-4">Ventas 1.0 </h1>
             <div className='flex flex-grid'>
-            <div className="w-full md:w-[70%] lg:w-[60%] xl:w-[50%] min-h-screen md:min-h-[70%] lg:min-h-[80%] mx-auto md:mx-[25%] lg:mx-[30%] xl:mx-[35%] mr-5">
+                <div className="w-[100vh] min-h-[87vh] ml-[30vh]">
                     <div className="float-left mt-[3vh]">
                         <label htmlFor="categorias" className="text-lg font-medium text-gray-700">Seleccione categorías: </label>
                         <select

@@ -6,12 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
 import "../css/style.css";
 import "../css/landing.css";
-import { useProduct } from '../Context/ProductContext.jsx'
+import { useProduct } from '../Context/Product.context.jsx'
 import { useCategoryProducts } from '../Context/CategoryProducts.context.jsx'
 import CreateProducts from '../Components/CreateProduct.jsx'
 
 function ProductPage() {
-  const { product, getProductsa, toggleProducStatus, getCurrentProduct, deleteProduct } = useProduct();
+  const { product, getProducts, toggleProducStatus, getCurrentProduct, deleteProduct } = useProduct();
   const { Category_products } = useCategoryProducts();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -24,11 +24,11 @@ function ProductPage() {
   };
 
   const handleCreated = () => {
-    getProductsa();
+    getProducts();
   };
 
-  useEffect(() => {
-    getProductsa();
+  useLayoutEffect(() => {
+    getProducts();
     // setCurrentPage(1);
   }, []);
 
