@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { getProductsRequest, getProductByCategoryRequest, createProductsRequest, statusProductsRequest, updateProductsRequest, deleteProductsRequest, getProductByIdRequest } from "../Api/product.request.js"
+import { getProductsRequest, getProductByCategoryRequest, createProductsRequest, statusProductsRequest, updateProductsRequest, deleteProductsRequest, getProductByCategoryRequest } from "../Api/product.request.js"
 import { getProductSale, getAllProduct, getDetailProductRequest, getDetailProductRequest2, createDetailPRequest, deleteDetailProductRequest } from "../Api/product.request.js" //Detalles
 import useLocaStorage from "../hooks/useLocaStorage.jsx";
 
@@ -152,7 +152,7 @@ export function Product({ children }) {
 
     const getProductById = async (id) => {
         try {
-            const res = await getProductByIdRequest(id);
+            const res = await getProductByCategoryRequest(id);
             console.log("res2", res)
             return res.data
         } catch (error) {
