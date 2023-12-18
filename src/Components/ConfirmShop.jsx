@@ -57,5 +57,3 @@ function ConfirmShop({ onConfirm, data, ...onConfirmValues }) {
 }
 
 export default ConfirmShop
-
-export default ConfirmShop
