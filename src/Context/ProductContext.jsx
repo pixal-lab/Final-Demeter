@@ -12,7 +12,7 @@ import {
     deleteDetailProductRequest,
     getAllProduct,
     getProducts
-} from "../Api/product.req.js";
+} from "../Api/product.request.js";
 
 
 const ProductContext = createContext();
