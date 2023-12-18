@@ -240,33 +240,16 @@ export const User = ({ children }) => {
 
   useEffect(() => {
     async function checkLogin() {
-      const cookies = Cookies.get()
 
-      //comprueba si hay un token, si no hay uno entonces la autenticación es false
-      if (!cookies.token) {
-        setisAuthenticated(false);
-        setLoading(false);
-        return setUser(null);
-      }
+
+
       //si hay un token, envialo al backend, si no responde ningún dato entonces envialo a false
       //pero si sí hay uno entonces el usuario está autenticado y me muestra el usuario
-      try {
-        const res = await verifyTokenRequest(cookies.token)
-        if (!res.data) {
-          setisAuthenticated(false);
-          setLoading(false);
-          return;
-        }
 
         setisAuthenticated(true);
         setUser(res.data);
         setLoading(false);
-      } catch (error) {
-        console.log(error);
-        setisAuthenticated(false);
-        setUser(null);
-        setLoading(false);
-      }
+
     }
     checkLogin();
   }, []);
