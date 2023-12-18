@@ -16,9 +16,9 @@ class ErrorBoundary extends Component {
     }
 
     render() {
-        if (this.state.hasError) {
-            return <AuthorizationModal />;
-        }
+        // if (this.state.hasError) {
+        //     return <AuthorizationModal />;
+        // }
 
         return this.props.children;
     }
