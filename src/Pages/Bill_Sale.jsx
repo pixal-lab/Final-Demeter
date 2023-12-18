@@ -34,7 +34,7 @@ function Bill() {
         getwholeProducts();
         getWaiters();
     }, []);
-
+    // pixal estuvo aqui
     useLayoutEffect(() => {
         // Mapear la lista de usuarios para obtener nombres y crear las opciones del select
         const waiterOptions = user.map((userData) => (
