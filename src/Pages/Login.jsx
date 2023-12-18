@@ -36,7 +36,6 @@ function Login() {
 	}, [isAuthenticated])
 
 
-	alert("login");
 	return (
 		
 		<div className="">
