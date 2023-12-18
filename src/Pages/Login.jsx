@@ -36,8 +36,9 @@ function Login() {
 	}, [isAuthenticated])
 
 
-
+	alert("login");
 	return (
+		
 		<div className="">
 			<div className="auth-wrapper">
 				<div className="auth-content">
