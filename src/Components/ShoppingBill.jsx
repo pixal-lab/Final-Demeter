@@ -1,11 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import '../css/style.css'
-<<<<<<< HEAD
-import ConfirmShop from './ConfirmShop';
-=======
 import ConfirmShop from './CofirmShop.jsx';
->>>>>>> parent of 24419f9 (.2)
 import CancelShop from './CancelShop';
 import { useSupplier } from '../Context/Supplier.context';
 import { useUser } from '../Context/User.context';
