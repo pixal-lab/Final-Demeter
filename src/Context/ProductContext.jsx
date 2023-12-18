@@ -12,7 +12,7 @@ export const useProduct = () => {
     }
     return context;
 }
-
+// pixal estuvo aqui tambien
 export const ProductProvider = ({ children }) => {
 
     const [Products, setProducts] = useState([]);
